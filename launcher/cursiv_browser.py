@@ -16,6 +16,10 @@ import urllib.request
 from pathlib import Path
 from typing import Optional
 
+QWebEngineView = None
+QWebEnginePage  = None
+_HAS_WEB_ENGINE = False
+
 try:
     from PyQt6.QtCore import QSize, Qt, QTimer, QUrl, pyqtSignal
     from PyQt6.QtGui import QFont, QIcon, QKeySequence, QShortcut
@@ -27,7 +31,7 @@ try:
     from PyQt6.QtWebEngineCore import QWebEnginePage
     from PyQt6.QtWebEngineWidgets import QWebEngineView
     _HAS_WEB_ENGINE = True
-except ImportError:
+except Exception:
     _HAS_WEB_ENGINE = False
 
 # ── Constants ─────────────────────────────────────────────────────────────────
