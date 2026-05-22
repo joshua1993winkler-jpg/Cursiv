@@ -243,6 +243,11 @@ class CursivBrowser(QMainWindow):
     closed = pyqtSignal()
 
     def __init__(self, parent=None):
+        if not _HAS_WEB_ENGINE:
+            raise ImportError(
+                "PyQt6-WebEngine is not installed.\n\n"
+                "Run:  pip install PyQt6-WebEngine\nThen relaunch."
+            )
         super().__init__(parent)
         self.setWindowTitle("Cursiv — Substrate Browser")
         self.resize(1280, 820)
@@ -332,7 +337,7 @@ class CursivBrowser(QMainWindow):
         # Wire buttons
         self._btn_back.clicked.connect(self._go_back)
         self._btn_fwd.clicked.connect(self._go_forward)
-        self._btn_reload.clicked.connect(self._view.reload)
+        self._btn_reload.clicked.connect(lambda: self._view.reload())
         self._btn_home.clicked.connect(lambda: self._navigate(_SUBSTRATE_HOST))
         self._btn_go.clicked.connect(self._on_go)
         self._addr_bar.returnPressed.connect(self._on_go)
@@ -399,6 +404,10 @@ class CursivBrowser(QMainWindow):
         self._view.setFocus()
 
     def _update_nav_buttons(self):
+        if not hasattr(self, "_view"):
+            self._btn_back.setEnabled(False)
+            self._btn_fwd.setEnabled(False)
+            return
         h = self._view.history()
         self._btn_back.setEnabled(h.canGoBack())
         self._btn_fwd.setEnabled(h.canGoForward())

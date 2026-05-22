@@ -11,6 +11,18 @@ Output: dist/Cursiv/Cursiv.exe  (one-dir bundle, windowed)
 import sys
 from pathlib import Path
 
+try:
+    from PyInstaller.utils.hooks import collect_all
+    _we_d,  _we_b,  _we_h  = collect_all("PyQt6.QtWebEngineWidgets")
+    _wec_d, _wec_b, _wec_h = collect_all("PyQt6.QtWebEngineCore")
+    _extra_datas    = _we_d  + _wec_d
+    _extra_binaries = _we_b  + _wec_b
+    _extra_hidden   = _we_h  + _wec_h
+except Exception:
+    _extra_datas    = []
+    _extra_binaries = []
+    _extra_hidden   = []
+
 ROOT = Path(SPECPATH).parent          # repo root (one level above launcher/)
 LAUNCHER = ROOT / "launcher"
 CURSIV   = ROOT / "cursiv_v215"
@@ -96,6 +108,8 @@ hiddenimports = [
     "cursiv_v215.web.app",
     "cursiv_v215.web.db",
     "cursiv_v215.web.auth",
+    "cursiv_v215.web.sentinel",
+    "cursiv_v215.web.maze",
     "cursiv_v215.substrate",
     "cursiv_v215.substrate.activator",
     "cursiv_v215.substrate.ruw",
@@ -118,9 +132,9 @@ hiddenimports = [
 a = Analysis(
     [str(LAUNCHER / "main.py")],
     pathex=[str(ROOT), str(LAUNCHER)],
-    binaries=[],
-    datas=datas,
-    hiddenimports=hiddenimports,
+    binaries=[] + _extra_binaries,
+    datas=datas + _extra_datas,
+    hiddenimports=hiddenimports + _extra_hidden,
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
