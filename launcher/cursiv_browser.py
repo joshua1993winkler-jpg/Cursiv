@@ -31,8 +31,11 @@ try:
     from PyQt6.QtWebEngineCore import QWebEnginePage
     from PyQt6.QtWebEngineWidgets import QWebEngineView
     _HAS_WEB_ENGINE = True
-except Exception:
+except Exception as _web_err:
     _HAS_WEB_ENGINE = False
+    _WEB_ERR_MSG = str(_web_err)
+else:
+    _WEB_ERR_MSG = ""
 
 # ── Constants ─────────────────────────────────────────────────────────────────
 
@@ -249,7 +252,7 @@ class CursivBrowser(QMainWindow):
     def __init__(self, parent=None):
         if not _HAS_WEB_ENGINE:
             raise ImportError(
-                "PyQt6-WebEngine is not installed.\n\n"
+                f"PyQt6-WebEngine is not available. Detail: {_WEB_ERR_MSG}\n\n"
                 "Run:  pip install PyQt6-WebEngine\nThen relaunch."
             )
         super().__init__(parent)

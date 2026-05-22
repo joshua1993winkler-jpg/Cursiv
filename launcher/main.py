@@ -54,15 +54,15 @@ def main():
         app.setOrganizationName("Joshua Winkler")
         try:
             from cursiv_browser import CursivBrowser
-        except ImportError:
+            window = CursivBrowser()
+        except ImportError as _e:
             from PyQt6.QtWidgets import QMessageBox
             QMessageBox.critical(
                 None, "Cursiv Substrate Browser",
-                "PyQt6-WebEngine is not installed.\n\n"
-                "Run:  pip install PyQt6-WebEngine\nThen relaunch."
+                f"Cursiv Substrate Browser could not start:\n\n{_e}\n\n"
+                "Use the Install button inside the Cursiv Launcher to set it up."
             )
             sys.exit(1)
-        window = CursivBrowser()
         window.setWindowTitle("Cursiv Substrate Browser")
         window.show()
         sys.exit(app.exec())
