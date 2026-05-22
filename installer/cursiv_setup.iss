@@ -67,8 +67,8 @@ Name: "{group}\Uninstall {#AppName}";  Filename: "{uninstallexe}"
 Name: "{autodesktop}\{#AppName}";                  Filename: "{app}\{#AppExe}"; Tasks: desktopicon
 
 ; Desktop shortcut — Cursiv Substrate Browser (optional CSB task)
-Name: "{autodesktop}\Cursiv Substrate Browser";    Filename: "{app}\{#AppExe}"; \
-  Parameters: "--browser"; \
+Name: "{autodesktop}\Cursiv Substrate Browser";    Filename: "cmd.exe"; \
+  Parameters: "/c ""{app}\{#AppExe}"" --browser & pause"; \
   IconFilename: "{app}\{#AppExe}"; \
   Comment: "Open the Cursiv substrate layer browser (curs.http://)"; \
   Tasks: csb

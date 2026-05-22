@@ -22,23 +22,24 @@ try:
     _extra_datas    = []
     _extra_hidden   = ["PyQt6.QtWebEngineCore", "PyQt6.QtWebEngineWidgets"]
 
-    # Qt WebEngine DLLs + subprocess helper
+    # Qt WebEngine DLLs + subprocess helper — must land in bundle root
+    # so Windows DLL search finds them when the .pyd loads
     for _fname in [
         "Qt6WebEngine.dll", "Qt6WebEngineCore.dll",
         "Qt6WebEngineWidgets.dll", "QtWebEngineProcess.exe",
     ]:
         _fp = _qt6_bin / _fname
         if _fp.exists():
-            _extra_binaries.append((str(_fp), "PyQt6/Qt6/bin"))
+            _extra_binaries.append((str(_fp), "."))
 
     # ICU data / pak files WebEngine needs at runtime
     if _qt6_res.exists():
-        _extra_datas.append((str(_qt6_res), "PyQt6/Qt6/resources"))
+        _extra_datas.append((str(_qt6_res), "resources"))
 
     # WebEngine translation catalogs only (keeps size down)
     if _qt6_tr.exists():
         for _tf in _qt6_tr.glob("qtwebengine*"):
-            _extra_datas.append((str(_tf), "PyQt6/Qt6/translations"))
+            _extra_datas.append((str(_tf), "translations"))
 
 except Exception as _e:
     print(f"[build.spec] WebEngine collection skipped: {_e}")
