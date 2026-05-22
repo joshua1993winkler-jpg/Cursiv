@@ -1,6 +1,6 @@
 @echo off
 :: ============================================================
-:: Cursiv — Package Script
+:: Cursiv - Package Script
 :: Compiles installer\cursiv_setup.iss into Cursiv-Setup-3.14-U03.exe
 :: Requires Inno Setup 6 (iscc must be in PATH or found below).
 :: Run from repo root:  scripts\package.bat
@@ -11,26 +11,30 @@ set "ROOT=%~dp0.."
 cd /d "%ROOT%"
 
 echo.
-echo  ╔══════════════════════════════════════╗
-echo  ║   Cursiv Installer Packager           ║
-echo  ╚══════════════════════════════════════╝
+echo  Cursiv Installer Packager
+echo  =========================================
 echo.
 
-:: ── Locate iscc ─────────────────────────────────────────────
+:: ---- Locate iscc -------------------------------------------
 set "ISCC="
-where iscc >nul 2>&1 && set "ISCC=iscc"
 
+where iscc >nul 2>&1
+if %errorlevel% equ 0 set "ISCC=iscc"
+
+:: Check Program Files (x86) directly - no for-loop, no nesting
 if not defined ISCC (
-    for %%p in (
-        "%ProgramFiles(x86)%\Inno Setup 6\iscc.exe"
-        "%ProgramFiles%\Inno Setup 6\iscc.exe"
-    ) do (
-        if exist %%p set "ISCC=%%p"
-    )
+    set "_T=%ProgramFiles(x86)%\Inno Setup 6\iscc.exe"
+    if exist "!_T!" set "ISCC=!_T!"
+)
+
+:: Check Program Files (64-bit)
+if not defined ISCC (
+    set "_T=%ProgramFiles%\Inno Setup 6\iscc.exe"
+    if exist "!_T!" set "ISCC=!_T!"
 )
 
 if not defined ISCC (
-    echo [ERROR] Inno Setup 6 compiler (iscc) not found.
+    echo [ERROR] Inno Setup 6 compiler ^(iscc^) not found.
     echo.
     echo  Download from: https://jrsoftware.org/isdl.php
     echo  After installing, re-run this script.
@@ -38,33 +42,31 @@ if not defined ISCC (
 )
 echo  Inno Setup: %ISCC%
 
-:: ── Check build exists ──────────────────────────────────────
+:: ---- Check build exists ------------------------------------
 if not exist "dist\Cursiv\Cursiv.exe" (
     echo [ERROR] dist\Cursiv\Cursiv.exe not found.
     echo  Run scripts\build.bat first.
     pause & exit /b 1
 )
 
-:: ── Compile installer ────────────────────────────────────────
+:: ---- Compile installer -------------------------------------
 echo  Compiling installer...
 echo.
 "%ISCC%" "installer\cursiv_setup.iss"
-if errorlevel 1 (
+if %errorlevel% neq 0 (
     echo.
     echo [ERROR] Inno Setup compilation failed.
     pause & exit /b 1
 )
 
-:: ── Verify output ────────────────────────────────────────────
+:: ---- Verify output -----------------------------------------
 if not exist "installer\Output\Cursiv-Setup-3.14-U03.exe" (
     echo [ERROR] Installer not found at installer\Output\Cursiv-Setup-3.14-U03.exe
     pause & exit /b 1
 )
 
 echo.
-echo  ┌──────────────────────────────────────────────────────┐
-echo  │  Installer created!                                   │
-echo  │  File: installer\Output\Cursiv-Setup-3.14-U03.exe         │
-echo  └──────────────────────────────────────────────────────┘
+echo  Installer created!
+echo  File: installer\Output\Cursiv-Setup-3.14-U03.exe
 echo.
 pause
