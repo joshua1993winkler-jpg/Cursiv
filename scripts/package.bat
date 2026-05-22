@@ -33,6 +33,12 @@ if not defined ISCC (
     if exist "!_T!" set "ISCC=!_T!"
 )
 
+:: Check user AppData\Local\Programs (non-admin install)
+if not defined ISCC (
+    set "_T=%LOCALAPPDATA%\Programs\Inno Setup 6\iscc.exe"
+    if exist "!_T!" set "ISCC=!_T!"
+)
+
 if not defined ISCC (
     echo [ERROR] Inno Setup 6 compiler ^(iscc^) not found.
     echo.

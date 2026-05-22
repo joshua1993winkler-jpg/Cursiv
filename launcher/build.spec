@@ -12,15 +12,38 @@ import sys
 from pathlib import Path
 
 try:
-    from PyInstaller.utils.hooks import collect_all
-    _we_d,  _we_b,  _we_h  = collect_all("PyQt6.QtWebEngineWidgets")
-    _wec_d, _wec_b, _wec_h = collect_all("PyQt6.QtWebEngineCore")
-    _extra_datas    = _we_d  + _wec_d
-    _extra_binaries = _we_b  + _wec_b
-    _extra_hidden   = _we_h  + _wec_h
-except Exception:
-    _extra_datas    = []
+    import PyQt6 as _qt6
+    _qt6_dir = Path(_qt6.__file__).parent
+    _qt6_bin = _qt6_dir / "Qt6" / "bin"
+    _qt6_res = _qt6_dir / "Qt6" / "resources"
+    _qt6_tr  = _qt6_dir / "Qt6" / "translations"
+
     _extra_binaries = []
+    _extra_datas    = []
+    _extra_hidden   = ["PyQt6.QtWebEngineCore", "PyQt6.QtWebEngineWidgets"]
+
+    # Qt WebEngine DLLs + subprocess helper
+    for _fname in [
+        "Qt6WebEngine.dll", "Qt6WebEngineCore.dll",
+        "Qt6WebEngineWidgets.dll", "QtWebEngineProcess.exe",
+    ]:
+        _fp = _qt6_bin / _fname
+        if _fp.exists():
+            _extra_binaries.append((str(_fp), "PyQt6/Qt6/bin"))
+
+    # ICU data / pak files WebEngine needs at runtime
+    if _qt6_res.exists():
+        _extra_datas.append((str(_qt6_res), "PyQt6/Qt6/resources"))
+
+    # WebEngine translation catalogs only (keeps size down)
+    if _qt6_tr.exists():
+        for _tf in _qt6_tr.glob("qtwebengine*"):
+            _extra_datas.append((str(_tf), "PyQt6/Qt6/translations"))
+
+except Exception as _e:
+    print(f"[build.spec] WebEngine collection skipped: {_e}")
+    _extra_binaries = []
+    _extra_datas    = []
     _extra_hidden   = []
 
 ROOT = Path(SPECPATH).parent          # repo root (one level above launcher/)
