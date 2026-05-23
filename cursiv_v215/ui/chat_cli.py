@@ -616,6 +616,27 @@ def _probe_claude(key: str) -> bool:
         return False
 
 
+_KEYS_FILE = Path(ROOT) / ".cursiv" / "config.json"
+
+def _load_saved_keys() -> dict:
+    try:
+        data = json.loads(_KEYS_FILE.read_text(encoding="utf-8"))
+        return {k: v for k, v in data.items() if isinstance(v, str)}
+    except Exception:
+        return {}
+
+def _save_key(field: str, value: str) -> None:
+    try:
+        try:
+            data = json.loads(_KEYS_FILE.read_text(encoding="utf-8"))
+        except Exception:
+            data = {}
+        data[field] = value
+        _KEYS_FILE.write_text(json.dumps(data, indent=2), encoding="utf-8")
+    except Exception:
+        pass
+
+
 def _api_chip(label: str, key: str, live) -> str:
     """Colored status chip: green=live, red=fail or off, gold=untested."""
     if not key:
@@ -1214,10 +1235,12 @@ def main() -> None:
         if p.exists() and p.is_dir():
             launch_ws = str(p)
 
+    _saved_keys = _load_saved_keys()
+
     cfg: dict = {
-        "api_key":          os.environ.get("XAI_API_KEY",       ""),
-        "openai_key":       os.environ.get("OPENAI_API_KEY",    ""),
-        "anthropic_key":    os.environ.get("ANTHROPIC_API_KEY", ""),
+        "api_key":          os.environ.get("XAI_API_KEY",       "") or _saved_keys.get("api_key",       ""),
+        "openai_key":       os.environ.get("OPENAI_API_KEY",    "") or _saved_keys.get("openai_key",    ""),
+        "anthropic_key":    os.environ.get("ANTHROPIC_API_KEY", "") or _saved_keys.get("anthropic_key", ""),
         "file_access":      False,
         "confirm_mode":     "confirm",
         "funforge_session": None,
@@ -3920,6 +3943,7 @@ def main() -> None:
             if new_key.startswith("sk-") or new_key.startswith("sk_"):
                 cfg["openai_key"] = new_key
                 cfg["openai_live"] = None
+                _save_key("openai_key", new_key)
                 print(f"  {DIM}That's an OpenAI key — routed to the OpenAI slot.{RESET}")
                 print(f"  {DIM}xAI keys start with  xai-  (console.x.ai){RESET}")
                 sys.stdout.write(f"  {GOLD}Testing OpenAI...{RESET}  ")
@@ -3929,6 +3953,7 @@ def main() -> None:
             else:
                 cfg["api_key"] = new_key
                 cfg["xai_live"] = None
+                _save_key("api_key", new_key)
                 sys.stdout.write(f"  {GOLD}Testing xAI...{RESET}  ")
                 sys.stdout.flush()
                 cfg["xai_live"] = _probe_xai(new_key)
@@ -3941,6 +3966,7 @@ def main() -> None:
             if new_key.startswith("xai-"):
                 cfg["api_key"] = new_key
                 cfg["xai_live"] = None
+                _save_key("api_key", new_key)
                 print(f"  {DIM}That's an xAI key — routed to the xAI slot.{RESET}")
                 print(f"  {DIM}OpenAI keys start with  sk-  (platform.openai.com){RESET}")
                 sys.stdout.write(f"  {GOLD}Testing xAI...{RESET}  ")
@@ -3950,6 +3976,7 @@ def main() -> None:
             elif new_key.startswith("sk-ant-"):
                 cfg["anthropic_key"] = new_key
                 cfg["claude_live"] = None
+                _save_key("anthropic_key", new_key)
                 print(f"  {DIM}That's an Anthropic key — routed to the Anthropic slot.{RESET}")
                 sys.stdout.write(f"  {GOLD}Testing Claude...{RESET}  ")
                 sys.stdout.flush()
@@ -3958,6 +3985,7 @@ def main() -> None:
             else:
                 cfg["openai_key"] = new_key
                 cfg["openai_live"] = None
+                _save_key("openai_key", new_key)
                 sys.stdout.write(f"  {GOLD}Testing OpenAI...{RESET}  ")
                 sys.stdout.flush()
                 cfg["openai_live"] = _probe_openai(new_key)
@@ -3970,6 +3998,7 @@ def main() -> None:
             if new_key.startswith("xai-"):
                 cfg["api_key"] = new_key
                 cfg["xai_live"] = None
+                _save_key("api_key", new_key)
                 sys.stdout.write(f"  {GOLD}Testing xAI...{RESET}  ")
                 sys.stdout.flush()
                 cfg["xai_live"] = _probe_xai(new_key)
@@ -3977,6 +4006,7 @@ def main() -> None:
             elif new_key.startswith("sk-") and not new_key.startswith("sk-ant-"):
                 cfg["openai_key"] = new_key
                 cfg["openai_live"] = None
+                _save_key("openai_key", new_key)
                 sys.stdout.write(f"  {GOLD}Testing OpenAI...{RESET}  ")
                 sys.stdout.flush()
                 cfg["openai_live"] = _probe_openai(new_key)
@@ -3984,6 +4014,7 @@ def main() -> None:
             else:
                 cfg["anthropic_key"] = new_key
                 cfg["claude_live"] = None
+                _save_key("anthropic_key", new_key)
                 sys.stdout.write(f"  {GOLD}Testing Claude...{RESET}  ")
                 sys.stdout.flush()
                 cfg["claude_live"] = _probe_claude(new_key)
