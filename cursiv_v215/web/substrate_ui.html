@@ -429,9 +429,15 @@ function renderAuth() {
       </div>
       <div class="auth-form">
         <input type="text" id="au" placeholder="username" />
-        <input type="password" id="ap" placeholder="password" />
+        <div style="position:relative;">
+          <input type="password" id="ap" placeholder="password" style="width:100%;box-sizing:border-box;padding-right:38px;" />
+          <button type="button" onclick="togglePw('ap',this)" style="position:absolute;right:6px;top:50%;transform:translateY(-50%);background:none;border:none;color:#666;cursor:pointer;font-size:14px;">👁</button>
+        </div>
         <div id="ap2w" style="display:none;">
-          <input type="password" id="ap2" placeholder="confirm password" />
+          <div style="position:relative;">
+            <input type="password" id="ap2" placeholder="confirm password" style="width:100%;box-sizing:border-box;padding-right:38px;" />
+            <button type="button" onclick="togglePw('ap2',this)" style="position:absolute;right:6px;top:50%;transform:translateY(-50%);background:none;border:none;color:#666;cursor:pointer;font-size:14px;">👁</button>
+          </div>
         </div>
         <button class="blue" id="auth-btn" onclick="doAuth()">login</button>
         <div class="msg" id="auth-msg"></div>
@@ -449,6 +455,12 @@ function switchTab(m) {
   document.getElementById('ap2w').style.display = m === 'register' ? 'block' : 'none';
   document.getElementById('auth-btn').textContent = m;
   document.getElementById('auth-msg').textContent = '';
+}
+
+function togglePw(id, btn) {
+  const el = document.getElementById(id);
+  if (el.type === 'password') { el.type = 'text'; btn.style.color = '#FFD700'; }
+  else { el.type = 'password'; btn.style.color = '#666'; }
 }
 
 async function doAuth() {
