@@ -10,6 +10,7 @@ Usage:
 """
 from __future__ import annotations
 
+import socket as _socket
 import sys
 import threading
 import urllib.request
@@ -96,6 +97,90 @@ QScrollBar::handle:vertical {{
 }}
 QStatusBar {{ background: {BG2}; color: {SILV2}; font-size: 11px; }}
 QSplitter::handle {{ background: {BORDER}; width: 1px; }}
+"""
+
+# ── Substrate server auto-start ──────────────────────────────────────────────
+
+_server_thread: Optional[threading.Thread] = None
+_server_error:  str = ""
+
+
+def _is_server_up(timeout: float = 1.0) -> bool:
+    """True only when the HTTP server is actually serving (not just TCP-bound)."""
+    try:
+        with urllib.request.urlopen(
+            f"{_SUBSTRATE_HOST}/health", timeout=timeout
+        ) as r:
+            return r.status < 500
+    except Exception:
+        return False
+
+
+def _start_substrate_server() -> None:
+    """Start uvicorn + cursiv_v215.web.app on port 1969 in a daemon thread."""
+    global _server_thread, _server_error
+    _server_error = ""
+    if _is_server_up():
+        return
+    if _server_thread and _server_thread.is_alive():
+        return
+
+    def _run() -> None:
+        global _server_error
+        try:
+            # Pre-configure logging so uvicorn's dictConfig never sees a bad formatter
+            import logging, logging.config
+            try:
+                logging.config.dictConfig({
+                    "version": 1,
+                    "disable_existing_loggers": False,
+                    "formatters": {
+                        "default": {"format": "%(levelname)s: %(message)s"},
+                        "access":  {"format": "%(message)s"},
+                    },
+                    "handlers": {
+                        "default": {
+                            "class": "logging.StreamHandler",
+                            "formatter": "default",
+                            "stream": "ext://sys.stderr",
+                        },
+                    },
+                    "loggers": {
+                        "uvicorn":        {"handlers": ["default"], "level": "WARNING"},
+                        "uvicorn.error":  {"handlers": ["default"], "level": "WARNING"},
+                        "uvicorn.access": {"handlers": ["default"], "level": "WARNING"},
+                    },
+                })
+            except Exception:
+                pass  # logging already configured — harmless
+            import uvicorn
+            from cursiv_v215.web.app import app as _web_app
+            uvicorn.run(_web_app, host="127.0.0.1", port=1969,
+                        log_level="warning", log_config=None)
+        except Exception as _e:
+            _server_error = str(_e)
+
+    _server_thread = threading.Thread(target=_run, daemon=True, name="cursiv-substrate")
+    _server_thread.start()
+
+
+_LOADING_HTML = """
+<!DOCTYPE html><html><head><meta charset="utf-8">
+<style>
+  body{margin:0;background:#0b0b12;display:flex;align-items:center;
+       justify-content:center;height:100vh;font-family:'Segoe UI',sans-serif;}
+  .box{text-align:center;color:#9B7B20;}
+  h2{color:#FFD700;margin-bottom:8px;}
+  p{color:#666680;font-size:13px;}
+  .dot{display:inline-block;animation:pulse 1.2s infinite;}
+  @keyframes pulse{0%,100%{opacity:.3}50%{opacity:1}}
+</style></head><body>
+<div class="box">
+  <h2>Cursiv Substrate</h2>
+  <p>Starting local server<span class="dot">…</span></p>
+  <p style="font-size:11px;color:#444">port 1969</p>
+</div>
+</body></html>
 """
 
 # ── URL translation ───────────────────────────────────────────────────────────
@@ -263,7 +348,45 @@ class CursivBrowser(QMainWindow):
         self._hist_idx: int = -1
         self._build_ui()
         self._connect_shortcuts()
-        self._navigate(_SUBSTRATE_HOST)
+        self._boot_server()
+
+    # ── Server bootstrap ──────────────────────────────────────────────────────
+
+    def _boot_server(self) -> None:
+        """Start the local substrate server if needed, then navigate to it."""
+        _start_substrate_server()
+        if _is_server_up():
+            self._navigate(_SUBSTRATE_HOST)
+        else:
+            self._view.setHtml(_LOADING_HTML)
+            self._status_lbl.setText("Starting substrate server…")
+            self._retry_timer = QTimer(self)
+            self._retry_timer.timeout.connect(self._try_connect)
+            self._retry_timer.start(500)
+
+    def _try_connect(self) -> None:
+        if _is_server_up():
+            self._retry_timer.stop()
+            self._status_lbl.setText("Server up — loading…")
+            self._navigate(_SUBSTRATE_HOST)
+            return
+        # Thread exited with an error — show it instead of spinning forever
+        dead = _server_thread is not None and not _server_thread.is_alive()
+        if dead and _server_error:
+            self._retry_timer.stop()
+            self._status_lbl.setText("Server error")
+            self._view.setHtml(
+                f"<html><body style='margin:40px;background:#0b0b12;color:#cc4444;"
+                f"font-family:monospace;font-size:13px'>"
+                f"<h3 style='color:#FFD700'>Substrate server failed to start</h3>"
+                f"<pre style='color:#cc6666;white-space:pre-wrap'>{_server_error}</pre>"
+                f"<p style='color:#666680;margin-top:24px'>"
+                f"Check that fastapi, uvicorn, and pydantic are installed, then restart.</p>"
+                f"</body></html>"
+            )
+        elif dead and not _server_error:
+            # Thread exited cleanly but server never came up — retry once more
+            _start_substrate_server()
 
     # ── UI construction ───────────────────────────────────────────────────────
 
@@ -386,9 +509,9 @@ class CursivBrowser(QMainWindow):
     def _on_load_finished(self, ok: bool):
         if ok:
             self._status_lbl.setText("Done")
-            self._status_panel.append_log(
-                f"→ {_display_url(self._view.url().toString())}"
-            )
+            url = self._view.url().toString()
+            if not url.startswith("data:"):
+                self._status_panel.append_log(f"→ {_display_url(url)}")
         else:
             self._status_lbl.setText("Load error")
 
