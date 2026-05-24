@@ -983,7 +983,7 @@ def render_oracle_settings() -> None:
 
     rows = [
         ("1", "Ollama",       "Local · No API needed · always tried first",    True),
-        ("2", "xAI · Grok",   "grok-beta · constitutional alignment",           has_xai),
+        ("2", "xAI · Grok",   "grok-3 · constitutional alignment",              has_xai),
         ("3", "OpenAI · GPT", "gpt-4o-mini · broad capability",                 has_openai),
         ("4", "Embedded",     "Symbolic reasoner · always available offline",   True),
     ]

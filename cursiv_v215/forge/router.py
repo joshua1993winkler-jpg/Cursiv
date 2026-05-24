@@ -163,7 +163,7 @@ class OracleRouter:
         try:
             import urllib.request
             payload = json.dumps({
-                "model": "grok-beta",
+                "model": "grok-3",
                 "messages": [{"role": "user", "content": prompt}],
                 "max_tokens": max_tokens,
             }).encode()
