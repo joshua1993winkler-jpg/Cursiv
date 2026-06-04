@@ -9,7 +9,8 @@ from __future__ import annotations
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import (
     QComboBox, QDialog, QHBoxLayout, QLabel, QLineEdit,
-    QMessageBox, QPushButton, QStackedWidget, QVBoxLayout, QWidget,
+    QMessageBox, QPushButton, QScrollArea, QStackedWidget,
+    QTextBrowser, QVBoxLayout, QWidget,
 )
 
 BG    = "#0b0b12"
@@ -526,6 +527,7 @@ class SetupDialog(_BaseDialog):
 
 # ── Login dialog ───────────────────────────────────────────────────────────────
 
+
 class LoginDialog(_BaseDialog):
     """Standard login — verifies existing credentials."""
 
@@ -637,3 +639,79 @@ class LoginDialog(_BaseDialog):
 
     def get_username(self) -> str:
         return self._username_result
+
+
+# ── Family welcome dialog ──────────────────────────────────────────────────────
+
+class FamilyWelcomeDialog(_BaseDialog):
+    """
+    Shown to family members after login/setup when their username matches a
+    known family member's first name. Displays the transmission header and
+    their personal letter, plus activation instructions.
+    """
+
+    def __init__(
+        self,
+        display_name: str,
+        member_key: str,
+        header_text: str,
+        letter_text: str,
+        parent=None,
+    ):
+        super().__init__(f"Cursiv — Welcome, {display_name}", parent)
+        self.setMinimumSize(720, 560)
+        self._build(display_name, member_key, header_text, letter_text)
+
+    def _build(
+        self,
+        display_name: str,
+        member_key: str,
+        header_text: str,
+        letter_text: str,
+    ):
+        vlay = QVBoxLayout(self)
+        vlay.setContentsMargins(28, 22, 28, 20)
+        vlay.setSpacing(12)
+
+        vlay.addWidget(self._header(f"✦  WELCOME, {display_name.upper()}"))
+        vlay.addWidget(self._sub("A message was left for you inside this system."))
+
+        # ── Letter display ────────────────────────────────────────────────
+        browser = QTextBrowser()
+        browser.setPlainText(header_text + "\n" + letter_text)
+        browser.setStyleSheet(
+            "background: #08090C;"
+            "color: #C8C8D4;"
+            f"border: 1px solid {LGOLD};"
+            "font-family: 'EB Garamond', 'Georgia', serif;"
+            "font-size: 13px;"
+            "padding: 14px 18px;"
+        )
+        browser.setReadOnly(True)
+        vlay.addWidget(browser, stretch=1)
+
+        # ── Activation instructions ───────────────────────────────────────
+        instr_text = (
+            "To unlock your personal feed with full access inside Terminal Chat:\n\n"
+            "  1. From the Cursiv launcher  →  click  Terminal Chat\n"
+            f"  2. Type:  babel I am {display_name} Winkler born [your birth date]\n"
+            "     Example:  babel I am Keiarra Tanyae-Simone Winkler born 09/12/1995\n\n"
+            "  The system will recognize you, let you set a personal PIN, and activate your feed.\n"
+            "  After that, your PIN is all you need — add it at the end after a comma."
+        )
+        instr_box = QLabel(instr_text)
+        instr_box.setWordWrap(True)
+        instr_box.setStyleSheet(
+            f"background: rgba(201,162,39,0.07);"
+            f"color: {GOLD};"
+            f"border-left: 3px solid {GOLD};"
+            f"font-size: 12px;"
+            f"padding: 12px 14px;"
+        )
+        vlay.addWidget(instr_box)
+
+        btn = QPushButton("Begin  ✦")
+        btn.clicked.connect(self.accept)
+        vlay.addWidget(btn)
+
+        self._ok = True

@@ -49,6 +49,7 @@ def main():
     )
 
     if _browser_mode:
+        QApplication.setAttribute(Qt.ApplicationAttribute.AA_ShareOpenGLContexts)
         app = QApplication(sys.argv)
         app.setApplicationName("Cursiv Substrate Browser")
         app.setOrganizationName("Joshua Winkler")
@@ -107,6 +108,33 @@ def main():
 
     except ImportError:
         # Auth module or login_dialog unavailable — dev mode, skip gate
+        pass
+
+    # ── Family member welcome ─────────────────────────────────────────────
+    # If the username matches a family member's first name, show their letter
+    # and activation instructions before the main launcher opens.
+    try:
+        _FAMILY_FIRST = {
+            "keiarra": ("Keiarra Tanyae-Simone", "keiarra"),
+            "kain":    ("Allan Kain",             "kain"),
+            "allan":   ("Allan Kain",             "kain"),
+            "elijah":  ("Elijah James",           "eli"),
+            "eli":     ("Elijah James",           "eli"),
+            "naylie":  ("Naylie Rae",             "naylie"),
+            "adaline": ("Adaline Marie",          "adaline"),
+            "tina":    ("Tina Marie",             "tina"),
+        }
+        _lname = username.lower().strip()
+        for _fn, (_disp, _key) in _FAMILY_FIRST.items():
+            if _lname == _fn or _lname.startswith(_fn + " ") or _lname.startswith(_fn + "_"):
+                from cursiv_v215.family.family_profiles import get_letter, get_jw_header
+                from login_dialog import FamilyWelcomeDialog
+                _fam_dlg = FamilyWelcomeDialog(
+                    _disp, _key, get_jw_header(), get_letter(_key)
+                )
+                _fam_dlg.exec()
+                break
+    except Exception:
         pass
 
     # ── Main launcher window ──────────────────────────────────────────────

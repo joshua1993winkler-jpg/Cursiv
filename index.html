@@ -497,6 +497,162 @@ footer {
 .footer-copy { font-family: var(--mono); font-size: 10px; color: var(--silver2); opacity: .3; letter-spacing: .5px; }
 
 /* ══════════════════════════════════════════════════════════
+   LIVE CHAT DEMO
+   ══════════════════════════════════════════════════════════ */
+.chat-wrap {
+  max-width: 760px; margin: 0 auto;
+  border: 1px solid var(--border2);
+  border-top: 2px solid var(--gold);
+  background: #060709;
+  display: flex; flex-direction: column;
+}
+.chat-msgs {
+  height: 340px;
+  overflow-y: auto;
+  padding: 18px 22px;
+  display: flex; flex-direction: column; gap: 12px;
+  scroll-behavior: smooth;
+}
+.chat-msgs::-webkit-scrollbar { width: 3px; }
+.chat-msgs::-webkit-scrollbar-thumb { background: var(--border2); }
+.chat-bubble {
+  max-width: 82%;
+  padding: 10px 14px;
+  font-size: 13px; line-height: 1.65;
+  border-radius: 4px;
+}
+.chat-bubble.user {
+  align-self: flex-end;
+  background: var(--blue); color: #fff;
+  border-bottom-right-radius: 2px;
+}
+.chat-bubble.ai {
+  align-self: flex-start;
+  background: var(--bg3); color: var(--silver);
+  border: 1px solid var(--border2);
+  border-bottom-left-radius: 2px;
+}
+.chat-bubble.ai.thinking {
+  color: var(--silver2); font-style: italic;
+  animation: pulse-text 1.4s ease-in-out infinite;
+}
+@keyframes pulse-text { 0%,100%{opacity:.5} 50%{opacity:1} }
+.chat-input-row {
+  display: flex; gap: 0;
+  border-top: 1px solid var(--border);
+}
+.chat-input-row input {
+  flex: 1;
+  background: var(--bg2); color: var(--silver);
+  border: none; outline: none;
+  padding: 14px 18px;
+  font-size: 13px; font-family: var(--ui);
+}
+.chat-input-row input::placeholder { color: var(--silver2); }
+.chat-send {
+  background: var(--blue); color: #fff;
+  border: none; cursor: pointer;
+  padding: 0 24px;
+  font-size: 13px; font-weight: 600;
+  transition: background .2s;
+  white-space: nowrap;
+}
+.chat-send:hover { background: var(--blue2); }
+.chat-send:disabled { background: var(--border2); cursor: default; }
+.chat-counter {
+  font-family: var(--mono); font-size: 10px;
+  color: var(--silver2); text-align: right;
+  padding: 6px 14px;
+  border-top: 1px solid var(--border);
+  opacity: .5;
+}
+.chat-notice {
+  font-family: var(--mono); font-size: 11px;
+  color: var(--amber); text-align: center;
+  padding: 8px 14px;
+  background: rgba(255,170,34,.06);
+  border-top: 1px solid rgba(255,170,34,.15);
+}
+
+/* ══════════════════════════════════════════════════════════
+   CIVILIZATION DECKS
+   ══════════════════════════════════════════════════════════ */
+.decks-scroll {
+  display: flex; gap: 16px;
+  overflow-x: auto;
+  padding-bottom: 16px;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+}
+.decks-scroll::-webkit-scrollbar { height: 3px; }
+.decks-scroll::-webkit-scrollbar-thumb { background: var(--border2); }
+.deck-card {
+  flex-shrink: 0;
+  width: 260px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-top: 3px solid var(--gold);
+  padding: 22px 20px 20px;
+  scroll-snap-align: start;
+  transition: background .2s, border-color .2s;
+  display: flex; flex-direction: column; gap: 10px;
+}
+.deck-card:hover { background: var(--bg3); border-color: var(--border2); }
+.deck-num {
+  font-family: var(--mono); font-size: 10px;
+  letter-spacing: 2px; color: var(--gold); opacity: .55;
+}
+.deck-name {
+  font-family: var(--serif); font-size: 22px;
+  color: var(--silver); line-height: 1.1;
+}
+.deck-era {
+  font-family: var(--mono); font-size: 10px;
+  color: var(--silver2); letter-spacing: .5px;
+}
+.deck-tags {
+  display: flex; flex-wrap: wrap; gap: 5px;
+  margin-top: 2px;
+}
+.deck-tag {
+  font-family: var(--mono); font-size: 9px;
+  padding: 2px 8px; letter-spacing: .5px;
+  background: rgba(255,255,255,.03);
+  border: 1px solid var(--border2);
+  color: var(--silver2);
+}
+
+/* ══════════════════════════════════════════════════════════
+   BABEL LETTERS HELP
+   ══════════════════════════════════════════════════════════ */
+.babel-box {
+  max-width: 780px; margin: 0 auto;
+  border: 1px solid var(--border2);
+  border-left: 3px solid var(--gold);
+  background: rgba(201,162,39,0.04);
+  padding: 28px 32px;
+}
+.babel-box h3 {
+  font-family: var(--serif); font-size: 20px;
+  color: var(--silver); font-weight: 400; margin-bottom: 12px;
+}
+.babel-box p { font-size: 13px; color: var(--silver2); line-height: 1.75; margin-bottom: 10px; }
+.babel-box code {
+  font-family: var(--mono); font-size: 12px;
+  background: rgba(255,255,255,.05); color: var(--gold);
+  padding: 2px 6px; border-radius: 2px; display: inline-block;
+}
+.babel-step {
+  display: flex; gap: 16px; margin: 14px 0;
+  align-items: flex-start;
+}
+.babel-step-n {
+  font-family: var(--mono); font-size: 22px; font-weight: 700;
+  color: var(--border2); line-height: 1; flex-shrink: 0; width: 30px;
+}
+.babel-step-b { font-size: 13px; color: var(--silver2); line-height: 1.7; }
+
+/* ══════════════════════════════════════════════════════════
    SCROLL REVEAL
    ══════════════════════════════════════════════════════════ */
 .reveal {
@@ -705,7 +861,9 @@ footer {
   <ul>
     <li><a href="#new">What's New</a></li>
     <li><a href="#features">Features</a></li>
+    <li><a href="#try-live">Try Live</a></li>
     <li><a href="#install">Install</a></li>
+    <li><a href="#academy">The Academy</a></li>
     <li><a href="#history">History</a></li>
     <li><a href="#origin">Origin</a></li>
     <li><a href="https://github.com/joshua1993winkler-jpg/Cursiv" target="_blank">GitHub ↗</a></li>
@@ -732,11 +890,11 @@ footer {
 
   <div class="dl-row">
     <div class="dl-pulse">
-      <a href="https://github.com/joshua1993winkler-jpg/Cursiv/releases/latest" class="btn-dl">
+      <a href="https://github.com/joshua1993winkler-jpg/Cursiv/releases/download/V3.14-U03/Cursiv-Setup-3.14-U03.exe" class="btn-dl">
         <span class="btn-dl-icon">⬇</span>
         <span class="btn-dl-txt">
           <span class="btn-dl-main">Download Cursiv-Setup-3.14-U03.exe</span>
-          <span class="btn-dl-sub">71 MB &nbsp;·&nbsp; Windows Installer &nbsp;·&nbsp; No admin required</span>
+          <span class="btn-dl-sub">261 MB &nbsp;·&nbsp; Windows Installer &nbsp;·&nbsp; No admin required</span>
         </span>
       </a>
     </div>
@@ -943,6 +1101,36 @@ footer {
   </div>
 </section>
 
+<!-- ══ TRY CURSIV LIVE ══════════════════════════════════════════════ -->
+<section class="section layer" id="try-live">
+  <p class="section-label reveal">Demo</p>
+  <h2 class="section-title reveal">Try Cursiv Live</h2>
+  <p class="reveal" style="max-width:580px;margin:0 auto 36px;text-align:center;color:var(--silver2);font-family:var(--serif);font-style:italic;font-size:17px;line-height:1.7;">
+    No download needed. This is the basic version running live. Type anything.
+  </p>
+
+  <div class="chat-wrap reveal" id="chat-wrap">
+    <div class="t-bar">
+      <span class="t-dot r"></span><span class="t-dot a"></span><span class="t-dot g"></span>
+      <span class="t-title">Cursiv Demo — live session</span>
+    </div>
+    <div class="chat-msgs" id="chat-msgs">
+      <div class="chat-bubble ai">
+        Welcome. I'm the demo version of Cursiv — an AI workspace built by Joshua Winkler. Ask me anything. When you're ready for the full experience, download the app above.
+      </div>
+    </div>
+    <div class="chat-input-row">
+      <input type="text" id="chat-in" placeholder="Type a message and press Enter…" maxlength="500" autocomplete="off">
+      <button class="chat-send" id="chat-send">Send ↗</button>
+    </div>
+    <div class="chat-counter" id="chat-counter">12 messages remaining in this session</div>
+  </div>
+
+  <p class="reveal" style="text-align:center;font-family:var(--mono);font-size:11px;color:var(--silver2);opacity:.4;margin-top:18px;">
+    Demo is rate-limited &nbsp;·&nbsp; No account required &nbsp;·&nbsp; Nothing stored
+  </p>
+</section>
+
 <!-- ══ REQUIREMENTS + INSTALL ═════════════════════════════════════════ -->
 <section class="section layer" id="install">
   <p class="section-label reveal">Requirements</p>
@@ -996,6 +1184,59 @@ footer {
       <div>
         <p class="step-t">You're in</p>
         <p class="step-b">Four interfaces open: System Tray, Chat UI at <code>localhost:7860</code>, Nexus Panel at <code>localhost:7861</code>, and Terminal Chat. Type anything.</p>
+      </div>
+    </div>
+  </div>
+
+  <br><br>
+
+  <!-- ── Babel Letters help ────────────────────────────────────────────── -->
+  <p class="section-label reveal">Personal Letters — Babel Access</p>
+  <h2 class="section-title reveal" style="margin-bottom:20px">Accessing Your Letter</h2>
+  <p class="reveal" style="max-width:620px;margin:0 auto 28px;color:var(--silver2);font-size:14px;line-height:1.75;">
+    Cursiv contains private letters written by Joshua Winkler — one for each person he built this for.
+    If you were given access to Cursiv and your name is in the system, here's how to find yours.
+  </p>
+
+  <div class="babel-box reveal">
+    <h3>How to open your Babel letter</h3>
+    <div class="babel-step">
+      <span class="babel-step-n">01</span>
+      <div class="babel-step-b">
+        <strong style="color:var(--silver)">Install and launch Cursiv.</strong> Create an account with your real name as the username — for example: <code>Keiarra</code> or <code>Naylie</code>. The system will recognize you immediately.
+      </div>
+    </div>
+    <div class="babel-step">
+      <span class="babel-step-n">02</span>
+      <div class="babel-step-b">
+        <strong style="color:var(--silver)">Open Terminal Chat</strong> from the launcher window.
+      </div>
+    </div>
+    <div class="babel-step">
+      <span class="babel-step-n">03</span>
+      <div class="babel-step-b">
+        <strong style="color:var(--silver)">Type the activation command</strong> exactly like this:
+        <br><br>
+        <code>babel I am [Your Full Name] born [MM/DD/YYYY]</code>
+        <br><br>
+        Example: &nbsp;<code>babel I am Keiarra Tanyae-Simone Winkler born 09/12/1995</code>
+      </div>
+    </div>
+    <div class="babel-step">
+      <span class="babel-step-n">04</span>
+      <div class="babel-step-b">
+        <strong style="color:var(--silver)">First time:</strong> you'll be asked to set a personal PIN — any 2–8 character combination. Keep it.
+        <br>
+        <strong style="color:var(--silver)">Returning:</strong> include your PIN at the end, separated by a comma:
+        <br><code>babel I am [...] born [...], yourPIN</code>
+      </div>
+    </div>
+    <div class="babel-step">
+      <span class="babel-step-n">05</span>
+      <div class="babel-step-b">
+        Your letter will display. Your personal feed is now active for this session — the system's context is replaced with Joshua's message and an AI that knows who you are.
+        <br><br>
+        <span style="color:var(--gold);font-size:12px;">If your name or date isn't recognized, nothing happens — the command silently falls through. No error. No trace.</span>
       </div>
     </div>
   </div>
@@ -1092,6 +1333,152 @@ footer {
     </div>
 
   </div>
+</section>
+
+<!-- ══ THE ACADEMY ══════════════════════════════════════════════════ -->
+<section class="section layer" id="academy">
+  <p class="section-label reveal">Human Frontier Academy</p>
+  <h2 class="section-title reveal">The Civilization Decks</h2>
+  <p class="reveal" style="max-width:620px;margin:0 auto 48px;text-align:center;color:var(--silver2);font-family:var(--serif);font-style:italic;font-size:17px;line-height:1.7;">
+    8 hand-built decks. 200+ cards. One guide per deck. A structured walk through 5,000 years
+    of human civilization — built by hand, before any of this was code.
+  </p>
+
+  <div class="decks-scroll reveal-group">
+
+    <div class="deck-card">
+      <p class="deck-num">DECK 01</p>
+      <p class="deck-name">Mesopotamia</p>
+      <p class="deck-era">~3500 BCE – 500 BCE</p>
+      <p style="font-size:12px;color:var(--silver2);line-height:1.6;flex:1">
+        The first cities. The first writing. The first laws. The Tigris and Euphrates gave birth to a model of civilization that everything since has been built on — or reacting against.
+      </p>
+      <div class="deck-tags">
+        <span class="deck-tag">Cuneiform</span>
+        <span class="deck-tag">Hammurabi</span>
+        <span class="deck-tag">Ziggurats</span>
+        <span class="deck-tag">Trade Networks</span>
+        <span class="deck-tag">Sumer &amp; Akkad</span>
+      </div>
+    </div>
+
+    <div class="deck-card">
+      <p class="deck-num">DECK 02</p>
+      <p class="deck-name">Egypt</p>
+      <p class="deck-era">~3100 BCE – 30 BCE</p>
+      <p style="font-size:12px;color:var(--silver2);line-height:1.6;flex:1">
+        A civilization built on the certainty of death and the refusal to accept it. The Nile as spine. The pyramid as statement. Over 3,000 years of unbroken continuity that most modern nations can't come close to.
+      </p>
+      <div class="deck-tags">
+        <span class="deck-tag">Pharaohs</span>
+        <span class="deck-tag">Hieroglyphics</span>
+        <span class="deck-tag">The Nile</span>
+        <span class="deck-tag">Afterlife Systems</span>
+        <span class="deck-tag">Engineering</span>
+      </div>
+    </div>
+
+    <div class="deck-card">
+      <p class="deck-num">DECK 03</p>
+      <p class="deck-name">Rome</p>
+      <p class="deck-era">~753 BCE – 476 CE</p>
+      <p style="font-size:12px;color:var(--silver2);line-height:1.6;flex:1">
+        How a city on seven hills became the model for every republic and empire since. Its fall is more instructive than its rise — a lesson in what happens when institutions hollow out from the inside.
+      </p>
+      <div class="deck-tags">
+        <span class="deck-tag">Republic → Empire</span>
+        <span class="deck-tag">Roman Law</span>
+        <span class="deck-tag">Infrastructure</span>
+        <span class="deck-tag">Military Strategy</span>
+        <span class="deck-tag">Fall &amp; Legacy</span>
+      </div>
+    </div>
+
+    <div class="deck-card">
+      <p class="deck-num">DECK 04</p>
+      <p class="deck-name">China</p>
+      <p class="deck-era">~2100 BCE – 1912 CE</p>
+      <p style="font-size:12px;color:var(--silver2);line-height:1.6;flex:1">
+        The oldest continuous civilization on earth. Four thousand years of dynasties, philosophy, invention, and a scale of social organization the West didn't encounter anything like until much later.
+      </p>
+      <div class="deck-tags">
+        <span class="deck-tag">The Four Inventions</span>
+        <span class="deck-tag">Confucianism</span>
+        <span class="deck-tag">Silk Road</span>
+        <span class="deck-tag">Dynastic Cycles</span>
+        <span class="deck-tag">The Great Wall</span>
+      </div>
+    </div>
+
+    <div class="deck-card">
+      <p class="deck-num">DECK 05</p>
+      <p class="deck-name">Renaissance</p>
+      <p class="deck-era">~1300 – 1600 CE</p>
+      <p style="font-size:12px;color:var(--silver2);line-height:1.6;flex:1">
+        Europe wakes up. The rediscovery of Greek and Roman thought, married to new money and a changed church, produced an explosion of art, science, and selfhood that we still live inside.
+      </p>
+      <div class="deck-tags">
+        <span class="deck-tag">da Vinci</span>
+        <span class="deck-tag">Gutenberg Press</span>
+        <span class="deck-tag">Humanism</span>
+        <span class="deck-tag">Florence &amp; Venice</span>
+        <span class="deck-tag">The Reformation</span>
+      </div>
+    </div>
+
+    <div class="deck-card">
+      <p class="deck-num">DECK 06</p>
+      <p class="deck-name">Industrial Revolution</p>
+      <p class="deck-era">~1760 – 1840 CE</p>
+      <p style="font-size:12px;color:var(--silver2);line-height:1.6;flex:1">
+        The moment human civilization went from muscle power to machine power. Everything accelerated. Not all of it in the right direction. The gains were enormous; the cost was paid by people who had no say in the matter.
+      </p>
+      <div class="deck-tags">
+        <span class="deck-tag">Steam Engine</span>
+        <span class="deck-tag">Textile Mills</span>
+        <span class="deck-tag">Urbanization</span>
+        <span class="deck-tag">Labor Movements</span>
+        <span class="deck-tag">Capital &amp; Class</span>
+      </div>
+    </div>
+
+    <div class="deck-card">
+      <p class="deck-num">DECK 07</p>
+      <p class="deck-name">Tech Age</p>
+      <p class="deck-era">~1970 – 2020 CE</p>
+      <p style="font-size:12px;color:var(--silver2);line-height:1.6;flex:1">
+        The transistor gave us computing. Computing gave us the internet. The internet gave everyone a voice — and then a microphone, an audience, an algorithm. We are still figuring out what we made.
+      </p>
+      <div class="deck-tags">
+        <span class="deck-tag">Transistors &amp; Chips</span>
+        <span class="deck-tag">The Internet</span>
+        <span class="deck-tag">Silicon Valley</span>
+        <span class="deck-tag">Social Media</span>
+        <span class="deck-tag">AI Emergence</span>
+      </div>
+    </div>
+
+    <div class="deck-card" style="border-top-color:var(--green)">
+      <p class="deck-num" style="color:var(--green)">DECK 08</p>
+      <p class="deck-name">The Future</p>
+      <p class="deck-era">2020 CE → ?</p>
+      <p style="font-size:12px;color:var(--silver2);line-height:1.6;flex:1">
+        Not a prediction. A framework. What are the forces already in motion? What does a civilization that has learned from the previous seven actually look like? This is the deck we are building in real time.
+      </p>
+      <div class="deck-tags">
+        <span class="deck-tag">AGI</span>
+        <span class="deck-tag">Climate Systems</span>
+        <span class="deck-tag">Decentralization</span>
+        <span class="deck-tag">Frontier Thinking</span>
+        <span class="deck-tag">Human Potential</span>
+      </div>
+    </div>
+
+  </div>
+
+  <p class="reveal" style="text-align:center;font-family:var(--serif);font-style:italic;color:var(--silver2);font-size:14px;margin-top:32px;opacity:.6;">
+    Scroll → to see all 8 decks &nbsp;·&nbsp; Built before the code. The code came from here.
+  </p>
 </section>
 
 <!-- ══ GUARDRAILS ════════════════════════════════════════════════════ -->
@@ -1528,6 +1915,91 @@ document.querySelectorAll('.reveal,.reveal-group').forEach(el=>ro.observe(el));
   }
 
   setTimeout(next,1400);
+})();
+
+/* ── Live chat demo ────────────────────────────────────────────────── */
+(function(){
+  // Point this at your deployed backend (Railway URL or your domain).
+  // If blank, the chat will show a friendly offline message.
+  const CURSIV_API = 'https://cursiv.winklers-llc.com';
+
+  const msgsEl    = document.getElementById('chat-msgs');
+  const inputEl   = document.getElementById('chat-in');
+  const sendBtn   = document.getElementById('chat-send');
+  const counterEl = document.getElementById('chat-counter');
+  const wrapEl    = document.getElementById('chat-wrap');
+
+  if (!msgsEl || !inputEl) return;
+
+  let msgsLeft = 12;
+  let sessionId = 'sess_' + Math.random().toString(36).slice(2, 10);
+  let sending = false;
+
+  function addBubble(text, role) {
+    const d = document.createElement('div');
+    d.className = 'chat-bubble ' + role;
+    d.textContent = text;
+    msgsEl.appendChild(d);
+    msgsEl.scrollTop = msgsEl.scrollHeight;
+    return d;
+  }
+
+  function updateCounter(left) {
+    msgsLeft = left;
+    counterEl.textContent = left + ' message' + (left !== 1 ? 's' : '') + ' remaining in this session';
+    if (left <= 0) {
+      counterEl.textContent = 'Session limit reached — download Cursiv for unlimited access.';
+      counterEl.style.color = 'var(--amber)';
+      counterEl.style.opacity = '1';
+      inputEl.disabled = true;
+      sendBtn.disabled = true;
+    }
+  }
+
+  async function sendMessage() {
+    const msg = inputEl.value.trim();
+    if (!msg || sending || msgsLeft <= 0) return;
+
+    sending = true;
+    sendBtn.disabled = true;
+    inputEl.value = '';
+
+    addBubble(msg, 'user');
+    const thinking = addBubble('thinking…', 'ai thinking');
+
+    try {
+      const res = await fetch(CURSIV_API + '/api/demo/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: msg, session_id: sessionId }),
+      });
+
+      if (res.status === 429) {
+        thinking.textContent = 'Session limit reached — download Cursiv for the full experience.';
+        thinking.classList.remove('thinking');
+        updateCounter(0);
+      } else if (!res.ok) {
+        thinking.textContent = 'Could not reach the demo server right now. Try downloading the app for offline access.';
+        thinking.classList.remove('thinking');
+      } else {
+        const data = await res.json();
+        thinking.textContent = data.reply || '…';
+        thinking.classList.remove('thinking');
+        if (typeof data.msgs_left === 'number') updateCounter(data.msgs_left);
+        else updateCounter(msgsLeft - 1);
+      }
+    } catch (e) {
+      thinking.textContent = 'Demo server offline. Download Cursiv to run it locally — fully offline, no server needed.';
+      thinking.classList.remove('thinking');
+    }
+
+    sending = false;
+    sendBtn.disabled = (msgsLeft <= 0);
+    inputEl.focus();
+  }
+
+  sendBtn.addEventListener('click', sendMessage);
+  inputEl.addEventListener('keydown', e => { if (e.key === 'Enter') sendMessage(); });
 })();
 </script>
 </body>
