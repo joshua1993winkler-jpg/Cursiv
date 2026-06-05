@@ -1182,8 +1182,80 @@ footer {
     <div class="step">
       <span class="step-n">05</span>
       <div>
-        <p class="step-t">You're in</p>
-        <p class="step-b">Four interfaces open: System Tray, Chat UI at <code>localhost:7860</code>, Nexus Panel at <code>localhost:7861</code>, and Terminal Chat. Type anything.</p>
+        <p class="step-t">Create your account</p>
+        <p class="step-b">First launch shows a setup screen — pick a username (use your real first name if you're family) and a password. Three security questions for recovery. All stored locally, never sent anywhere.</p>
+      </div>
+    </div>
+    <div class="step">
+      <span class="step-n">06</span>
+      <div>
+        <p class="step-t">Open a terminal and type <code>cursiv</code></p>
+        <p class="step-b">Press <strong>Win + R</strong>, type <code>cmd</code>, hit Enter. Then type <code>cursiv</code> and press Enter. The Eye of Horus (𓂀) terminal chat opens right there — gold-styled, AI-powered, ready. No API keys required. If Ollama finished downloading, it runs fully offline.</p>
+      </div>
+    </div>
+    <div class="step">
+      <span class="step-n">07</span>
+      <div>
+        <p class="step-t">Optional — add API keys for cloud AI</p>
+        <p class="step-b">Cursiv works completely offline with Ollama. If you want to upgrade to xAI Grok, OpenAI, or Claude: open the Launcher from the system tray → Settings → paste your keys. The system automatically routes to the best available provider.</p>
+      </div>
+    </div>
+  </div>
+
+  <br><br>
+
+  <!-- ── Quick-start troubleshooting ──────────────────────────────────────── -->
+  <p class="section-label reveal">Troubleshooting</p>
+  <h2 class="section-title reveal" style="margin-bottom:20px">If Something Doesn't Work</h2>
+
+  <div class="babel-box reveal">
+    <h3>Common first-run issues</h3>
+
+    <div class="babel-step">
+      <span class="babel-step-n">?</span>
+      <div class="babel-step-b">
+        <strong style="color:var(--silver)">Windows SmartScreen blocked the installer.</strong><br>
+        Click <strong>More info</strong> → <strong>Run anyway</strong>. This is a standard false positive for unsigned Python apps. The source code is fully open at GitHub.
+      </div>
+    </div>
+
+    <div class="babel-step">
+      <span class="babel-step-n">?</span>
+      <div class="babel-step-b">
+        <strong style="color:var(--silver)">"cursiv" is not recognized in the terminal.</strong><br>
+        Close your terminal and open a <strong>new</strong> one — the PATH update from the installer only takes effect in new windows. If it still doesn't work, uninstall and reinstall Cursiv-Setup-3.14-U08.exe.
+      </div>
+    </div>
+
+    <div class="babel-step">
+      <span class="babel-step-n">?</span>
+      <div class="babel-step-b">
+        <strong style="color:var(--silver)">"Cursiv is already running — check the system tray."</strong><br>
+        You have an older version installed. Uninstall it first: <strong>Control Panel → Apps → Cursiv → Uninstall</strong>, then reinstall with the latest installer above.
+      </div>
+    </div>
+
+    <div class="babel-step">
+      <span class="babel-step-n">?</span>
+      <div class="babel-step-b">
+        <strong style="color:var(--silver)">The AI model is slow or not answering.</strong><br>
+        Ollama is still downloading the model (~4.7 GB, runs in the background). Minimise the download window and wait a few minutes. Once it finishes, responses are instant and fully offline.
+      </div>
+    </div>
+
+    <div class="babel-step">
+      <span class="babel-step-n">?</span>
+      <div class="babel-step-b">
+        <strong style="color:var(--silver)">I want the GUI window, not the terminal.</strong><br>
+        Cursiv opens in terminal mode when launched from cmd/PowerShell. To open the full GUI launcher: find <strong>Cursiv</strong> in your Start Menu, or type <code>cursiv --gui</code> in the terminal.
+      </div>
+    </div>
+
+    <div class="babel-step">
+      <span class="babel-step-n">?</span>
+      <div class="babel-step-b">
+        <strong style="color:var(--silver)">No internet, no API keys — will it still work?</strong><br>
+        Yes. Cursiv is designed to run 100% offline after the initial Ollama download. No API keys required. The AI cascade automatically falls back to the local model.
       </div>
     </div>
   </div>
