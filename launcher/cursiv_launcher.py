@@ -57,7 +57,7 @@ _WATCHDOG_MS     = 3_000         # ms between app-health checks
 _POLL_DEADLINE_S = 30            # seconds to wait for app to bind its port
 
 # ── Update checker ─────────────────────────────────────────────────────────────
-_CURRENT_VERSION   = "3.14-U08"
+_CURRENT_VERSION   = "3.14-U09"
 _GITHUB_API        = "https://api.github.com/repos/joshua1993winkler-jpg/Cursiv/releases/latest"
 _GITHUB_RELEASES   = "https://github.com/joshua1993winkler-jpg/Cursiv/releases"
 
