@@ -1,6 +1,6 @@
 ; ============================================================
-; Cursiv v3.14-U03 — Substrate Browser + CSB desktop component
-; Produces: installer\Output\Cursiv-Setup-3.14-U03.exe
+; Cursiv v3.14-U04 — Terminal crash fix, family welcome, live demo chat
+; Produces: installer\Output\Cursiv-Setup-3.14-U04.exe
 ;
 ; Offline-first AI workspace. Runs without internet after install.
 ; Ollama + llama3.1 downloaded post-install (~4.7 GB, one time).
@@ -10,7 +10,7 @@
 ; ============================================================
 
 #define AppName      "Cursiv"
-#define AppVer       "3.14-U03"
+#define AppVer       "3.14-U04"
 #define AppPublisher "Joshua Winkler"
 #define AppURL       "https://github.com/joshua1993winkler-jpg/Cursiv"
 #define AppExe       "Cursiv.exe"
@@ -32,7 +32,7 @@ LicenseFile=..\LICENSE
 InfoAfterFile=..\CHANGELOG.md
 AppComments=Offline AI workspace with cascade routing (xAI → OpenAI → Claude → Ollama), live status indicators, and security-question password recovery. No internet required after install. Your data never leaves your machine.
 OutputDir=Output
-OutputBaseFilename=Cursiv-Setup-3.14-U03
+OutputBaseFilename=Cursiv-Setup-3.14-U04
 SetupIconFile=..\launcher\resources\icons\cursiv.ico
 WizardSmallImageFile=..\launcher\resources\icons\cursiv_256.png
 Compression=lzma2/ultra64
