@@ -1,6 +1,6 @@
 ; ============================================================
-; Cursiv v3.14-U04 — Terminal crash fix, family welcome, live demo chat
-; Produces: installer\Output\Cursiv-Setup-3.14-U04.exe
+; Cursiv v3.14-U05 — PATH registration so 'cursiv' works in any terminal
+; Produces: installer\Output\Cursiv-Setup-3.14-U05.exe
 ;
 ; Offline-first AI workspace. Runs without internet after install.
 ; Ollama + llama3.1 downloaded post-install (~4.7 GB, one time).
@@ -10,7 +10,7 @@
 ; ============================================================
 
 #define AppName      "Cursiv"
-#define AppVer       "3.14-U04"
+#define AppVer       "3.14-U05"
 #define AppPublisher "Joshua Winkler"
 #define AppURL       "https://github.com/joshua1993winkler-jpg/Cursiv"
 #define AppExe       "Cursiv.exe"
@@ -32,7 +32,7 @@ LicenseFile=..\LICENSE
 InfoAfterFile=..\CHANGELOG.md
 AppComments=Offline AI workspace with cascade routing (xAI → OpenAI → Claude → Ollama), live status indicators, and security-question password recovery. No internet required after install. Your data never leaves your machine.
 OutputDir=Output
-OutputBaseFilename=Cursiv-Setup-3.14-U04
+OutputBaseFilename=Cursiv-Setup-3.14-U05
 SetupIconFile=..\launcher\resources\icons\cursiv.ico
 WizardSmallImageFile=..\launcher\resources\icons\cursiv_256.png
 Compression=lzma2/ultra64
@@ -80,6 +80,11 @@ Root: HKCU; Subkey: "SOFTWARE\Microsoft\Windows\CurrentVersion\Run"; \
   ValueData: """{app}\{#AppExe}"" --tray"; \
   Flags: uninsdeletevalue; Tasks: autostart
 
+; Add install dir to user PATH so 'cursiv' works from any terminal
+Root: HKCU; Subkey: "Environment"; ValueType: expandsz; ValueName: "Path"; \
+  ValueData: "{olddata};{app}"; Check: NeedsAddPath(ExpandConstant('{app}')); \
+  Flags: preservestringtype uninsdeletevalue
+
 [Run]
 ; AI engine bootstrap — downloads Ollama (latest) and pulls llama3.1 (~4.7 GB) in a visible window
 ; Runs non-blocking so the installer finishes immediately; user can minimise and wait
@@ -104,10 +109,20 @@ Filename: "taskkill"; Parameters: "/f /im {#AppExe}"; \
   Flags: runhidden; RunOnceId: "KillCursiv"
 
 [Code]
-// Show a friendly page at the end of install
+// Returns true if Param is not already in the user PATH
+function NeedsAddPath(Param: string): boolean;
+var
+  OrigPath: string;
+begin
+  if not RegQueryStringValue(HKCU, 'Environment', 'Path', OrigPath) then
+  begin
+    Result := True;
+    exit;
+  end;
+  Result := Pos(';' + Lowercase(Param) + ';', ';' + Lowercase(OrigPath) + ';') = 0;
+end;
+
 procedure CurStepChanged(CurStep: TSetupStep);
 begin
-  if CurStep = ssDone then begin
-    // nothing extra needed — Run section handles launch
-  end;
+  // PATH is registered; new terminals will pick it up automatically
 end;
