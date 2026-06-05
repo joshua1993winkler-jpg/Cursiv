@@ -3331,6 +3331,60 @@ def main() -> None:
             # Babel runs as a one-shot tool — not added to main conversation history
             continue
 
+        # ── Bible Study — "bible John 8:7" or "discuss John 8:7" ─────────────
+        elif (
+            (cmd.startswith("bible") and (cmd == "bible" or cmd[5:6] in (" ", ":")))
+            or cmd.startswith("discuss ")
+            or cmd.startswith("study ")
+        ):
+            _BIBLE_OK = False
+            try:
+                from cursiv_v215.agents.bible_study import (
+                    study_verse, detect_verse_references, inject_verse_context
+                )
+                _BIBLE_OK = True
+            except Exception as _be:
+                print(f"  {RED}Bible study module unavailable: {_be}{RESET}")
+
+            if _BIBLE_OK:
+                # Strip command prefix to get raw query
+                if cmd.startswith("bible"):
+                    _bq = raw[5:].strip().lstrip(":").strip()
+                else:
+                    _bq = raw[raw.index(" ")+1:].strip()
+
+                if not _bq:
+                    print(f"  {LGOLD}Bible Study{RESET}")
+                    print(f"  {DIM}Usage:  bible <reference>  |  discuss <reference>{RESET}")
+                    print(f"  {DIM}Examples:{RESET}")
+                    print(f"  {SILV2}  bible John 8:7{RESET}")
+                    print(f"  {SILV2}  bible Psalm 23{RESET}")
+                    print(f"  {SILV2}  bible Romans 8:28-39{RESET}")
+                    print(f"  {SILV2}  bible Proverbs 3:5-6{RESET}")
+                    print(f"  {SILV2}  discuss Genesis 1:1{RESET}")
+                    print(f"  {DIM}Fetches all public-domain translations. Cached offline after first fetch.{RESET}")
+                    continue
+
+                refs = detect_verse_references(_bq)
+                target_ref = refs[0] if refs else _bq
+
+                print(
+                    f"\n  {GOLD}[ BIBLE STUDY ]{RESET}  "
+                    f"{SILV2}{target_ref}{RESET}\n"
+                )
+
+                result = study_verse(target_ref)
+                for _bl in result.splitlines():
+                    try:
+                        print(f"  {_bl}")
+                    except UnicodeEncodeError:
+                        safe_line = _bl.encode(
+                            sys.stdout.encoding or "utf-8", errors="replace"
+                        ).decode(sys.stdout.encoding or "utf-8", errors="replace")
+                        print(f"  {safe_line}")
+                print()
+            continue
+
         # ── Legacy import (top-level, no auth — Joshua only) ─────────────────
         elif cmd.startswith("legacy import "):
             _imp_path = raw[14:].strip().strip('"').strip("'")
@@ -4402,12 +4456,52 @@ def main() -> None:
             if _cli_scan:
                 _cli_scan.routing(_route_label)
 
+            # ── Bible verse auto-detection ────────────────────────────────
+            # If input is just a bare verse reference → route to bible study.
+            # If it's a question containing a verse → inject verse text as context.
+            _verse_raw = raw
+            try:
+                from cursiv_v215.agents.bible_study import (
+                    detect_verse_references, study_verse, inject_verse_context
+                )
+                _auto_refs = detect_verse_references(raw)
+                if _auto_refs:
+                    _words = raw.strip().split()
+                    _is_bare_ref = len(_words) <= 5 and not any(
+                        w in cmd for w in
+                        ["what", "why", "how", "who", "when", "explain", "mean",
+                         "tell", "give", "show", "help", "context", "about"]
+                    )
+                    if _is_bare_ref:
+                        # Bare verse → direct study output
+                        print(
+                            f"\n  {GOLD}[ BIBLE STUDY ]{RESET}  "
+                            f"{SILV2}{_auto_refs[0]}{RESET}\n"
+                        )
+                        _bsresult = study_verse(_auto_refs[0])
+                        for _bsl in _bsresult.splitlines():
+                            try:
+                                print(f"  {_bsl}")
+                            except UnicodeEncodeError:
+                                _safe = _bsl.encode(
+                                    sys.stdout.encoding or "utf-8",
+                                    errors="replace"
+                                ).decode(sys.stdout.encoding or "utf-8", errors="replace")
+                                print(f"  {_safe}")
+                        print()
+                        continue
+                    else:
+                        # Question about a verse → inject verse text as AI context
+                        _verse_raw = inject_verse_context(raw)
+            except Exception:
+                pass
+
             sys.stdout.write(f"  {GOLD}{BOLD}✦{RESET}  {GOLD}AI{RESET}  ")
             sys.stdout.flush()
 
             try:
                 for chunk in chat(
-                    raw,
+                    _verse_raw,
                     _send_ctx,
                     cfg["api_key"],
                     None,
