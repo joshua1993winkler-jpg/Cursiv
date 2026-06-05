@@ -49,6 +49,14 @@ def _run_terminal_mode() -> None:
             sys.stdin  = open("CONIN$",  "r", encoding="utf-8", errors="replace")
         except Exception:
             pass
+
+    # Ollama health check -- prints friendly guidance if setup is incomplete
+    try:
+        from cursiv_v215.runtime.setup_check import ensure_ollama
+        ensure_ollama(auto_start=True, quiet=False)
+    except Exception:
+        pass
+
     from cursiv_v215.ui.chat_cli import main as _cli_main
     _cli_main()
 

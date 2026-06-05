@@ -154,6 +154,19 @@ class OracleRouter:
                     if obj.get("done"):
                         break
                 return "".join(chunks)
+        except urllib.error.HTTPError as _he:
+            if _he.code == 404:
+                return (
+                    "Setup needed: the AI model is not downloaded yet.\n\n"
+                    "Open a terminal and run:\n"
+                    "    ollama pull llama3.1\n\n"
+                    "This is a one-time download (~4.7 GB). "
+                    "Restart Cursiv when it finishes."
+                )
+            return None
+        except OSError:
+            # Ollama not running -- silently fall through to other providers
+            return None
         except Exception:
             return None
 

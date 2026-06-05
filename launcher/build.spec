@@ -143,6 +143,7 @@ hiddenimports = [
     "cursiv_v215.nexus.epistemic_engine",
     "cursiv_v215.nexus.model_identities",
     "cursiv_v215.nexus.forge",
+    "cursiv_v215.runtime.setup_check",
     "cursiv_v215.web",
     "cursiv_v215.web.app",
     "cursiv_v215.web.db",
