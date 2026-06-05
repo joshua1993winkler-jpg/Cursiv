@@ -1,7 +1,7 @@
 @echo off
 :: ============================================================
 :: Cursiv - Package Script
-:: Compiles installer\cursiv_setup.iss into Cursiv-Setup-3.14-U07.exe
+:: Compiles installer\cursiv_setup.iss into Cursiv-Setup-3.14-U08.exe
 :: Requires Inno Setup 6 (iscc must be in PATH or found below).
 :: Run from repo root:  scripts\package.bat
 :: ============================================================
@@ -66,13 +66,13 @@ if %errorlevel% neq 0 (
 )
 
 :: ---- Verify output -----------------------------------------
-if not exist "installer\Output\Cursiv-Setup-3.14-U07.exe" (
-    echo [ERROR] Installer not found at installer\Output\Cursiv-Setup-3.14-U07.exe
+if not exist "installer\Output\Cursiv-Setup-3.14-U08.exe" (
+    echo [ERROR] Installer not found at installer\Output\Cursiv-Setup-3.14-U08.exe
     pause & exit /b 1
 )
 
 echo.
 echo  Installer created!
-echo  File: installer\Output\Cursiv-Setup-3.14-U07.exe
+echo  File: installer\Output\Cursiv-Setup-3.14-U08.exe
 echo.
 pause

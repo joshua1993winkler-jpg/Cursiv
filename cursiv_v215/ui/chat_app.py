@@ -42,7 +42,12 @@ from datetime import datetime
 from pathlib import Path
 from typing import Generator
 
-import gradio as gr
+try:
+    import gradio as gr
+    _HAS_GRADIO = True
+except Exception:
+    gr = None  # type: ignore[assignment]
+    _HAS_GRADIO = False
 
 # ── Token rate limiter + scan display ──────────────────────────────────────
 try:

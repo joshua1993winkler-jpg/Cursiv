@@ -47,6 +47,8 @@ except Exception as _e:
     _extra_datas    = []
     _extra_hidden   = []
 
+from PyInstaller.utils.hooks import collect_data_files, collect_submodules
+
 ROOT = Path(SPECPATH).parent          # repo root (one level above launcher/)
 LAUNCHER = ROOT / "launcher"
 CURSIV   = ROOT / "cursiv_v215"
@@ -63,6 +65,13 @@ datas = [
     # Services (guardian_service standalone runner)
     (str(SERVICES), "services"),
 ]
+
+# Collect data files from packages that read files at import time
+for _pkg in ("safehttpx", "gradio", "gradio_client"):
+    try:
+        datas += collect_data_files(_pkg)
+    except Exception:
+        pass
 
 # ── Hidden imports that PyInstaller static analysis misses ───────────────────
 hiddenimports = [
@@ -151,6 +160,9 @@ hiddenimports = [
     "openai",
     "httpx",
     "PIL",
+    "gradio",
+    "gradio_client",
+    "safehttpx",
 ]
 
 a = Analysis(
