@@ -1444,6 +1444,34 @@ def main() -> None:
             print(_status_str(cfg))
             continue
 
+        elif cmd in ("plugin status", "plugins", "plugin"):
+            try:
+                from cursiv_v215.plugins.registry import show_status
+                print(show_status(cfg))
+            except Exception as _e:
+                print(f"[Status] {_e}")
+            continue
+
+        elif cmd == "graph status":
+            try:
+                from cursiv_v215.council.knowledge_graph import get_graph
+                g = get_graph()
+                print(g.status() if hasattr(g, "status") else str(g))
+            except Exception as _e:
+                print(f"[KnowledgeGraph] {_e}")
+            continue
+
+        elif cmd.startswith("graph query "):
+            _concept = raw[len("graph query "):].strip()
+            try:
+                from cursiv_v215.council.knowledge_graph import get_graph
+                g = get_graph()
+                result = g.query(_concept) if hasattr(g, "query") else f"(query not supported: {_concept})"
+                print(result)
+            except Exception as _e:
+                print(f"[KnowledgeGraph] {_e}")
+            continue
+
         elif cmd == "codex" or cmd.startswith("codex "):
             if not _CODEX_CLI_OK or not _codex_avail_cli():
                 print(f"  {RED}Codex Agent not available.{RESET}  "
