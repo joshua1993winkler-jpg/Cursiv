@@ -67,7 +67,7 @@ datas = [
 ]
 
 # Collect data files from packages that read files at import time
-for _pkg in ("safehttpx", "gradio", "gradio_client"):
+for _pkg in ("safehttpx", "gradio", "gradio_client", "uvicorn"):
     try:
         datas += collect_data_files(_pkg)
     except Exception:
