@@ -17,6 +17,23 @@ else:
 if str(_ROOT) not in sys.path:
     sys.path.insert(0, str(_ROOT))
 
+
+def _run_terminal_mode() -> None:
+    """Attach to parent console and run the Eye of Horus CLI terminal."""
+    if sys.platform == "win32":
+        try:
+            import ctypes
+            # Attach to the calling terminal (cmd.exe / PowerShell / WT)
+            ctypes.windll.kernel32.AttachConsole(-1)  # ATTACH_PARENT_PROCESS
+            # Reopen std streams so Python can write to the attached console
+            sys.stdout = open("CONOUT$", "w", encoding="utf-8", errors="replace")
+            sys.stderr = open("CONOUT$", "w", encoding="utf-8", errors="replace")
+            sys.stdin  = open("CONIN$",  "r", encoding="utf-8", errors="replace")
+        except Exception:
+            pass
+    from cursiv_v215.ui.chat_cli import main as _cli_main
+    _cli_main()
+
 # ── Windows: enable DPI awareness before QApplication is created ─────────────
 if sys.platform == "win32":
     try:
@@ -30,6 +47,11 @@ if sys.platform == "win32":
 
 
 def main():
+    # ── --terminal flag: run Eye of Horus CLI in current console ─────────
+    if "--terminal" in sys.argv or "-t" in sys.argv:
+        _run_terminal_mode()
+        return
+
     # ── --browser flag: open Substrate Browser directly, skip launcher ────
     _browser_mode = "--browser" in sys.argv or "--substrate-browser" in sys.argv
 
