@@ -21,3 +21,11 @@ try:
     from cursiv_v215.core.sigil import LCW_MANIFEST_ZWC as _LCW_SIGIL  # noqa: F401
 except ImportError:
     _LCW_SIGIL = ""
+
+
+try:
+    from cursiv_v215.nexus.epistemic_engine import triangulate, fan_out, available_identities
+    from cursiv_v215.nexus.forge import forge_pipeline
+except ImportError:
+    pass
+

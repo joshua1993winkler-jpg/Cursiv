@@ -75,6 +75,27 @@ except ImportError:
     aiohttp = None          # type: ignore[assignment]
     _AIOHTTP_OK = False
 
+# ── Epistemic lens framing ────────────────────────────────────────────────────
+try:
+    from cursiv_v215.nexus.model_identities import (
+        ALL_IDENTITIES as _ALL_IDENTS,
+    )
+    _LENS_FRAMES = {
+        "truth":       "[Truth Lens] Be accurate, nuanced, acknowledge uncertainty.",
+        "exploration": "[Exploration Lens] Think broadly, find unexpected connections, go wide.",
+        "hard_facts":  "[Hard Facts Lens] Be direct, cite what is verifiable, strip hedging.",
+        "sovereign":   "[Sovereign Lens] Be grounded, practical, actionable.",
+    }
+    # Map provider id -> (role, lens label) e.g. "xai" -> ("hard_facts", "Hard Facts")
+    _PROVIDER_ROLE_MAP: dict[str, tuple[str, str]] = {
+        ident["provider"]: (ident["role"], ident["lens"])
+        for ident in _ALL_IDENTS
+        if ident.get("provider") not in ("ollama",)
+    }
+except Exception:
+    _LENS_FRAMES = {}
+    _PROVIDER_ROLE_MAP = {}
+
 # ── ANSI palette ──────────────────────────────────────────────────────────────
 _R   = "\033[0m"
 _DIM = "\033[2m"
@@ -227,6 +248,13 @@ def council_available(cfg: dict) -> bool:
 def _build_request(provider: dict, query: str, full_mode: bool) -> tuple[dict, dict]:
     """Return (headers, json_payload) for the given provider format."""
     max_tokens = 1024 if full_mode else 512
+
+    # Inject epistemic lens framing when available
+    _role_info = _PROVIDER_ROLE_MAP.get(provider.get("id", ""), ("", ""))
+    _role, _lens_label = _role_info
+    _lens_frame = _LENS_FRAMES.get(_role, "")
+    framed_query = f"{_lens_frame}\n\n{query}" if _lens_frame else query
+
     if provider["fmt"] == "openai":
         headers = {
             "Authorization": f"Bearer {provider['api_key']}",
@@ -236,7 +264,7 @@ def _build_request(provider: dict, query: str, full_mode: bool) -> tuple[dict, d
             "model":      provider["model"],
             "stream":     True,
             "max_tokens": max_tokens,
-            "messages":   [{"role": "user", "content": query}],
+            "messages":   [{"role": "user", "content": framed_query}],
         }
     else:  # anthropic
         headers = {
@@ -248,7 +276,7 @@ def _build_request(provider: dict, query: str, full_mode: bool) -> tuple[dict, d
             "model":      provider["model"],
             "max_tokens": max_tokens,
             "stream":     True,
-            "messages":   [{"role": "user", "content": query}],
+            "messages":   [{"role": "user", "content": framed_query}],
         }
     return headers, payload
 
@@ -371,9 +399,17 @@ async def _synthesize(
         if full_mode else ""
     )
 
+    _EPISTEMIC_TOPOLOGY = (
+        "Epistemic composition of this council:\n"
+        "- Hard Facts Lens (xAI Grok): verifiable facts, directness, no hedging\n"
+        "- Exploration Lens (OpenAI GPT): broad synthesis, creative connections, wide-angle\n"
+        "- Truth Lens (Anthropic Claude): accuracy, nuance, uncertainty calibration\n"
+    )
+
     prompt = _identity_wrap(
         f"You are the Synthesis layer of Cursiv — a sovereign, local-first intelligence "
         f"built for deep deliberation across multiple council perspectives.\n\n"
+        f"{_EPISTEMIC_TOPOLOGY}\n"
         f"The system owner asked:\n{query}\n\n"
         f"Council input ({mode_lbl} from {len(signals)} members):\n{signals_blk}"
         f"{wisdom_blk}\n\n"

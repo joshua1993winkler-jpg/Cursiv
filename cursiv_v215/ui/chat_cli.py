@@ -3385,6 +3385,108 @@ def main() -> None:
                 print()
             continue
 
+        # ── Epistemic Engine — deep / triangulate ────────────────────────────
+        elif cmd.startswith("deep ") or cmd.startswith("triangulate "):
+            _q = raw.split(" ", 1)[1].strip() if " " in raw else ""
+            if not _q:
+                print("Usage: deep [question]")
+                continue
+            try:
+                from cursiv_v215.nexus.epistemic_engine import triangulate
+                print(triangulate(_q, cfg))
+            except Exception as _e:
+                print(f"[Epistemic Engine] Error: {_e}")
+            continue
+
+        # ── Forge pipeline ────────────────────────────────────────────────────
+        elif cmd.startswith("forge "):
+            _q = raw[6:].strip()
+            if not _q:
+                print("Usage: forge [question]")
+                continue
+            try:
+                from cursiv_v215.nexus.forge import forge_pipeline
+                print(forge_pipeline(_q, cfg))
+            except Exception as _e:
+                print(f"[Forge] Error: {_e}")
+            continue
+
+        # ── Truth lens (Claude only) ──────────────────────────────────────────
+        elif cmd.startswith("truth "):
+            _q = raw[6:].strip()
+            if not _q:
+                print("Usage: truth [question]")
+                continue
+            try:
+                from cursiv_v215.nexus.epistemic_engine import fan_out
+                from cursiv_v215.nexus.model_identities import IDENTITY_CLAUDE
+                _result = fan_out(_q, cfg, identities=[IDENTITY_CLAUDE])
+                print(f"\n[Truth / Claude]\n{_result}")
+            except Exception as _e:
+                print(f"[Truth] Error: {_e}")
+            continue
+
+        # ── Explore lens (GPT only) ───────────────────────────────────────────
+        elif cmd.startswith("explore "):
+            _q = raw[8:].strip()
+            if not _q:
+                print("Usage: explore [question]")
+                continue
+            try:
+                from cursiv_v215.nexus.epistemic_engine import fan_out
+                from cursiv_v215.nexus.model_identities import IDENTITY_GPT
+                _result = fan_out(_q, cfg, identities=[IDENTITY_GPT])
+                print(f"\n[Explore / GPT]\n{_result}")
+            except Exception as _e:
+                print(f"[Explore] Error: {_e}")
+            continue
+
+        # ── Facts lens (Grok only) ────────────────────────────────────────────
+        elif cmd.startswith("facts "):
+            _q = raw[6:].strip()
+            if not _q:
+                print("Usage: facts [question]")
+                continue
+            try:
+                from cursiv_v215.nexus.epistemic_engine import fan_out
+                from cursiv_v215.nexus.model_identities import IDENTITY_GROK
+                _result = fan_out(_q, cfg, identities=[IDENTITY_GROK])
+                print(f"\n[Facts / Grok]\n{_result}")
+            except Exception as _e:
+                print(f"[Facts] Error: {_e}")
+            continue
+
+        # ── Lens — explicit model selector ───────────────────────────────────
+        elif cmd.startswith("lens "):
+            _lens_parts = raw.split(" ", 2)
+            if len(_lens_parts) < 3:
+                print("Usage: lens [claude|gpt|grok|ollama] [question]")
+                continue
+            _lens_model = _lens_parts[1].lower().strip()
+            _lens_q = _lens_parts[2].strip()
+            if not _lens_q:
+                print("Usage: lens [claude|gpt|grok|ollama] [question]")
+                continue
+            try:
+                from cursiv_v215.nexus.epistemic_engine import fan_out
+                from cursiv_v215.nexus.model_identities import (
+                    IDENTITY_CLAUDE, IDENTITY_GPT, IDENTITY_GROK, IDENTITY_OLLAMA
+                )
+                _identity_map = {
+                    "claude": IDENTITY_CLAUDE,
+                    "gpt": IDENTITY_GPT,
+                    "grok": IDENTITY_GROK,
+                    "ollama": IDENTITY_OLLAMA,
+                }
+                if _lens_model not in _identity_map:
+                    print(f"[Lens] Unknown model '{_lens_model}'. Choose: claude, gpt, grok, ollama")
+                    continue
+                _result = fan_out(_lens_q, cfg, identities=[_identity_map[_lens_model]])
+                print(f"\n[Lens / {_lens_model.capitalize()}]\n{_result}")
+            except Exception as _e:
+                print(f"[Lens] Error: {_e}")
+            continue
+
         # ── Legacy import (top-level, no auth — Joshua only) ─────────────────
         elif cmd.startswith("legacy import "):
             _imp_path = raw[14:].strip().strip('"').strip("'")
