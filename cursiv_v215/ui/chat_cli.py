@@ -534,8 +534,15 @@ try:
     from prompt_toolkit import prompt as _pt_prompt
     from prompt_toolkit.formatted_text import ANSI as _PT_ANSI
     from prompt_toolkit.utils import get_cwidth as _cwidth
+    # On Windows, prompt_toolkit imports fine but crashes the first time
+    # prompt() is called when the terminal is xterm-256color (Git Bash, VS Code
+    # integrated terminal, Cygwin). Pre-check so we fall back gracefully instead
+    # of crashing mid-session.
+    if os.name == "nt":
+        from prompt_toolkit.output.defaults import create_output as _pt_check_output
+        _pt_check_output()   # raises NoConsoleScreenBufferError on bad terminals
     _HAS_PT = True
-except ImportError:
+except Exception:
     _HAS_PT = False
     def _cwidth(c: str) -> int:          # fallback: treat everything as 1
         return 1
