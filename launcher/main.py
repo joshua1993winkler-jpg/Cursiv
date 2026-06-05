@@ -18,14 +18,32 @@ if str(_ROOT) not in sys.path:
     sys.path.insert(0, str(_ROOT))
 
 
+_CONSOLE_PARENTS = {
+    "cmd.exe", "powershell.exe", "pwsh.exe",
+    "windowsterminal.exe", "wt.exe",
+    "bash.exe", "git-bash.exe", "mintty.exe", "conhost.exe",
+    "alacritty.exe", "wezterm.exe", "hyper.exe",
+}
+
+
+def _launched_from_terminal() -> bool:
+    """True if the parent process is a known terminal shell."""
+    try:
+        import psutil
+        parent = psutil.Process().parent()
+        if parent and parent.name().lower() in _CONSOLE_PARENTS:
+            return True
+    except Exception:
+        pass
+    return False
+
+
 def _run_terminal_mode() -> None:
     """Attach to parent console and run the Eye of Horus CLI terminal."""
     if sys.platform == "win32":
         try:
             import ctypes
-            # Attach to the calling terminal (cmd.exe / PowerShell / WT)
             ctypes.windll.kernel32.AttachConsole(-1)  # ATTACH_PARENT_PROCESS
-            # Reopen std streams so Python can write to the attached console
             sys.stdout = open("CONOUT$", "w", encoding="utf-8", errors="replace")
             sys.stderr = open("CONOUT$", "w", encoding="utf-8", errors="replace")
             sys.stdin  = open("CONIN$",  "r", encoding="utf-8", errors="replace")
@@ -47,8 +65,11 @@ if sys.platform == "win32":
 
 
 def main():
-    # ── --terminal flag: run Eye of Horus CLI in current console ─────────
-    if "--terminal" in sys.argv or "-t" in sys.argv:
+    # ── Terminal mode: explicit flag OR auto-detected console parent ─────
+    # Use 'cursiv --gui' to force the launcher window from a terminal.
+    if "--gui" not in sys.argv and (
+        "--terminal" in sys.argv or "-t" in sys.argv or _launched_from_terminal()
+    ):
         _run_terminal_mode()
         return
 
