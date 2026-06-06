@@ -531,6 +531,11 @@ except Exception:
 # get_cwidth: correctly counts wide chars (✦ ✓ ✋ etc) as 2 columns so box
 #             borders align properly on all terminals.
 try:
+    # CURSIV_PLAIN_INPUT is set by the launcher when it uses AttachConsole().
+    # prompt_toolkit talks to the Windows Console API directly and conflicts
+    # with the replaced stdin/stdout handles — disable it in that case.
+    if os.environ.get("CURSIV_PLAIN_INPUT"):
+        raise RuntimeError("plain input mode — prompt_toolkit disabled")
     from prompt_toolkit import prompt as _pt_prompt
     from prompt_toolkit.formatted_text import ANSI as _PT_ANSI
     from prompt_toolkit.utils import get_cwidth as _cwidth
@@ -967,7 +972,8 @@ def _input_prompt(cfg: dict) -> str:
 
     # 𓂀 = Eye of Horus (U+13080). Requires Noto Sans Egyptian Hieroglyphs or
     # Segoe UI Historic — shows as □ on systems without the font; swap to ⊙.
-    prefix_ansi = f"{GOLD}𓂀{RESET}  "
+    _glyph = ">" if os.environ.get("CURSIV_PLAIN_INPUT") else "𓂀"
+    prefix_ansi = f"{GOLD}{_glyph}{RESET}  "
 
     try:
         if _HAS_PT:
