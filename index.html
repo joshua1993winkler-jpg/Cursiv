@@ -533,12 +533,12 @@ footer {
 <nav>
   <a class="nav-logo" href="#">Cursiv</a>
   <div class="nav-links">
+    <a href="#demo">Live Demo</a>
     <a href="#install">Install</a>
-    <a href="#quickstart">Quick Start</a>
     <a href="#features">Features</a>
     <a href="#family">Family</a>
     <a href="#origin">Origin</a>
-    <a href="/terminal" target="_blank">Try Online</a>
+    <a href="/terminal" target="_blank">Full Terminal</a>
     <a class="nav-dl" href="https://github.com/joshua1993winkler-jpg/Cursiv/releases/download/v3.14-U12/Cursiv-Setup-3.14-U12.exe">Download</a>
   </div>
 </nav>
@@ -705,6 +705,178 @@ footer {
     </div>
   </div>
 </section>
+
+<hr class="divider">
+
+<!-- LIVE DEMO -->
+<section id="demo">
+  <div class="inner">
+    <div class="section-label">Live Demo</div>
+    <h2 class="section-title">Talk to Cursiv Now</h2>
+    <p class="section-body">
+      Free web edition — no download needed. Login or register in seconds.<br>
+      Download the desktop app to unlock the full 14-agent council, forge pipeline, and offline mode.
+    </p>
+
+    <!-- Auth panel -->
+    <div id="demo-auth" class="demo-auth-wrap">
+      <div class="demo-auth-row">
+        <input type="text" id="demo-u" class="demo-input" placeholder="Username" autocomplete="username" spellcheck="false">
+        <input type="password" id="demo-p" class="demo-input" placeholder="Password" autocomplete="current-password">
+        <button class="demo-btn demo-btn-primary" id="demo-signin">Sign In</button>
+        <button class="demo-btn" id="demo-register">Register</button>
+      </div>
+      <div id="demo-err" class="demo-err"></div>
+    </div>
+
+    <!-- Terminal panel -->
+    <div id="demo-terminal-wrap" class="demo-term-wrap" style="display:none">
+      <div class="demo-term-bar">
+        <span class="demo-term-dot"></span>
+        <span class="demo-term-title">𓂀  Cursiv Terminal &nbsp;<span style="color:var(--silver3);font-size:.7rem">Web Edition</span></span>
+        <span class="demo-term-spacer"></span>
+        <a href="/terminal" target="_blank" class="demo-term-link">Full Terminal ↗</a>
+        <button class="demo-term-logout" id="demo-logout">Log out</button>
+      </div>
+      <div id="demo-term"></div>
+      <div class="demo-term-hint">
+        Try: &nbsp;<code>help</code> &nbsp;·&nbsp; <code>about</code> &nbsp;·&nbsp; <code>download</code> &nbsp;·&nbsp; ask anything
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+/* ── Demo section ──────────────────────────────────────────────────────── */
+#demo { padding: 100px 0; }
+
+.demo-auth-wrap {
+  max-width: 680px;
+  margin: 48px auto 0;
+}
+
+.demo-auth-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.demo-input {
+  background: var(--bg2);
+  border: 1px solid var(--border2);
+  color: var(--silver);
+  font-family: var(--ui);
+  font-size: .88rem;
+  padding: 10px 14px;
+  outline: none;
+  width: 190px;
+  transition: border-color .15s;
+}
+.demo-input:focus { border-color: var(--gold); }
+
+.demo-btn {
+  background: transparent;
+  border: 1px solid var(--border2);
+  color: var(--silver2);
+  font-family: var(--ui);
+  font-size: .82rem;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  padding: 10px 22px;
+  cursor: pointer;
+  transition: border-color .15s, color .15s;
+}
+.demo-btn:hover { border-color: var(--gold); color: var(--gold); }
+.demo-btn-primary { border-color: var(--gold); color: var(--gold); }
+.demo-btn-primary:hover { background: var(--gold); color: var(--bg); }
+
+.demo-err {
+  text-align: center;
+  color: #ff5555;
+  font-size: .8rem;
+  margin-top: 12px;
+  min-height: 1.2em;
+}
+
+.demo-term-wrap {
+  margin: 48px auto 0;
+  max-width: 860px;
+  border: 1px solid var(--border2);
+  background: #080c0c;
+}
+
+.demo-term-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 14px;
+  height: 34px;
+  background: #0d1212;
+  border-bottom: 1px solid var(--border2);
+}
+
+.demo-term-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--gold);
+  display: inline-block;
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: .4; }
+}
+
+.demo-term-title {
+  font-size: .75rem;
+  color: var(--gold);
+  letter-spacing: .1em;
+  font-family: var(--ui);
+}
+
+.demo-term-spacer { flex: 1; }
+
+.demo-term-link {
+  font-size: .7rem;
+  color: var(--silver3);
+  text-decoration: none;
+  letter-spacing: .06em;
+  transition: color .15s;
+}
+.demo-term-link:hover { color: var(--gold); }
+
+.demo-term-logout {
+  background: transparent;
+  border: none;
+  color: var(--silver3);
+  font-family: var(--ui);
+  font-size: .7rem;
+  cursor: pointer;
+  padding: 2px 6px;
+  transition: color .15s;
+}
+.demo-term-logout:hover { color: #ff5555; }
+
+#demo-term {
+  height: 420px;
+  padding: 4px 2px 2px 6px;
+}
+
+.demo-term-hint {
+  padding: 8px 14px;
+  font-size: .72rem;
+  color: var(--silver3);
+  border-top: 1px solid var(--border);
+  font-family: var(--ui);
+}
+.demo-term-hint code {
+  color: var(--gold);
+  font-family: monospace;
+  font-size: .75rem;
+}
+</style>
 
 <hr class="divider">
 
@@ -1113,6 +1285,251 @@ footer {
     </p>
   </div>
 </footer>
+
+<!-- xterm.js for live demo terminal -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/xterm@5.3.0/css/xterm.css">
+<script src="https://cdn.jsdelivr.net/npm/xterm@5.3.0/lib/xterm.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xterm-addon-fit@0.8.0/lib/xterm-addon-fit.js"></script>
+
+<script>
+(function() {
+'use strict';
+
+// Backend URL — override by setting window.CURSIV_API_BASE / CURSIV_WS_BASE
+// Default: same host (works when FastAPI is served at the same domain)
+// Set to your Railway URL if the backend is separate, e.g.:
+//   window.CURSIV_API_BASE = 'https://your-app.railway.app';
+const API = window.CURSIV_API_BASE ||
+  (location.protocol === 'https:' ? 'https://' : 'http://') + location.host;
+const WSS = window.CURSIV_WS_BASE  ||
+  (location.protocol === 'https:' ? 'wss://'  : 'ws://')  + location.host;
+
+let demoToken    = sessionStorage.getItem('cursiv_demo_token') || '';
+let demoUsername = sessionStorage.getItem('cursiv_demo_user')  || '';
+let demoWS       = null;
+let demoTerm     = null;
+let demoFit      = null;
+let demoBuffer   = '';
+let demoHistory  = [];
+let demoHistPos  = -1;
+let demoBusy     = false;
+let demoReconnect = 0;
+
+function $id(id) { return document.getElementById(id); }
+
+function setErr(msg) {
+  $id('demo-err').textContent = msg;
+}
+
+async function apiPost(path, body) {
+  const r = await fetch(API + path, {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify(body)
+  });
+  const d = await r.json();
+  if (!r.ok) throw new Error(d.detail || 'Error');
+  return d;
+}
+
+async function doAuth(register) {
+  const u = $id('demo-u').value.trim();
+  const p = $id('demo-p').value;
+  if (!u || !p) { setErr('Username and password required.'); return; }
+  setErr('');
+  const btn = $id(register ? 'demo-register' : 'demo-signin');
+  btn.disabled = true;
+  btn.textContent = register ? 'Registering...' : 'Signing in...';
+  try {
+    if (register) await apiPost('/api/register', {username: u, password: p});
+    const data = await apiPost('/api/login', {username: u, password: p});
+    demoToken    = data.token;
+    demoUsername = data.username;
+    sessionStorage.setItem('cursiv_demo_token', demoToken);
+    sessionStorage.setItem('cursiv_demo_user', demoUsername);
+    showDemoTerminal();
+  } catch(e) {
+    setErr(e.message);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = register ? 'Register' : 'Sign In';
+  }
+}
+
+$id('demo-signin').addEventListener('click', () => doAuth(false));
+$id('demo-register').addEventListener('click', () => doAuth(true));
+$id('demo-u').addEventListener('keydown', e => { if (e.key==='Enter') doAuth(false); });
+$id('demo-p').addEventListener('keydown', e => { if (e.key==='Enter') doAuth(false); });
+
+$id('demo-logout').addEventListener('click', () => {
+  sessionStorage.removeItem('cursiv_demo_token');
+  sessionStorage.removeItem('cursiv_demo_user');
+  if (demoWS) demoWS.close();
+  $id('demo-terminal-wrap').style.display = 'none';
+  $id('demo-auth').style.display = '';
+  demoToken = '';
+});
+
+function showDemoTerminal() {
+  $id('demo-auth').style.display = 'none';
+  const wrap = $id('demo-terminal-wrap');
+  wrap.style.display = '';
+
+  if (!demoTerm) {
+    demoTerm = new Terminal({
+      theme: {
+        background:   '#080c0c',
+        foreground:   '#d8d0c0',
+        cursor:       '#c9a741',
+        cursorAccent: '#080c0c',
+        black:        '#080c0c',
+        yellow:       '#c9a741',
+        brightBlack:  '#607070',
+        red:          '#ff5555',
+        green:        '#50fa7b',
+        cyan:         '#8be9fd',
+      },
+      fontFamily: '"Cascadia Code","Fira Code",Consolas,monospace',
+      fontSize: 13,
+      lineHeight: 1.45,
+      cursorBlink: true,
+      cursorStyle: 'bar',
+      scrollback: 2000,
+      convertEol: false,
+    });
+    demoFit = new FitAddon.FitAddon();
+    demoTerm.loadAddon(demoFit);
+    demoTerm.open($id('demo-term'));
+    demoFit.fit();
+    window.addEventListener('resize', () => { if (demoFit) demoFit.fit(); });
+    demoTerm.onKey(demoHandleKey);
+  }
+  connectDemoWS();
+}
+
+const DONE = '\x00DONE\x00';
+const PROMPT = '\x1b[33m\u{13080}\x1b[0m  ';
+
+function demoPrompt() { demoTerm.write('\r\n' + PROMPT); }
+function demoPromptNL() { demoTerm.write(PROMPT); }
+
+function demoHandleKey({key, domEvent}) {
+  if (demoBusy) {
+    if (domEvent.ctrlKey && domEvent.keyCode === 67) {
+      demoTerm.write('^C\r\n');
+      demoBusy = false;
+      demoPrompt();
+    }
+    return;
+  }
+  const printable = !domEvent.altKey && !domEvent.ctrlKey && !domEvent.metaKey;
+
+  switch (domEvent.keyCode) {
+    case 13:
+      demoTerm.write('\r\n');
+      const cmd = demoBuffer.trim();
+      demoBuffer = '';
+      demoHistPos = -1;
+      if (cmd) {
+        demoHistory.unshift(cmd);
+        if (demoHistory.length > 50) demoHistory.pop();
+        demoSend(cmd);
+      } else {
+        demoPrompt();
+      }
+      break;
+    case 8:
+      if (demoBuffer.length > 0) {
+        demoBuffer = demoBuffer.slice(0, -1);
+        demoTerm.write('\b \b');
+      }
+      break;
+    case 38:
+      if (demoHistPos < demoHistory.length - 1) {
+        demoHistPos++;
+        demoReplaceInput(demoHistory[demoHistPos]);
+      }
+      break;
+    case 40:
+      if (demoHistPos > 0) { demoHistPos--; demoReplaceInput(demoHistory[demoHistPos]); }
+      else if (demoHistPos === 0) { demoHistPos = -1; demoReplaceInput(''); }
+      break;
+    case 67:
+      if (domEvent.ctrlKey) { demoTerm.write('^C\r\n'); demoBuffer = ''; demoPrompt(); }
+      break;
+    default:
+      if (printable && key) { demoBuffer += key; demoTerm.write(key); }
+  }
+}
+
+function demoReplaceInput(t) {
+  demoTerm.write('\r\x1b[K');
+  demoPromptNL();
+  demoBuffer = t;
+  demoTerm.write(t);
+}
+
+function demoSend(msg) {
+  if (!demoWS || demoWS.readyState !== WebSocket.OPEN) {
+    demoTerm.write('\x1b[31m  Not connected — please wait...\x1b[0m');
+    demoPrompt();
+    return;
+  }
+  demoBusy = true;
+  demoWS.send(msg);
+}
+
+function connectDemoWS() {
+  const dot = document.querySelector('.demo-term-dot');
+  if (dot) dot.style.background = '#c9a741';
+
+  const url = `${WSS}/ws/chat?token=${encodeURIComponent(demoToken)}`;
+  demoWS = new WebSocket(url);
+
+  demoWS.onopen = () => {
+    if (dot) dot.style.background = '#50fa7b';
+    demoReconnect = 0;
+  };
+
+  demoWS.onmessage = (e) => {
+    if (e.data === DONE) {
+      demoBusy = false;
+      demoPrompt();
+    } else if (e.data.startsWith('\x00ERR\x00')) {
+      demoTerm.write('\x1b[31m' + e.data.slice(7) + '\x1b[0m');
+      demoBusy = false;
+      demoPrompt();
+    } else {
+      demoTerm.write(e.data);
+    }
+  };
+
+  demoWS.onerror = () => {
+    if (dot) dot.style.background = '#ff5555';
+  };
+
+  demoWS.onclose = (e) => {
+    if (dot) dot.style.background = '#ff5555';
+    if (e.code === 4001) {
+      sessionStorage.removeItem('cursiv_demo_token');
+      sessionStorage.removeItem('cursiv_demo_user');
+      $id('demo-terminal-wrap').style.display = 'none';
+      $id('demo-auth').style.display = '';
+      setErr('Session expired — please sign in again.');
+      return;
+    }
+    demoReconnect++;
+    if (demoReconnect > 5) return;
+    const delay = Math.min(1000 * demoReconnect, 8000);
+    setTimeout(connectDemoWS, delay);
+  };
+}
+
+// Auto-connect if already logged in from this session
+if (demoToken) { showDemoTerminal(); }
+
+})();
+</script>
 
 </body>
 </html>
