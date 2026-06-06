@@ -7,7 +7,7 @@
 ; Offline-first AI workspace. Runs without internet after install.
 ; Ollama + llama3.1 downloaded post-install (~4.7 GB, one time).
 ;
-; Compile: iscc installer\cursiv_setup.iss
+; Compile: "%LOCALAPPDATA%\Programs\Inno Setup 6\ISCC.exe" installer\cursiv_setup.iss
 ;          (or run scripts\package.bat)
 ; ============================================================
 
