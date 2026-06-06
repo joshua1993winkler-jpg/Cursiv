@@ -483,15 +483,15 @@ async def ws_chat(websocket: WebSocket, token: str = Query(default="")):
     """Authenticated WebSocket terminal session."""
     payload = decode_token(token)
     if not payload:
+        await websocket.accept()
         await websocket.close(code=4001, reason="Invalid or expired token")
         return
 
     user = get_user_by_id(payload["sub"])
     if not user:
+        await websocket.accept()
         await websocket.close(code=4001, reason="User not found")
         return
-
-    await websocket.accept()
 
     try:
         from cursiv_v215.web.chat_ws import CursivWebSession, BANNER
@@ -499,10 +499,12 @@ async def ws_chat(websocket: WebSocket, token: str = Query(default="")):
         try:
             from chat_ws import CursivWebSession, BANNER
         except ImportError:
+            await websocket.accept()
             await websocket.send_text("\x1b[31mTerminal backend not available.\x1b[0m")
             await websocket.close()
             return
 
+    await websocket.accept()
     session = CursivWebSession(user["username"])
 
     # Send banner — client shows prompt after DONE

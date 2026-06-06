@@ -348,10 +348,12 @@ let ws       = null;
 let term     = null;
 let fitAddon = null;
 
-let inputBuffer  = '';
-let history      = [];
-let historyPos   = -1;
-let isProcessing = false;
+let inputBuffer   = '';
+let history       = [];
+let historyPos    = -1;
+let isProcessing  = false;
+let reconnectCount = 0;
+const MAX_RECONNECT = 5;
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 function setError(msg) {
@@ -523,9 +525,6 @@ function handleKey({ key, domEvent }) {
 }
 
 function replaceInput(newText) {
-  // Erase current input then write new
-  term.write('\b \b'.repeat(inputBuffer.length));
-  // Fallback: if multi-width chars exist, use line-erase
   term.write('\r\x1b[K');
   showPromptNoNL();
   inputBuffer = newText;
@@ -569,11 +568,6 @@ function connectWS() {
   const url = `${WS_BASE}/ws/chat?token=${encodeURIComponent(token)}`;
   ws = new WebSocket(url);
 
-  ws.onopen = () => {
-    setDot('connected');
-    // Banner comes from server on connect; prompt shown after first DONE
-  };
-
   ws.onmessage = (e) => {
     if (e.data === DONE_MARKER) {
       isProcessing = false;
@@ -590,18 +584,27 @@ function connectWS() {
 
   ws.onerror = () => { setDot('error'); };
 
+  ws.onopen = () => {
+    setDot('connected');
+    reconnectCount = 0;
+  };
+
   ws.onclose = (e) => {
     setDot('error');
     if (e.code === 4001) {
-      // Auth failed — back to login
       localStorage.removeItem('cursiv_token');
       localStorage.removeItem('cursiv_user');
       location.reload();
       return;
     }
-    // Reconnect after 3s
-    term.write('\r\n\x1b[90m  Connection lost. Reconnecting...\x1b[0m\r\n');
-    setTimeout(connectWS, 3000);
+    reconnectCount++;
+    if (reconnectCount > MAX_RECONNECT) {
+      term.write('\r\n\x1b[31m  Server unreachable. Refresh to try again.\x1b[0m\r\n');
+      return;
+    }
+    const delay = Math.min(1000 * reconnectCount, 8000);
+    term.write(`\r\n\x1b[90m  Connection lost. Reconnecting in ${delay/1000}s...\x1b[0m\r\n`);
+    setTimeout(connectWS, delay);
   };
 }
 
