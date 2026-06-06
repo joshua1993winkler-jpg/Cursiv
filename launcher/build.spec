@@ -1,11 +1,17 @@
 # -*- mode: python ; coding: utf-8 -*-
 """
-PyInstaller build spec for Cursiv Launcher.
+PyInstaller build spec for Cursiv.
+
+Two EXEs in one bundle (share the same _internal folder):
+  - CursivLauncher.exe  console=False  GUI launcher / tray
+  - Cursiv.exe          console=True   CLI terminal (like 'claude' command)
 
 Usage (from repo root):
     pyinstaller launcher/build.spec
 
-Output: dist/Cursiv/Cursiv.exe  (one-dir bundle, windowed)
+Output:
+    dist/Cursiv/CursivLauncher.exe   (windowed GUI)
+    dist/Cursiv/Cursiv.exe           (console CLI)
 """
 
 import sys
@@ -49,7 +55,7 @@ except Exception as _e:
 
 from PyInstaller.utils.hooks import collect_data_files, collect_submodules
 
-ROOT = Path(SPECPATH).parent          # repo root (one level above launcher/)
+ROOT     = Path(SPECPATH).parent          # repo root (one level above launcher/)
 LAUNCHER = ROOT / "launcher"
 CURSIV   = ROOT / "cursiv_v215"
 SERVICES = ROOT / "services"
@@ -172,6 +178,23 @@ hiddenimports = [
     "safehttpx",
 ]
 
+_excludes = [
+    "tkinter", "matplotlib", "scipy", "pandas", "IPython",
+    # Heavy ML libs — not needed by launcher/chat UI; load separately at runtime
+    "torch", "torchvision", "torchaudio",
+    "tensorflow", "keras", "jax",
+    "bitsandbytes",
+    "transformers", "tokenizers", "datasets",
+    "sentence_transformers",
+    "sklearn", "xgboost", "lightgbm",
+    "cv2", "skimage",
+    # Jupyter / dev tools
+    "notebook", "ipykernel", "ipywidgets",
+    # Unused stdlib
+    "unittest", "doctest", "pdb",
+]
+
+# ── GUI launcher Analysis (windowed, no console) ─────────────────────────────
 a = Analysis(
     [str(LAUNCHER / "main.py")],
     pathex=[str(ROOT), str(LAUNCHER)],
@@ -181,40 +204,45 @@ a = Analysis(
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
-    excludes=[
-        "tkinter", "matplotlib", "scipy", "pandas", "IPython",
-        # Heavy ML libs — not needed by launcher/chat UI; load separately at runtime
-        "torch", "torchvision", "torchaudio",
-        "tensorflow", "keras", "jax",
-        "bitsandbytes",
-        "transformers", "tokenizers", "datasets",
-        "sentence_transformers",
-        "sklearn", "xgboost", "lightgbm",
-        "cv2", "skimage",
-        # Jupyter / dev tools
-        "notebook", "ipykernel", "ipywidgets",
-        # Unused stdlib
-        "unittest", "doctest", "pdb",
-    ],
+    excludes=_excludes,
     win_no_prefer_redirects=False,
     win_private_assemblies=False,
     cipher=block_cipher,
     noarchive=False,
 )
 
-pyz = PYZ(a.pure, a.zipped_data, cipher=block_cipher)
+# ── CLI terminal Analysis (console=True, proper stdin/stdout from the start) ─
+a_cli = Analysis(
+    [str(LAUNCHER / "cli_main.py")],
+    pathex=[str(ROOT), str(LAUNCHER)],
+    binaries=[],
+    datas=[],
+    hiddenimports=hiddenimports,
+    hookspath=[],
+    hooksconfig={},
+    runtime_hooks=[],
+    excludes=_excludes + _extra_hidden,
+    win_no_prefer_redirects=False,
+    win_private_assemblies=False,
+    cipher=block_cipher,
+    noarchive=False,
+)
 
-exe = EXE(
+pyz     = PYZ(a.pure,     a.zipped_data,     cipher=block_cipher)
+pyz_cli = PYZ(a_cli.pure, a_cli.zipped_data, cipher=block_cipher)
+
+# ── GUI EXE — windowed, no console window ────────────────────────────────────
+exe_gui = EXE(
     pyz,
     a.scripts,
     [],
     exclude_binaries=True,
-    name="Cursiv",
+    name="CursivLauncher",
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
     upx=True,
-    console=False,                          # no terminal window
+    console=False,
     disable_windowed_traceback=False,
     argv_emulation=False,
     target_arch=None,
@@ -223,11 +251,36 @@ exe = EXE(
     icon=str(LAUNCHER / "resources" / "icons" / "cursiv.ico"),
 )
 
+# ── CLI EXE — console=True, proper handles, no AttachConsole needed ──────────
+exe_cli = EXE(
+    pyz_cli,
+    a_cli.scripts,
+    [],
+    exclude_binaries=True,
+    name="Cursiv",
+    debug=False,
+    bootloader_ignore_signals=False,
+    strip=False,
+    upx=True,
+    console=True,
+    disable_windowed_traceback=False,
+    argv_emulation=False,
+    target_arch=None,
+    codesign_identity=None,
+    entitlements_file=None,
+    icon=str(LAUNCHER / "resources" / "icons" / "cursiv.ico"),
+)
+
+# ── One-dir bundle — both EXEs share the same _internal folder ───────────────
 coll = COLLECT(
-    exe,
+    exe_gui,
     a.binaries,
     a.zipfiles,
     a.datas,
+    exe_cli,
+    a_cli.binaries,
+    a_cli.zipfiles,
+    a_cli.datas,
     strip=False,
     upx=True,
     upx_exclude=[],

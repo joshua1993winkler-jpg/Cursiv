@@ -50,10 +50,6 @@ def _run_terminal_mode() -> None:
         except Exception:
             pass
 
-    # Signal to chat_cli that we attached the console — disables prompt_toolkit
-    # so it doesn't fight with AttachConsole's replaced stdin/stdout handles.
-    os.environ["CURSIV_PLAIN_INPUT"] = "1"
-
     # Ollama health check -- prints friendly guidance if setup is incomplete
     try:
         from cursiv_v215.runtime.setup_check import ensure_ollama
