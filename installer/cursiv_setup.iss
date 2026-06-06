@@ -1,8 +1,8 @@
 ; ============================================================
-; Cursiv v3.14-U11 — Two-EXE architecture
+; Cursiv v3.14-U12 — Two-EXE architecture
 ;   CursivLauncher.exe  = windowed GUI / tray (double-click to open)
 ;   Cursiv.exe          = console CLI with proper handles (type 'cursiv' in any terminal)
-; Produces: installer\Output\Cursiv-Setup-3.14-U11.exe
+; Produces: installer\Output\Cursiv-Setup-3.14-U12.exe
 ;
 ; Offline-first AI workspace. Runs without internet after install.
 ; Ollama + llama3.1 downloaded post-install (~4.7 GB, one time).
@@ -12,7 +12,7 @@
 ; ============================================================
 
 #define AppName      "Cursiv"
-#define AppVer       "3.14-U11"
+#define AppVer       "3.14-U12"
 #define AppPublisher "Joshua Winkler"
 #define AppURL       "https://github.com/joshua1993winkler-jpg/Cursiv"
 #define AppExe       "CursivLauncher.exe"
@@ -35,7 +35,7 @@ LicenseFile=..\LICENSE
 InfoAfterFile=..\CHANGELOG.md
 AppComments=Offline AI workspace with cascade routing (xAI → OpenAI → Claude → Ollama), live status indicators, and security-question password recovery. No internet required after install. Your data never leaves your machine.
 OutputDir=Output
-OutputBaseFilename=Cursiv-Setup-3.14-U11
+OutputBaseFilename=Cursiv-Setup-3.14-U12
 SetupIconFile=..\launcher\resources\icons\cursiv.ico
 WizardSmallImageFile=..\launcher\resources\icons\cursiv_256.png
 Compression=lzma2/ultra64
@@ -58,7 +58,9 @@ Name: "csb";          Description: "Cursiv Substrate Browser — adds a desktop 
 ; Main application (one-dir PyInstaller bundle)
 Source: "..\dist\Cursiv\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 
-; Ollama bootstrap — downloads and installs Ollama + llama3.1 post-install
+; Full dependency bootstrap — installs Git, Python, Ollama, llama3.1, pip packages
+Source: "..\scripts\cursiv_full_setup.ps1"; DestDir: "{app}\scripts"; Flags: ignoreversion
+; Legacy Ollama-only bootstrap (kept for reference)
 Source: "..\scripts\install_ollama.ps1"; DestDir: "{app}\scripts"; Flags: ignoreversion
 
 [Icons]
@@ -89,11 +91,11 @@ Root: HKCU; Subkey: "Environment"; ValueType: expandsz; ValueName: "Path"; \
   Flags: preservestringtype uninsdeletevalue
 
 [Run]
-; AI engine bootstrap — downloads Ollama (latest) and pulls llama3.1 (~4.7 GB) in a visible window
-; Runs non-blocking so the installer finishes immediately; user can minimise and wait
+; Full bootstrap — installs Git, Python, Ollama, llama3.1, and Python packages
+; Opens separate visible windows for each component so the user can watch progress
 Filename: "powershell.exe"; \
-  Parameters: "-NoProfile -ExecutionPolicy Bypass -WindowStyle Normal -File ""{app}\scripts\install_ollama.ps1"""; \
-  Description: "Set up local AI engine (Ollama + llama3.1 model — ~4.7 GB download)"; \
+  Parameters: "-NoProfile -ExecutionPolicy Bypass -WindowStyle Normal -File ""{app}\scripts\cursiv_full_setup.ps1"""; \
+  Description: "Set up all requirements (Git, Python, Ollama, llama3.1 model — ~4.7 GB)"; \
   Flags: nowait postinstall skipifsilent runascurrentuser
 
 ; CSB: install PyQt6-WebEngine when the substrate browser task is selected
