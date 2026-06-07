@@ -19,7 +19,7 @@
 <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
 <style>
 /* ══════════════════════════════════════════════════════════
-   CURSIV — Release Page  v3.14-U08
+   CURSIV — Release Page  v3.14-U09
    Palette: #08090C bg · #C9A227 gold · #2255DD blue
    ══════════════════════════════════════════════════════════ */
 
@@ -890,7 +890,7 @@ footer {
 
   <div class="dl-row">
     <div class="dl-pulse">
-      <a href="https://github.com/joshua1993winkler-jpg/Cursiv/releases/download/V3.14-U08/Cursiv-Setup-3.14-U08.exe" class="btn-dl">
+      <a href="https://github.com/joshua1993winkler-jpg/Cursiv/releases/download/v3.14-U09/Cursiv-Setup-3.14-U09.exe" class="btn-dl">
         <span class="btn-dl-icon">⬇</span>
         <span class="btn-dl-txt">
           <span class="btn-dl-main">Download Cursiv-Setup-3.14-U08.exe</span>
@@ -1129,6 +1129,165 @@ footer {
   <p class="reveal" style="text-align:center;font-family:var(--mono);font-size:11px;color:var(--silver2);opacity:.4;margin-top:18px;">
     Demo is rate-limited &nbsp;·&nbsp; No account required &nbsp;·&nbsp; Nothing stored
   </p>
+
+  <!-- ── Feature previews: Babel Letter + Bible Study ──────────────── -->
+  <div class="reveal" style="margin-top:64px;display:grid;grid-template-columns:1fr 1fr;gap:24px;max-width:900px;margin-left:auto;margin-right:auto;">
+
+    <!-- Babel Letter card -->
+    <div style="background:var(--bg2);border:1px solid var(--border2);border-radius:12px;overflow:hidden;">
+      <div class="t-bar" style="cursor:pointer;" id="babel-tab">
+        <span class="t-dot r"></span><span class="t-dot a"></span><span class="t-dot g"></span>
+        <span class="t-title">Babel Letter — Personal Activation</span>
+      </div>
+      <div style="padding:20px 22px;font-family:var(--mono);font-size:12.5px;line-height:1.8;color:var(--silver2);">
+        <div style="color:var(--silver2);margin-bottom:12px;">
+          <span style="color:var(--gold);">$</span> <span style="color:var(--silver);">babel letter keiarra</span>
+        </div>
+        <div style="color:var(--green);margin-bottom:4px;">→ profile: Keiarra Tanyae-Simone</div>
+        <div style="color:var(--silver2);margin-bottom:4px;">→ sealed 5/20/2026 4:30 AM · key: birth date</div>
+        <hr style="border:none;border-top:1px solid var(--border);margin:12px 0;">
+        <div style="font-family:var(--serif);font-size:14px;line-height:1.9;color:var(--silver);font-style:italic;" id="babel-letter-body">
+          Keiarra —<br><br>
+          I built this for you. Not as a product.<br>
+          As a space that knows your name before you<br>
+          even open your mouth.<br><br>
+          Every agent in this system, every layer of<br>
+          memory it holds — it was assembled with you<br>
+          in mind. Not you someday. You now.<br><br>
+          The babel key is your birth date.<br>
+          The system will know you by it.<br><br>
+          — Joshua Winkler<br>
+          &nbsp;&nbsp;JW Architect Software &nbsp;·&nbsp; 5/20/2026
+        </div>
+        <div style="margin-top:14px;color:var(--silver2);font-size:11px;opacity:.6;">
+          Each family member has their own sealed letter. Unlocked by birth date. Stored locally. No cloud.
+        </div>
+      </div>
+    </div>
+
+    <!-- Bible Study card -->
+    <div style="background:var(--bg2);border:1px solid var(--border2);border-radius:12px;overflow:hidden;">
+      <div class="t-bar">
+        <span class="t-dot r"></span><span class="t-dot a"></span><span class="t-dot g"></span>
+        <span class="t-title">Bible Study — 7 Translations + Synthesis</span>
+      </div>
+      <div style="padding:20px 22px;font-family:var(--mono);font-size:12.5px;line-height:1.8;">
+        <div style="margin-bottom:10px;">
+          <span style="color:var(--gold);">$</span>
+          <input id="verse-input" type="text" value="John 8:7"
+            style="background:transparent;border:none;border-bottom:1px solid var(--border2);color:var(--silver);font-family:var(--mono);font-size:12.5px;width:200px;outline:none;margin-left:6px;"
+            placeholder="John 8:7 · Psalm 23 · Romans 8:38">
+          <button onclick="lookupVerse()" style="margin-left:8px;background:var(--gold);color:#000;border:none;border-radius:4px;padding:2px 10px;font-size:11px;cursor:pointer;font-family:var(--mono);">lookup</button>
+        </div>
+        <div id="verse-out" style="font-size:12px;line-height:1.85;">
+          <div style="margin-bottom:8px;"><span style="color:var(--gold);font-weight:600;">[KJV 1611]</span><br>
+          <span style="color:var(--silver);">He that is without sin among you, let him first cast a stone at her.</span></div>
+          <div style="margin-bottom:8px;"><span style="color:var(--blue3);font-weight:600;">[NWT 1961]</span><br>
+          <span style="color:var(--silver2);">Whoever of you is sinless, let him be the first to throw a stone at her.</span></div>
+          <div style="margin-bottom:8px;"><span style="color:var(--green);font-weight:600;">[NIV 1978]</span><br>
+          <span style="color:var(--silver2);">Let any one of you who is without sin be the first to throw a stone at her.</span></div>
+          <div style="margin-bottom:8px;"><span style="color:var(--amber);font-weight:600;">[WEB 2000]</span><br>
+          <span style="color:var(--silver2);">He who is without sin among you, let him throw the first stone at her.</span></div>
+          <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border);color:var(--silver2);font-size:11px;">
+            <span style="color:var(--gold);">[AXIS: CHARIS]</span> Grace under accusation. Minimum divergence across all 7 traditions. The most bit-stable grace passage in the corpus.
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+  const BIBLE_MOCK = {
+    "john 8:7": {
+      "KJV 1611": "He that is without sin among you, let him first cast a stone at her.",
+      "NWT 1961": "Whoever of you is sinless, let him be the first to throw a stone at her.",
+      "NIV 1978": "Let any one of you who is without sin be the first to throw a stone at her.",
+      "ESV 2001": "Let him who is without sin among you be the first to throw a stone at her.",
+      "NASB 1971": "He who is without sin among you, let him be the first to throw a stone at her.",
+      "YLT 1862": "He who is sinless of you — let him first cast the stone at her.",
+      "WEB 2000":  "He who is without sin among you, let him throw the first stone at her.",
+      "axis": "CHARIS", "axis_note": "Grace under accusation. Minimum divergence across all 7 traditions."
+    },
+    "psalm 23": {
+      "KJV 1611": "The LORD is my shepherd; I shall not want. He maketh me to lie down in green pastures.",
+      "NWT 1961": "Jehovah is my Shepherd. I will lack nothing. In grassy pastures he makes me lie down.",
+      "NIV 1978": "The LORD is my shepherd, I lack nothing. He makes me lie down in green pastures.",
+      "ESV 2001": "The LORD is my shepherd; I shall not want. He makes me lie down in green pastures.",
+      "NASB 1971": "The LORD is my shepherd, I will not be in need. He makes me lie down in green pastures.",
+      "YLT 1862": "Jehovah is my shepherd, I do not lack. In pastures of tender grass He causeth me to lie down.",
+      "WEB 2000":  "Yahweh is my shepherd: I shall lack nothing. He makes me lie down in green pastures.",
+      "axis": "KAIROS", "axis_note": "Appointed presence. The rhythm of Kairos — right timing, not clock time."
+    },
+    "romans 8:38": {
+      "KJV 1611": "For I am persuaded, that neither death, nor life, nor angels, nor principalities, nor powers... shall be able to separate us from the love of God.",
+      "NWT 1961": "For I am convinced that neither death nor life nor angels nor governments... will be able to separate us from God's love.",
+      "NIV 1978": "For I am convinced that neither death nor life, neither angels nor demons... will be able to separate us from the love of God.",
+      "ESV 2001": "For I am sure that neither death nor life, nor angels nor rulers... will be able to separate us from the love of God.",
+      "NASB 1971": "For I am convinced that neither death nor life, nor angels nor principalities... will be able to separate us from the love of God.",
+      "YLT 1862": "For I am persuaded that neither death, nor life, nor messengers, nor principalities... shall be able to separate us from the love of God.",
+      "WEB 2000":  "For I am persuaded that neither death, nor life, nor angels, nor principalities... will be able to separate us from the love of God.",
+      "axis": "CHARIS", "axis_note": "The constitutional guarantee. Most bit-stable passage in the corpus — zero divergence on intent across all 7."
+    },
+    "john 3:16": {
+      "KJV 1611": "For God so loved the world, that he gave his only begotten Son, that whosoever believeth in him should not perish.",
+      "NWT 1961": "For God loved the world so much that he gave his only-begotten Son.",
+      "NIV 1978": "For God so loved the world that he gave his one and only Son.",
+      "ESV 2001": "For God so loved the world, that he gave his only Son.",
+      "NASB 1971": "For God so loved the world, that He gave His only Son.",
+      "YLT 1862": "For God did so love the world, that His Son — the only begotten — He gave.",
+      "WEB 2000":  "For God so loved the world, that he gave his one and only Son.",
+      "axis": "AGAPE", "axis_note": "AGAPE in its most universal form. Love as action, not feeling."
+    },
+    "proverbs 3:5": {
+      "KJV 1611": "Trust in the LORD with all thine heart; and lean not unto thine own understanding.",
+      "NWT 1961": "Trust in Jehovah with all your heart, and do not rely on your own understanding.",
+      "NIV 1978": "Trust in the LORD with all your heart and lean not on your own understanding.",
+      "ESV 2001": "Trust in the LORD with all your heart, and do not lean on your own understanding.",
+      "NASB 1971": "Trust in the LORD with all your heart and do not lean on your own understanding.",
+      "YLT 1862": "Trust unto Jehovah with all thy heart, And unto thine own understanding lean not.",
+      "WEB 2000":  "Trust in Yahweh with all your heart, and don't lean on your own understanding.",
+      "axis": "SOPHIA", "axis_note": "The founding instruction. Sophia over self-reliance. Consistent across all 7 — the most agreed-upon command in the corpus."
+    },
+    "1 corinthians 13:4": {
+      "KJV 1611": "Charity suffereth long, and is kind; charity envieth not; charity vaunteth not itself, is not puffed up.",
+      "NWT 1961": "Love is patient and kind. Love is not jealous. It does not brag, does not get puffed up.",
+      "NIV 1978": "Love is patient, love is kind. It does not envy, it does not boast, it is not proud.",
+      "ESV 2001": "Love is patient and kind; love does not envy or boast; it is not arrogant.",
+      "NASB 1971": "Love is patient, love is kind, it is not jealous; love does not brag, it is not arrogant.",
+      "YLT 1862": "The love is long-suffering, it is kind, the love doth not envy, the love doth not vaunt itself.",
+      "WEB 2000":  "Love is patient and is kind; love doesn't envy. Love doesn't brag, is not proud.",
+      "axis": "AGAPE", "axis_note": "The most translation-stable passage in scripture. Seven versions, one verdict."
+    }
+  };
+
+  const AXIS_COLORS = { CHARIS:'var(--gold)', AGAPE:'var(--blue3)', SOPHIA:'var(--green)', KAIROS:'var(--amber)', LOGOS:'var(--silver)' };
+
+  function lookupVerse() {
+    const raw = document.getElementById('verse-input').value.trim().toLowerCase();
+    const data = BIBLE_MOCK[raw];
+    const out = document.getElementById('verse-out');
+    if (!data) {
+      const available = Object.keys(BIBLE_MOCK).map(k => `<code style="color:var(--gold)">${k}</code>`).join(' · ');
+      out.innerHTML = `<span style="color:var(--red);">Reference not in demo set.</span><br><br>Try: ${available}`;
+      return;
+    }
+    const colors = ['var(--gold)','var(--blue3)','var(--green)','var(--amber)','var(--silver)','var(--silver2)','var(--amber)'];
+    const translations = Object.entries(data).filter(([k]) => !['axis','axis_note'].includes(k));
+    const axisColor = AXIS_COLORS[data.axis] || 'var(--gold)';
+    out.innerHTML = translations.map(([label, text], i) =>
+      `<div style="margin-bottom:8px;"><span style="color:${colors[i]};font-weight:600;">[${label}]</span><br>
+      <span style="color:${i===0?'var(--silver)':'var(--silver2)'};">${text}</span></div>`
+    ).join('') +
+    `<div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border);color:var(--silver2);font-size:11px;">
+      <span style="color:${axisColor};">[AXIS: ${data.axis}]</span> ${data.axis_note}
+    </div>`;
+  }
+
+  document.getElementById('verse-input').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') lookupVerse();
+  });
+  </script>
 </section>
 
 <!-- ══ REQUIREMENTS + INSTALL ═════════════════════════════════════════ -->
@@ -1155,7 +1314,7 @@ footer {
       <span class="step-n">01</span>
       <div>
         <p class="step-t">Download the installer</p>
-        <p class="step-b">Grab <code>Cursiv-Setup-3.14-U08.exe</code> from the button above. Windows may show a SmartScreen warning — click More info → Run anyway. Standard false positive for unsigned PyInstaller binaries. Full source is open.</p>
+        <p class="step-b">Grab <code>Cursiv-Setup-3.14-U09.exe</code> from the button above. Windows may show a SmartScreen warning — click More info → Run anyway. Standard false positive for unsigned PyInstaller binaries. Full source is open.</p>
       </div>
     </div>
     <div class="step">
@@ -1886,6 +2045,43 @@ document.querySelectorAll('.reveal,.reveal-group').forEach(el=>ro.observe(el));
       { c:'t-dim',  v:'  ✓ peer-reviewed by deepseek — no issues'},
     ]},
     { t:'pause', ms:2600 },
+    { t:'clrout' }, { t:'clrcmd' }, { t:'pause', ms:400 },
+
+    // 13 — babel letter (family activation)
+    { t:'type',  s:'babel letter keiarra' },
+    { t:'pause', ms:500 },
+    { t:'enter' },
+    { t:'out', lines:[
+      { c:'t-dim',  v:'  → Babel Agent — personal letter mode'},
+      { c:'t-dim',  v:'  looking up profile: Keiarra Tanyae-Simone...'},
+      { c:'t-ok',   v:'  ✓ letter found · sealed 5/20/2026 4:30 AM'},
+      { c:'t-dim',  v:''},
+      { c:'t-cmd',  v:'  Keiarra —'},
+      { c:'t-cmd',  v:'  I built this for you. Not as a product.'},
+      { c:'t-cmd',  v:'  As a space that knows your name before you'},
+      { c:'t-cmd',  v:'  even open your mouth. This system holds you.'},
+      { c:'t-dim',  v:'  — JW  [babel key: your birth date]'},
+    ]},
+    { t:'pause', ms:3000 },
+    { t:'clrout' }, { t:'clrcmd' }, { t:'pause', ms:400 },
+
+    // 14 — bible study
+    { t:'type',  s:'bible John 8:7' },
+    { t:'pause', ms:500 },
+    { t:'enter' },
+    { t:'out', lines:[
+      { c:'t-dim',  v:'  → Bible Study Engine · 7 translations + synthesis'},
+      { c:'t-dim',  v:''},
+      { c:'t-ok',   v:'  [KJV]  "He that is without sin among you, let'},
+      { c:'t-ok',   v:'         him first cast a stone at her."'},
+      { c:'t-dim',  v:''},
+      { c:'t-cmd',  v:'  [NWT]  "Whoever of you is sinless, let him'},
+      { c:'t-cmd',  v:'         be the first to throw a stone at her."'},
+      { c:'t-dim',  v:''},
+      { c:'t-dim',  v:'  [AXIS: CHARIS] Grace under pressure. The most'},
+      { c:'t-dim',  v:'  bit-stable grace passage. 0 divergence on intent.'},
+    ]},
+    { t:'pause', ms:3200 },
     { t:'clrout' }, { t:'clrcmd' }, { t:'pause', ms:400 },
   ];
 
