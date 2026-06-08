@@ -76,7 +76,9 @@ HELP_TEXT = (
     "  \x1b[36mdownload\x1b[0m        Get the full sovereign desktop\r\n"
     "  \x1b[36mbible <ref>\x1b[0m     Study any verse (6 translations)\r\n"
     "  \x1b[36mstudy <ref>\x1b[0m     Alias for bible\r\n"
-    "  \x1b[36m<message>\x1b[0m       Talk to the system\r\n"
+    "  \x1b[36mblast <text>\x1b[0m    Post to the shared Board (public messages/syntheses visible to other users in the temple)\r\n"
+    "  \x1b[36mboard\x1b[0m           View recent posts from the shared Board (see what others have sent)\r\n"
+    "  \x1b[36m<message>\x1b[0m       Talk to the system (or use family activations)\r\n"
     "\r\n"
     "\x1b[90m  Special family activations (use exact name + birthdate):\x1b[0m\r\n"
     "  \x1b[36mbabel I am Keiarra Winkler born 09/12/1995\x1b[0m   (wife, KWdomain)\r\n"
@@ -174,6 +176,51 @@ class CursivWebSession:
             ref = text[6:].strip()
             result = study_verse(ref)
             yield result.replace("\n", "\r\n")
+            return
+
+        # ── Board posting: send messages to the shared temple Board ───────────
+        if lower.startswith("blast "):
+            msg = text[6:].strip()
+            if not msg:
+                yield "Usage: blast <your message or synthesis>  — posts to the public Board for others to see.\r\n"
+                return
+            try:
+                from .db import get_user_by_username, create_post
+            except Exception:
+                try:
+                    from db import get_user_by_username, create_post
+                except Exception:
+                    yield "Board posting not available in this session.\r\n"
+                    return
+            user = get_user_by_username(uname)
+            if user:
+                create_post(user["id"], uname, msg, "broadcast")
+                yield f"\x1b[32mPosted to the Board:\x1b[0m {msg}\r\n"
+                yield "\x1b[90mOthers can see it in the shared memory (Board section or /api/posts).\x1b[0m\r\n"
+                return
+            else:
+                yield "Could not post — user record not found.\r\n"
+                return
+
+        # ── View the shared Board feed ────────────────────────────────────────
+        if lower in ("board", "posts", "feed", "syntheses"):
+            try:
+                from .db import get_posts
+            except Exception:
+                try:
+                    from db import get_posts
+                except Exception:
+                    yield "Board feed not available in this session.\r\n"
+                    return
+            posts = get_posts(limit=5)
+            if not posts:
+                yield "The Board is quiet right now. Be the first to blast something!\r\n"
+                return
+            yield "\x1b[33mRecent posts from the temple Board:\x1b[0m\r\n"
+            for p in posts:
+                ts = p.get("timestamp", "")[:10]
+                yield f"\x1b[36m[{p['username']} {ts}]\x1b[0m {p['text']}\r\n"
+            yield "\x1b[90mUse 'blast <your message>' to add your voice to the shared memory.\x1b[0m\r\n"
             return
 
         # ── Personal Babel Letters for family (special users) ──
