@@ -176,7 +176,7 @@ a = Analysis(
     hooksconfig={},
     runtime_hooks=[],
     excludes=[
-        "tkinter", "matplotlib", "scipy", "pandas", "IPython",
+        "tkinter", "matplotlib", "scipy", "IPython",
         # Heavy ML libs — not needed by launcher/chat UI; load separately at runtime
         "torch", "torchvision", "torchaudio",
         "tensorflow", "keras", "jax",

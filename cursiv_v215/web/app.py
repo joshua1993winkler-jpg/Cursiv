@@ -17,6 +17,8 @@ Routes:
   GET  /api/me            current user info (auth required)
   POST /api/blast         post a synthesis (auth required)
   DELETE /api/post/{id}   delete own post (auth required)
+  GET  /terminal          Eye of Horus browser terminal (xterm.js)
+  WS   /ws/chat           Authenticated WebSocket terminal session
   GET  /substrate/status
   POST /substrate/activate
   GET  /substrate/weave
@@ -31,16 +33,17 @@ import os
 import secrets as _secrets_mod
 from pathlib import Path
 
-from fastapi import FastAPI, HTTPException, Header, Query, Request
+from fastapi import FastAPI, HTTPException, Header, Query, Request, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, PlainTextResponse
 from pydantic import BaseModel, field_validator
 
 _log = logging.getLogger("cursiv.sentinel")
 
-_WEB_DIR     = Path(__file__).parent
-_UI_FILE     = _WEB_DIR / "substrate_ui.html"
-_FLEET_TOKEN = os.environ.get("CURSIV_FLEET_TOKEN", "")
+_WEB_DIR       = Path(__file__).parent
+_UI_FILE       = _WEB_DIR / "substrate_ui.html"
+_TERMINAL_FILE = _WEB_DIR / "terminal.html"
+_FLEET_TOKEN   = os.environ.get("CURSIV_FLEET_TOKEN", "")
 
 try:
     from cursiv_v215.web.db   import (
@@ -466,6 +469,66 @@ def remove_post(post_id: str, authorization: str | None = Header(None)):
     if not delete_post(post_id, user["id"]):
         raise HTTPException(404, "Post not found or not yours")
     return {"ok": True}
+
+
+# ── Web terminal ──────────────────────────────────────────────────────────────
+
+@app.get("/terminal", include_in_schema=False)
+def terminal_page():
+    if _TERMINAL_FILE.exists():
+        return FileResponse(_TERMINAL_FILE, media_type="text/html")
+    raise HTTPException(404, "Terminal page not found")
+
+
+@app.websocket("/ws/chat")
+async def ws_chat(websocket: WebSocket, token: str = Query(default="")):
+    """Authenticated WebSocket terminal session."""
+    payload = decode_token(token)
+    if not payload:
+        await websocket.accept()
+        await websocket.close(code=4001, reason="Invalid or expired token")
+        return
+
+    user = get_user_by_id(payload["sub"])
+    if not user:
+        await websocket.accept()
+        await websocket.close(code=4001, reason="User not found")
+        return
+
+    try:
+        from cursiv_v215.web.chat_ws import CursivWebSession, BANNER
+    except ImportError:
+        try:
+            from chat_ws import CursivWebSession, BANNER
+        except ImportError:
+            await websocket.accept()
+            await websocket.send_text("\x1b[31mTerminal backend not available.\x1b[0m")
+            await websocket.close()
+            return
+
+    await websocket.accept()
+    session = CursivWebSession(user["username"])
+
+    # Send banner — client shows prompt after DONE
+    await websocket.send_text(BANNER)
+    await websocket.send_text("\x00DONE\x00")
+
+    try:
+        while True:
+            msg = await websocket.receive_text()
+            if not msg.strip():
+                await websocket.send_text("\x00DONE\x00")
+                continue
+            try:
+                async for chunk in session.process(msg):
+                    await websocket.send_text(chunk)
+            except Exception as e:
+                await websocket.send_text(f"\x00ERR\x00Internal error: {e}")
+            await websocket.send_text("\x00DONE\x00")
+    except WebSocketDisconnect:
+        pass
+    except Exception:
+        pass
 
 
 # ── Substrate layer ───────────────────────────────────────────────────────────
