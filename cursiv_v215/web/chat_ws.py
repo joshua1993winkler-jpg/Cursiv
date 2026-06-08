@@ -63,7 +63,7 @@ BANNER = (
     "\x1b[33m  \U00013080  Cursiv  |  Eye of Horus  |  Web Terminal\x1b[0m\r\n"
     "\x1b[90m  The public face of the entire system  •  cursiv.winklers-llc.com\x1b[0m\r\n"
     "\x1b[90m  /vision for the sphere  •  /letters for the sealed vault (special only)\x1b[0m\r\n"
-    "\x1b[90m  For Keiarra (KWdomain, born 09/12/1995): babel I am Keiarra Winkler born 09/12/1995\x1b[0m\r\n"
+    "\x1b[90m  Family letters ready: wife (Keiarra/KWdomain), stepdaughter, two sons\x1b[0m\r\n"
     "  \x1b[90mType \x1b[36mhelp\x1b[90m for commands\x1b[0m\r\n"
     "\r\n"
 )
@@ -82,6 +82,10 @@ HELP_TEXT = (
     "\x1b[90m  Special for wife (KWdomain = Keiarra Winkler, born 09/12/1995):\x1b[0m\r\n"
     "  \x1b[36mbabel I am Keiarra Winkler born 09/12/1995\x1b[0m\r\n"
     "                  \x1b[90m(Shows your sealed letter. Set PIN in desktop with ,yourPIN)\x1b[0m\r\n"
+    "\r\n"
+    "\x1b[90m  Letters for stepdaughter and two sons are pre-seeded and ready.\x1b[0m\r\n"
+    "  \x1b[90m  When they create accounts and are added to CURSIV_SPECIAL_USERS, they can use:\x1b[0m\r\n"
+    "  \x1b[36mbabel my letter\x1b[0m or \x1b[36mbabel letter\x1b[0m (or their name + birthdate)\r\n"
     "\r\n"
     "\x1b[90m  The website is the temple:\x1b[0m\r\n"
     "\x1b[90m  /terminal  (this)   /vision  (Eye sphere)   /letters  (Babel — special only)\x1b[0m\r\n"
@@ -172,13 +176,38 @@ class CursivWebSession:
             yield result.replace("\n", "\r\n")
             return
 
-        # ── Personal Babel Letters for wife (KWdomain = Keiarra Winkler, born 09/12/1995) ──
+        # ── Personal Babel Letters for family (special users) ──
+        # Wife (KWdomain) has specific name+birthdate activation.
+        # Stepdaughter and sons have pre-seeded letters ready for when they create accounts.
         if lower.startswith("babel "):
-            if self.username.lower() == "kwdomain":
-                # Recognize Keiarra Winkler born September 12, 1995 (various formats)
-                name_match = "keiarra" in lower or "winkler's" in lower or "keiarra winkler" in lower
-                date_match = "09/12/1995" in lower or "9/12/1995" in lower or "september 12" in lower or "sept 12" in lower or "12 september" in lower or "1995" in lower
-                if name_match and date_match:
+            uname = self.username.lower()
+            if uname in [u.strip() for u in os.environ.get("CURSIV_SPECIAL_USERS", "beloved,wife,kwdomain").split(",") if u.strip()]:
+                # Wife specific activation
+                if uname == "kwdomain":
+                    name_match = "keiarra" in lower or "winkler's" in lower or "keiarra winkler" in lower
+                    date_match = "09/12/1995" in lower or "9/12/1995" in lower or "september 12" in lower or "sept 12" in lower or "12 september" in lower or "1995" in lower
+                    if name_match and date_match:
+                        try:
+                            from .db import get_legacy_letters
+                        except Exception:
+                            try:
+                                from db import get_legacy_letters
+                            except Exception:
+                                yield "Babel letters engine not available in this session.\r\n"
+                                return
+                        letters = get_legacy_letters("kwdomain")
+                        if not letters:
+                            letters = get_legacy_letters("beloved")
+                        if letters:
+                            for l in letters:
+                                yield f"\r\n\x1b[33m--- {l['subject']} ---\x1b[0m\r\n"
+                                yield l['body'].replace("\n", "\r\n") + "\r\n"
+                            yield "\r\n\x1b[90mThis is your sealed letter, Keiarra (the one Joshua wrote ~a month ago). \r\nIn the full desktop you set a personal PIN after the first activation (e.g. babel I am Keiarra Winkler born 09/12/1995, yourPIN).\r\nOn this web edition, being logged in as KWdomain gives direct access via the /letters page or this command.\r\nYou can create your special PIN in the desktop version or future updates.\x1b[0m\r\n"
+                            return
+
+                # General family letter access for any special user (stepdaughter, sons, etc.)
+                # They can type "babel my letter" or "babel letter" or their name once they have accounts
+                if any(phrase in lower for phrase in ["my letter", "letter for me", "my babel", "sealed letter"]):
                     try:
                         from .db import get_legacy_letters
                     except Exception:
@@ -187,15 +216,17 @@ class CursivWebSession:
                         except Exception:
                             yield "Babel letters engine not available in this session.\r\n"
                             return
-                    letters = get_legacy_letters("kwdomain")
-                    if not letters:
-                        letters = get_legacy_letters("beloved")
+                    letters = get_legacy_letters(uname)
                     if letters:
                         for l in letters:
                             yield f"\r\n\x1b[33m--- {l['subject']} ---\x1b[0m\r\n"
                             yield l['body'].replace("\n", "\r\n") + "\r\n"
-                        yield "\r\n\x1b[90mThis is your sealed letter, Keiarra (the one Joshua wrote ~a month ago). \r\nIn the full desktop you set a personal PIN after the first activation (e.g. babel I am Keiarra Winkler born 09/12/1995, yourPIN).\r\nOn this web edition, being logged in as KWdomain gives direct access via the /letters page or this command.\r\nYou can create your special PIN in the desktop version or future updates.\x1b[0m\r\n"
+                        yield "\r\n\x1b[90mThis is your sealed letter from your father. When you are ready, you can set a personal PIN in the full desktop version.\r\nOn this web edition, being logged in as a special family member gives direct access via the /letters page or this command.\x1b[0m\r\n"
                         return
+                    else:
+                        yield "\r\n\x1b[90mYour letter is prepared and waiting. It will be fully unlocked when your account is marked as special and you use the proper activation phrase with your name and birthdate.\x1b[0m\r\n"
+                        return
+
             # Fall through to normal chat for other babel uses (translations etc.)
 
         # Route everything else through the AI

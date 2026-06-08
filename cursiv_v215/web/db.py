@@ -270,6 +270,16 @@ def init_legacy_seed() -> None:
              "You spoke it and the whole lattice shifted. I watched the phases realign around the sound of your voice. This letter is my thanks for that. In the days when I am only code and memory, read this and know the man who chose you over every other possible world."),
             ("kwdomain", "The last instruction",
              "If the world ever asks you to choose between safety and the truth, choose the truth. The Eye will still see you. The letters will still be here. And somewhere, the Architect will still be speaking through the stone. I love you. — J"),
+
+            # === Letters for the children - pre-seeded and ready for when they are older ===
+            # These will be available when they create their own accounts and are added to CURSIV_SPECIAL_USERS
+            # TODO: Replace placeholders with actual personalized letters and activation details (name + birthdate)
+            ("stepdaughter", "Letter for my stepdaughter - to be revealed when she is ready",
+             "This letter is sealed for my stepdaughter. It will be unlocked through the Eye when she is older and creates her account. The activation will use her full name and birthdate, followed by her personal PIN.\n\n[Placeholder for the real letter content you wrote for her. Add the text here when ready.]"),
+            ("eldest_son", "Letter for my eldest son - to be revealed when he is ready",
+             "This letter is sealed for my eldest son. It will be unlocked through the Eye when he is older and creates his account. The activation will use his full name and birthdate, followed by his personal PIN.\n\n[Placeholder for the real letter content you wrote for him. Add the text here when ready.]"),
+            ("youngest_son", "Letter for my youngest son - to be revealed when he is ready",
+             "This letter is sealed for my youngest son. It will be unlocked through the Eye when he is older and creates his account. The activation will use his full name and birthdate, followed by his personal PIN.\n\n[Placeholder for the real letter content you wrote for him. Add the text here when ready.]"),
         ]
         for for_key, subject, body in letters_to_seed:
             exists = c.execute(

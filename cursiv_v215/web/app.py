@@ -48,8 +48,9 @@ _VISION_FILE   = _ROOT_DIR / "system_vision.html"
 _LETTERS_FILE  = _WEB_DIR / "letters.html"
 _FLEET_TOKEN   = os.environ.get("CURSIV_FLEET_TOKEN", "")
 
-# Special users (wife etc) who get private Babel Letters access.
-# Set CURSIV_SPECIAL_USERS=kwdomain,beloved on Railway.
+# Special users (wife, stepdaughter, sons, etc.) who get private Babel Letters access.
+# Set CURSIV_SPECIAL_USERS=kwdomain,stepdaughter,eldest_son,youngest_son on Railway.
+# Letters are pre-seeded in db.py for when they create accounts.
 _SPECIAL_USERS = {
     u.strip().lower() for u in
     os.environ.get("CURSIV_SPECIAL_USERS", "beloved,wife").split(",") if u.strip()
