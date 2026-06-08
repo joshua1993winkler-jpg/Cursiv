@@ -1,17 +1,17 @@
 ; ============================================================
-; Cursiv v3.14-U09 — One-click full dependency bootstrap
-; Produces: installer\Output\Cursiv-Setup-3.14-U09.exe
+; Cursiv v3.14-U11 — Full desktop bundle + CLI fix
+; Produces: installer\Output\Cursiv-Setup-3.14-U11.exe
 ;
-; Offline-first AI workspace. Runs without internet after install.
-; Full setup script opens 12 windows: Git, Python, Ollama, models,
-; pip packages, verification — everything in one click.
+; Full PyInstaller bundle: CursivLauncher.exe (GUI tray + guardian +
+; feedback loops + substrate browser) + Cursiv.exe (CLI terminal).
+; Patches applied: groovy/version.txt + pandas stub (fixes CLI crash).
+; Bootstrap script installs Ollama + all pip packages post-install.
 ;
 ; Compile: iscc installer\cursiv_setup.iss
-;          (or run scripts\package.bat)
 ; ============================================================
 
 #define AppName      "Cursiv"
-#define AppVer       "3.14-U09"
+#define AppVer       "3.14-U11"
 #define AppPublisher "Joshua Winkler"
 #define AppURL       "https://github.com/joshua1993winkler-jpg/Cursiv"
 #define AppExe       "Cursiv.exe"
@@ -33,7 +33,7 @@ LicenseFile=..\LICENSE
 InfoAfterFile=..\CHANGELOG.md
 AppComments=Offline AI workspace with cascade routing (xAI → OpenAI → Claude → Ollama), live status indicators, and security-question password recovery. No internet required after install. Your data never leaves your machine.
 OutputDir=Output
-OutputBaseFilename=Cursiv-Setup-3.14-U09
+OutputBaseFilename=Cursiv-Setup-3.14-U11
 SetupIconFile=..\launcher\resources\icons\cursiv.ico
 WizardSmallImageFile=..\launcher\resources\icons\cursiv_256.png
 Compression=lzma2/ultra64
@@ -53,14 +53,21 @@ Name: "autostart";    Description: "Start Cursiv when Windows starts";          
 Name: "csb";          Description: "Cursiv Substrate Browser — adds a desktop icon for the local curs.http:// browser"; GroupDescription: "Optional components:"
 
 [Files]
-; Main application (one-dir PyInstaller bundle)
+; ── Main application (PyInstaller bundle: CursivLauncher.exe + Cursiv.exe) ───
+; Includes groovy/version.txt and pandas stub patch — CLI no longer crashes.
 Source: "..\dist\Cursiv\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 
-; Ollama bootstrap — downloads and installs Ollama + llama3.1 post-install
-Source: "..\scripts\install_ollama.ps1"; DestDir: "{app}\scripts"; Flags: ignoreversion
+; ── .bat launchers (alternative entry points from any terminal) ───────────────
+Source: "..\launcher\cursiv.bat";     DestDir: "{app}"; Flags: ignoreversion
+Source: "..\launcher\cursiv-web.bat"; DestDir: "{app}"; Flags: ignoreversion
 
-; Full one-click bootstrap — installs every requirement (Git, Python, Ollama, pip packages, etc.)
-Source: "..\scripts\cursiv_full_setup.ps1"; DestDir: "{app}\scripts"; Flags: ignoreversion
+; ── Bootstrap scripts ─────────────────────────────────────────────────────────
+Source: "..\scripts\cursiv_bootstrap.ps1";   DestDir: "{app}\scripts"; Flags: ignoreversion
+Source: "..\scripts\cursiv_full_setup.ps1";  DestDir: "{app}\scripts"; Flags: ignoreversion
+Source: "..\scripts\install_ollama.ps1";     DestDir: "{app}\scripts"; Flags: ignoreversion
+
+; ── Web terminal HTML (browser interface) ─────────────────────────────────────
+Source: "..\cursiv_v215\web\terminal.html"; DestDir: "{app}\_internal\cursiv_v215\web"; Flags: ignoreversion
 
 [Icons]
 ; Start Menu
