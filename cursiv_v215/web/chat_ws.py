@@ -62,8 +62,7 @@ BANNER = (
     "\r\n"
     "\x1b[33m  \U00013080  Cursiv  |  Eye of Horus  |  Web Terminal\x1b[0m\r\n"
     "\x1b[90m  The public face of the entire system  •  cursiv.winklers-llc.com\x1b[0m\r\n"
-    "\x1b[90m  /vision for the sphere  •  /letters for the sealed vault (special only)\x1b[0m\r\n"
-    "\x1b[90m  Family letters ready: wife (Keiarra/KWdomain), stepdaughter, two sons\x1b[0m\r\n"
+    "\x1b[90m  Family: Keiarra (KWdomain 09/12/1995) • Naylie (03/31/2016) • Kain (03/03/2020) • Eli (08/10/2022)\x1b[0m\r\n"
     "  \x1b[90mType \x1b[36mhelp\x1b[90m for commands\x1b[0m\r\n"
     "\r\n"
 )
@@ -79,13 +78,14 @@ HELP_TEXT = (
     "  \x1b[36mstudy <ref>\x1b[0m     Alias for bible\r\n"
     "  \x1b[36m<message>\x1b[0m       Talk to the system\r\n"
     "\r\n"
-    "\x1b[90m  Special for wife (KWdomain = Keiarra Winkler, born 09/12/1995):\x1b[0m\r\n"
-    "  \x1b[36mbabel I am Keiarra Winkler born 09/12/1995\x1b[0m\r\n"
-    "                  \x1b[90m(Shows your sealed letter. Set PIN in desktop with ,yourPIN)\x1b[0m\r\n"
+    "\x1b[90m  Special family activations (use exact name + birthdate):\x1b[0m\r\n"
+    "  \x1b[36mbabel I am Keiarra Winkler born 09/12/1995\x1b[0m   (wife, KWdomain)\r\n"
+    "  \x1b[36mbabel I am Naylie Rae Shaffer born 03/31/2016\x1b[0m (stepdaughter)\r\n"
+    "  \x1b[36mbabel I am Allan Kain Winkler born 03/03/2020\x1b[0m (eldest son)\r\n"
+    "  \x1b[36mbabel I am Elijah James Winkler born 08/10/2022\x1b[0m (youngest son)\r\n"
+    "                  \x1b[90m(Shows sealed letter. Set PIN in desktop with ,yourPIN)\x1b[0m\r\n"
     "\r\n"
-    "\x1b[90m  Letters for stepdaughter and two sons are pre-seeded and ready.\x1b[0m\r\n"
-    "  \x1b[90m  When they create accounts and are added to CURSIV_SPECIAL_USERS, they can use:\x1b[0m\r\n"
-    "  \x1b[36mbabel my letter\x1b[0m or \x1b[36mbabel letter\x1b[0m (or their name + birthdate)\r\n"
+    "\x1b[90m  On web: login with the special username + /letters or the command above.\x1b[0m\r\n"
     "\r\n"
     "\x1b[90m  The website is the temple:\x1b[0m\r\n"
     "\x1b[90m  /terminal  (this)   /vision  (Eye sphere)   /letters  (Babel — special only)\x1b[0m\r\n"
@@ -226,6 +226,35 @@ class CursivWebSession:
                     else:
                         yield "\r\n\x1b[90mYour letter is prepared and waiting. It will be fully unlocked when your account is marked as special and you use the proper activation phrase with your name and birthdate.\x1b[0m\r\n"
                         return
+
+                # Specific name+birthdate for stepdaughter and sons (when they log in with their usernames)
+                if uname == "naylie":
+                    if "naylie" in lower and ("03/31/2016" in lower or "3/31/2016" in lower or "march 31" in lower or "march 31st" in lower or "2016" in lower):
+                        letters = get_legacy_letters("naylie")
+                        if letters:
+                            for l in letters:
+                                yield f"\r\n\x1b[33m--- {l['subject']} ---\x1b[0m\r\n"
+                                yield l['body'].replace("\n", "\r\n") + "\r\n"
+                            yield "\r\n\x1b[90mThis is your sealed letter, Naylie. In the full desktop you set a personal PIN after the first activation (e.g. babel I am Naylie Rae Shaffer born 03/31/2016, yourPIN).\r\nOn this web edition, being logged in as naylie gives direct access via the /letters page or this command.\r\n\x1b[0m\r\n"
+                            return
+                if uname == "kain":
+                    if "kain" in lower and ("03/03/2020" in lower or "3/3/2020" in lower or "march 3" in lower or "march 3rd" in lower or "2020" in lower):
+                        letters = get_legacy_letters("kain")
+                        if letters:
+                            for l in letters:
+                                yield f"\r\n\x1b[33m--- {l['subject']} ---\x1b[0m\r\n"
+                                yield l['body'].replace("\n", "\r\n") + "\r\n"
+                            yield "\r\n\x1b[90mThis is your sealed letter, Kain. In the full desktop you set a personal PIN after the first activation (e.g. babel I am Allan Kain Winkler born 03/03/2020, yourPIN).\r\nOn this web edition, being logged in as kain gives direct access via the /letters page or this command.\r\n\x1b[0m\r\n"
+                            return
+                if uname == "eli":
+                    if "eli" in lower and ("08/10/2022" in lower or "8/10/2022" in lower or "august 10" in lower or "aug 10" in lower or "2022" in lower):
+                        letters = get_legacy_letters("eli")
+                        if letters:
+                            for l in letters:
+                                yield f"\r\n\x1b[33m--- {l['subject']} ---\x1b[0m\r\n"
+                                yield l['body'].replace("\n", "\r\n") + "\r\n"
+                            yield "\r\n\x1b[90mThis is your sealed letter, Eli. In the full desktop you set a personal PIN after the first activation (e.g. babel I am Elijah James Winkler born 08/10/2022, yourPIN).\r\nOn this web edition, being logged in as eli gives direct access via the /letters page or this command.\r\n\x1b[0m\r\n"
+                            return
 
             # Fall through to normal chat for other babel uses (translations etc.)
 
