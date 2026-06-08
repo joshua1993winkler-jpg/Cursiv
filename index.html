@@ -2485,6 +2485,12 @@ function eyeHandleKey({ key, domEvent }) {
 
   const printable = !domEvent.altKey && !domEvent.ctrlKey && !domEvent.metaKey;
 
+  if (printable && key && key.length === 1 && eyeTerm) {
+    eyeInputBuffer += key;
+    eyeTerm.write(key);
+    return;
+  }
+
   switch (domEvent.keyCode) {
     case 13: // Enter
       if (eyeTerm) eyeTerm.write('\r\n');
@@ -2525,11 +2531,6 @@ function eyeHandleKey({ key, domEvent }) {
         eyeShowPrompt();
       }
       break;
-    default:
-      if (printable && key && eyeTerm) {
-        eyeInputBuffer += key;
-        eyeTerm.write(key);
-      }
   }
 }
 

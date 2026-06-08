@@ -472,6 +472,12 @@ function handleKey({ key, domEvent }) {
 
   const printable = !domEvent.altKey && !domEvent.ctrlKey && !domEvent.metaKey;
 
+  if (printable && key && key.length === 1) {
+    inputBuffer += key;
+    term.write(key);
+    return;
+  }
+
   switch (domEvent.keyCode) {
     case 13: // Enter
       term.write('\r\n');
@@ -517,12 +523,6 @@ function handleKey({ key, domEvent }) {
         showPrompt();
       }
       break;
-
-    default:
-      if (printable && key) {
-        inputBuffer += key;
-        term.write(key);
-      }
   }
 }
 
