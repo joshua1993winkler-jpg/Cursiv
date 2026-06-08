@@ -2621,12 +2621,26 @@ function eyeShowTerminal() {
 
   eyeUserLabel.textContent = eyeUsernameState || '';
 
-  // Show Babel Letters link only for special users
+  // Show special links/badges
   fetch(EYE_API_BASE + '/api/me', {
     headers: { 'Authorization': 'Bearer ' + eyeTokenState }
   }).then(r => r.json()).then(me => {
-    if (me && me.is_special && eyeLettersLink) {
+    if (!me) return;
+    if (me.is_special && eyeLettersLink) {
       eyeLettersLink.style.display = 'inline-block';
+    }
+    if (me.is_master) {
+      const badge = document.getElementById('eye-edition-badge') || document.createElement('span');
+      badge.id = 'eye-edition-badge';
+      badge.textContent = 'MASTER';
+      badge.style.cssText = 'margin-left:8px;font-size:.65rem;padding:1px 6px;border:1px solid #c9a741;color:#c9a741;';
+      const top = document.getElementById('eye-topbar');
+      if (top && !document.getElementById('eye-edition-badge')) top.insertBefore(badge, top.children[1] || null);
+      // Masters get quick access to full legacy view
+      if (eyeLettersLink) {
+        eyeLettersLink.textContent = 'LETTERS (MASTER)';
+        eyeLettersLink.href = '/letters?master=1';
+      }
     }
   }).catch(() => {});
 

@@ -317,7 +317,7 @@
 <div id="app">
   <div id="topbar">
     <span class="brand">𓂀 Cursiv</span>
-    <span class="edition-badge">Eye of Horus • Web</span>
+    <span class="edition-badge" id="edition-badge">Eye of Horus • Web</span>
     <div class="spacer"></div>
     <span class="user-label" id="user-label"></span>
     <span id="conn-dot" class="connecting" title="Connecting..."></span>
@@ -627,13 +627,25 @@ function showTerminal() {
   app.classList.add('visible');
   document.getElementById('user-label').textContent = username;
 
-  // Special access: show Babel Letters button for wife / beloved
+  // Special + master access
   fetch(API_BASE + '/api/me', {
     headers: { 'Authorization': 'Bearer ' + token }
   }).then(r => r.json()).then(me => {
-    if (me && me.is_special) {
+    if (!me) return;
+    const badge = document.getElementById('edition-badge');
+    if (me.is_master && badge) {
+      badge.textContent = 'MASTER • Eye of Horus • Web';
+      badge.style.borderColor = '#c9a741';
+      badge.style.color = '#c9a741';
+    } else if (me.is_special && badge) {
+      badge.textContent = 'Special Access • Eye of Horus • Web';
+    }
+    if (me.is_special) {
       const b = document.getElementById('letters-btn');
-      if (b) b.style.display = 'inline-block';
+      if (b) {
+        b.style.display = 'inline-block';
+        if (me.is_master) b.textContent = 'LETTERS (MASTER)';
+      }
     }
   }).catch(() => {});
 

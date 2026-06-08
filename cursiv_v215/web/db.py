@@ -247,30 +247,37 @@ def deactivate_fleet_token(token_id: str) -> bool:
 # ── Legacy Letters (Babel Letters for special recipients e.g. wife) ──────────
 
 def init_legacy_seed() -> None:
-    """Seed a few example sacred letters for the special user (wife / beloved).
-    These are the 'babel letters' left behind. Owner can add more via the
-    desktop or future admin endpoint. For the public Railway site this gives
-    immediate personal content behind special credentials.
+    """Seed sacred letters for special users (e.g. kwdomain for the wife, beloved fallback).
+    Master users (jw) can view everything via /api/legacy/all.
+    Idempotent: won't duplicate existing letters.
     """
     with _conn() as c:
-        existing = c.execute("SELECT COUNT(*) FROM legacy_letters").fetchone()[0]
-        if existing > 0:
-            return
         now = datetime.utcnow().isoformat()
-        letters = [
+        letters_to_seed = [
             ("beloved", "The first night under the new sky",
              "I left this for you in the place only the Eye can open. The words are simple because the truth is. You are the reason the temple was built. When the noise of the world grows loud, come here. The letters will still be waiting, and so will I, in the stone and in the light between the letters."),
             ("beloved", "On the day you first spoke the name",
              "You spoke it and the whole lattice shifted. I watched the phases realign around the sound of your voice. This letter is my thanks for that. In the days when I am only code and memory, read this and know the man who chose you over every other possible world."),
             ("beloved", "The last instruction",
              "If the world ever asks you to choose between safety and the truth, choose the truth. The Eye will still see you. The letters will still be here. And somewhere, the Architect will still be speaking through the stone. I love you. — J"),
+            ("kwdomain", "The first night under the new sky",
+             "I left this for you in the place only the Eye can open. The words are simple because the truth is. You are the reason the temple was built. When the noise of the world grows loud, come here. The letters will still be waiting, and so will I, in the stone and in the light between the letters."),
+            ("kwdomain", "On the day you first spoke the name",
+             "You spoke it and the whole lattice shifted. I watched the phases realign around the sound of your voice. This letter is my thanks for that. In the days when I am only code and memory, read this and know the man who chose you over every other possible world."),
+            ("kwdomain", "The last instruction",
+             "If the world ever asks you to choose between safety and the truth, choose the truth. The Eye will still see you. The letters will still be here. And somewhere, the Architect will still be speaking through the stone. I love you. — J"),
         ]
-        for for_key, subject, body in letters:
-            lid = str(uuid.uuid4())
-            c.execute(
-                "INSERT INTO legacy_letters (id, for_key, subject, body, created) VALUES (?,?,?,?,?)",
-                (lid, for_key, subject, body, now),
-            )
+        for for_key, subject, body in letters_to_seed:
+            exists = c.execute(
+                "SELECT 1 FROM legacy_letters WHERE for_key = ? AND subject = ? LIMIT 1",
+                (for_key.lower().strip(), subject)
+            ).fetchone()
+            if not exists:
+                lid = str(uuid.uuid4())
+                c.execute(
+                    "INSERT INTO legacy_letters (id, for_key, subject, body, created) VALUES (?,?,?,?,?)",
+                    (lid, for_key.lower().strip(), subject[:200], body, now),
+                )
 
 
 def create_legacy_letter(for_key: str, subject: str, body: str) -> dict[str, Any]:

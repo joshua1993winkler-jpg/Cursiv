@@ -92,8 +92,13 @@ async function load() {
     return;
   }
 
+  const isMasterView = new URLSearchParams(location.search).has('master');
+
   try {
-    const res = await fetch(API_BASE + '/api/legacy/letters', {
+    let url = API_BASE + '/api/legacy/letters';
+    if (isMasterView) url += '?master=1';  // will be handled by backend if master
+
+    const res = await fetch(url, {
       headers: { 'Authorization': 'Bearer ' + token }
     });
     if (res.status === 403) {
@@ -112,11 +117,14 @@ async function load() {
       lettersEl.innerHTML = `<div class="empty">The vault is quiet for now.<br>More letters may arrive with time.</div>`;
       return;
     }
-    lettersEl.innerHTML = letters.map(l => `
+    const header = data.for && data.for.includes('master') 
+      ? `<div style="margin-bottom:12px;color:#c9a741;font-size:.8rem;">MASTER VIEW — all sealed letters</div>` 
+      : '';
+    lettersEl.innerHTML = header + letters.map(l => `
       <div class="letter">
         <div class="letter-subject">${escapeHtml(l.subject)}</div>
         <div class="letter-body">${escapeHtml(l.body)}</div>
-        <div class="letter-meta">${new Date(l.created).toLocaleDateString()} — sealed for you</div>
+        <div class="letter-meta">${new Date(l.created).toLocaleDateString()} — for ${escapeHtml(l.for_key || 'you')}</div>
       </div>
     `).join('');
   } catch (e) {

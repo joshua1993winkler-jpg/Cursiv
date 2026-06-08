@@ -49,10 +49,17 @@ _LETTERS_FILE  = _WEB_DIR / "letters.html"
 _FLEET_TOKEN   = os.environ.get("CURSIV_FLEET_TOKEN", "")
 
 # Special users (wife etc) who get private Babel Letters access.
-# Set CURSIV_SPECIAL_USERS=beloved,her_private_name on Railway.
+# Set CURSIV_SPECIAL_USERS=kwdomain,beloved on Railway.
 _SPECIAL_USERS = {
     u.strip().lower() for u in
     os.environ.get("CURSIV_SPECIAL_USERS", "beloved,wife").split(",") if u.strip()
+}
+
+# Master / owner users (JW etc) – get full visibility (e.g. all legacy letters, master badge).
+# Set CURSIV_MASTER_USERS=jw on Railway.
+_MASTER_USERS = {
+    u.strip().lower() for u in
+    os.environ.get("CURSIV_MASTER_USERS", "jw").split(",") if u.strip()
 }
 
 
@@ -62,14 +69,21 @@ def _is_special_user(username: str | None) -> bool:
     return username.lower().strip() in _SPECIAL_USERS
 
 
+def _is_master_user(username: str | None) -> bool:
+    if not username:
+        return False
+    return username.lower().strip() in _MASTER_USERS
+
+
 def _user_response(user: dict, token: str) -> dict:
-    """Standard login/me response + special flag for Babel Letters."""
+    """Standard login/me response + special + master flags."""
     uname = user.get("username", "")
     return {
         "token": token,
         "user_id": user["id"],
         "username": uname,
         "is_special": _is_special_user(uname),
+        "is_master": _is_master_user(uname),
     }
 
 try:
@@ -493,6 +507,7 @@ def me(authorization: str | None = Header(None)):
         "id": user["id"],
         "username": uname,
         "is_special": _is_special_user(uname),
+        "is_master": _is_master_user(uname),
     }
 
 
@@ -523,26 +538,28 @@ def remove_post(post_id: str, authorization: str | None = Header(None)):
 
 @app.get("/api/legacy/letters")
 def legacy_letters(authorization: str | None = Header(None)):
-    """Return letters for the authenticated special user.
-    Only users with is_special (or exact match in CURSIV_SPECIAL_USERS) can read.
+    """Return letters for the authenticated special user (or master can view their own + special).
     """
     user = _require_auth(authorization)
-    if not _is_special_user(user.get("username")):
+    uname = user.get("username", "")
+    if _is_master_user(uname):
+        # Masters can see the primary wife's letters (kwdomain) + beloved fallback
+        letters = get_legacy_letters("kwdomain") or get_legacy_letters("beloved")
+        return {"letters": letters, "for": "kwdomain (master view)"}
+    if not _is_special_user(uname):
         raise HTTPException(403, "These letters are sealed for a specific heart.")
-    letters = get_legacy_letters(user["username"])
-    # Also allow a conventional key "beloved" if the username is different
-    if not letters and _is_special_user(user["username"]):
+    letters = get_legacy_letters(uname)
+    if not letters:
         letters = get_legacy_letters("beloved")
-    return {"letters": letters, "for": user["username"]}
+    return {"letters": letters, "for": uname}
 
 
 @app.get("/api/legacy/all")
 def legacy_all(authorization: str | None = Header(None)):
-    """Owner view of all letters (for managing what was left for her)."""
+    """Master/owner view of all letters (for managing what was left for her)."""
     user = _require_auth(authorization)
-    # Very light owner gate: any logged in user on the owner machine or with bridge
-    # For public Railway this is mostly for the desktop owner.
-    # In practice the wife never sees this; only the one who left the letters does.
+    if not _is_master_user(user.get("username")):
+        raise HTTPException(403, "Master access only.")
     return {"letters": list_all_legacy_letters()}
 
 
