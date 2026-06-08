@@ -167,7 +167,7 @@ end;
 // ---------------------------------------------------------------------------
 function GetPullModel(Param: string): string;
 begin
-  if IsTaskSelected('pullmodel') then
+  if WizardIsTaskSelected('pullmodel') then
     Result := 'yes'
   else
     Result := 'no';
