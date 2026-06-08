@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cursiv — AI Workspace</title>
-<meta name="description" content="The AI workspace that lives on your machine. No cloud. No keys. No one watching.">
+<title>Cursiv • The Eye of Horus</title>
+<meta name="description" content="The sacred public temple. Login to the living Eye — full terminal, shared Board, sealed family letters, and the Vision. Free. Badass. Human sovereignty.">
 <meta property="og:title" content="Cursiv — AI Workspace">
 <meta property="og:description" content="14-agent council. Full offline. xAI → OpenAI → Claude → Ollama cascade routing. Your data never leaves.">
 <meta property="og:image" content="https://cursiv.winklers-llc.com/assets/og-image.png">
@@ -85,9 +85,12 @@ nav {
   display: flex; align-items: center; justify-content: space-between;
   padding: 0 48px;
   height: 56px;
-  background: rgba(8,9,12,0.88);
-  backdrop-filter: blur(14px);
+  background: rgba(8,9,12,0.92);
+  backdrop-filter: blur(18px);
   border-bottom: 1px solid var(--border);
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 1.5px;
 }
 
 .nav-logo {
@@ -97,6 +100,27 @@ nav {
   font-size: 13px; font-weight: 700; letter-spacing: 3.5px;
 }
 .nav-logo .hex { font-size: 19px; filter: drop-shadow(0 0 5px var(--gold)); }
+
+.nav-links {
+  display: flex;
+  gap: 32px;
+  align-items: center;
+}
+.nav-links a {
+  color: var(--silver2);
+  text-decoration: none;
+  transition: color .15s;
+}
+.nav-links a:hover { color: var(--gold); }
+
+.nav-user {
+  font-size: 11px;
+  color: var(--gold);
+  padding: 4px 10px;
+  border: 1px solid var(--gold-dim);
+  border-radius: 2px;
+  display: none;
+}
 
 nav ul { display: flex; gap: 32px; list-style: none; }
 nav ul a {
@@ -864,18 +888,20 @@ footer {
 
 <!-- ══ NAV ══════════════════════════════════════════════════════════ -->
 <nav class="layer">
-  <a href="#" class="nav-logo"><span class="hex">⬡</span>CURSIV</a>
-  <ul>
-    <li><a href="#new">What's New</a></li>
-    <li><a href="#features">Features</a></li>
-    <li><a href="#try-live">Try Live</a></li>
-    <li><a href="#install">Install</a></li>
-    <li><a href="#academy">The Academy</a></li>
-    <li><a href="#history">History</a></li>
-    <li><a href="#origin">Origin</a></li>
-    <li><a href="https://github.com/joshua1993winkler-jpg/Cursiv" target="_blank">GitHub ↗</a></li>
-  </ul>
-  <span class="nav-ver">v3.14-U08</span>
+  <a href="#" class="nav-logo"><span class="hex">𓂀</span> THE EYE</a>
+  
+  <div class="nav-links">
+    <a href="#the-eye">The Eye</a>
+    <a href="#the-board">The Board</a>
+    <a href="#the-letters">The Letters</a>
+    <a href="#the-vision">The Vision</a>
+    <a href="https://github.com/joshua1993winkler-jpg/Cursiv" target="_blank">Desktop</a>
+  </div>
+
+  <div style="display:flex; align-items:center; gap:12px;">
+    <span id="nav-user-badge" class="nav-user"></span>
+    <a href="#the-eye" style="font-size:11px; padding:6px 14px; border:1px solid var(--gold); color:var(--gold); text-decoration:none; letter-spacing:1px;">ENTER THE TEMPLE</a>
+  </div>
 </nav>
 
 <!-- ══ HERO ══════════════════════════════════════════════════════════ -->
@@ -1020,6 +1046,34 @@ footer {
 
   <div style="text-align:center; margin-top: 10px; font-size: 11px; color: #6b6f7a;">
     Your session uses the same account as the rest of the temple. Everything you do here is also available at <a href="/terminal" style="color:#c9a741;">/terminal</a>.
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════
+     THE BOARD — BADASS INTERACTIVE SHARED MESSAGE AREA
+     Users send real messages to each other here. Fully integrated.
+     ══════════════════════════════════════════════════════════ -->
+<section id="the-board" style="max-width: 1120px; margin: 70px auto; padding: 0 20px;">
+  <div style="margin-bottom: 22px;">
+    <div style="font-family: var(--mono); font-size: 10px; letter-spacing: 3.5px; color: var(--gold); text-transform: uppercase; opacity: .75;">THE LIVING RECORD</div>
+    <h3 style="font-family: var(--serif); font-size: 36px; color: var(--silver); margin: 2px 0 6px;">The Board</h3>
+    <p style="color: var(--silver2); max-width: 620px; font-size: 15px;">This is where the temple speaks to itself. Post here or type <span style="color:#c9a741;">blast your words</span> in the Eye above. Every transmission stays visible to the community.</p>
+  </div>
+
+  <div style="display: grid; grid-template-columns: 1fr 400px; gap: 18px;">
+    <!-- Posts -->
+    <div style="background: #0a0c12; border: 1px solid var(--border2); padding: 22px;">
+      <div style="font-family: var(--mono); font-size: 10px; color: var(--gold); letter-spacing: 2px; margin-bottom: 14px; text-transform: uppercase;">Recent Transmissions</div>
+      <div id="board-posts" style="min-height: 280px; font-size: 14.5px; line-height: 1.75; color: var(--silver2);"></div>
+    </div>
+
+    <!-- Composer -->
+    <div style="background: #0a0c12; border: 1px solid var(--border2); padding: 22px; display: flex; flex-direction: column;">
+      <div style="font-family: var(--mono); font-size: 10px; color: var(--gold); letter-spacing: 2px; margin-bottom: 10px; text-transform: uppercase;">Transmit to the Temple</div>
+      <textarea id="board-text" placeholder="Your synthesis, message, or offering to the others..." style="flex:1; min-height: 160px; background:#08090C; border:1px solid var(--border); color:var(--silver); font-family:inherit; font-size:14px; padding:14px; resize:vertical; outline:none;"></textarea>
+      <button id="board-blast-btn" style="margin-top:12px; padding:13px; background:#c9a741; color:#08090C; border:none; font-size:13px; letter-spacing:1.5px; text-transform:uppercase; font-weight:600; cursor:pointer;">BLAST TO THE BOARD</button>
+      <div id="board-status" style="margin-top:8px; font-size:11px; color:#6b6f7a; min-height:16px;"></div>
+    </div>
   </div>
 </section>
 
@@ -2678,6 +2732,80 @@ function eyeBootEmbeddedTerminal() {
 }
 
 eyeBootEmbeddedTerminal();
+
+// ══════════════════════════════════════════════════════════
+// BADASS INTERACTIVE BOARD (unified on the index)
+// Users send real messages to each other publicly in the temple
+// ══════════════════════════════════════════════════════════
+(function() {
+  const feed = document.getElementById('board-posts');
+  const composer = document.getElementById('board-text');
+  const postBtn = document.getElementById('board-blast-btn');
+  const status = document.getElementById('board-status');
+
+  if (!feed || !postBtn) return;
+
+  const token = localStorage.getItem('cursiv_token');
+  const user = localStorage.getItem('cursiv_user');
+
+  async function loadBoard() {
+    try {
+      const r = await fetch('/api/posts');
+      const j = await r.json();
+      const posts = (j.posts || []).slice(0, 7);
+      if (!posts.length) {
+        feed.innerHTML = '<div style="color:#6b6f7a;font-size:13px;">The Board is quiet. Be the first to transmit.</div>';
+        return;
+      }
+      feed.innerHTML = posts.map(p => {
+        const d = (p.timestamp || '').slice(0,10);
+        return `<div style="margin-bottom:17px;padding-bottom:14px;border-bottom:1px solid #1e3030;">
+          <div style="font-size:11px;color:#c9a741;letter-spacing:1px;">${p.username} <span style="opacity:.4;">${d}</span></div>
+          <div style="margin-top:3px;color:#d8d0c0;">${(p.text || '').replace(/</g,'&lt;')}</div>
+        </div>`;
+      }).join('');
+    } catch(e) {
+      feed.innerHTML = '<div style="color:#ff5555;font-size:13px;">Could not reach the Board.</div>';
+    }
+  }
+
+  postBtn.addEventListener('click', async () => {
+    const msg = (composer.value || '').trim();
+    if (!msg) return;
+    if (!token) {
+      status.textContent = 'Login in The Eye first.';
+      status.style.color = '#ff5555';
+      setTimeout(()=>{status.textContent='';status.style.color='#6b6f7a';},1800);
+      return;
+    }
+    postBtn.disabled = true;
+    status.textContent = 'Transmitting...';
+    status.style.color = '#c9a741';
+    try {
+      const r = await fetch('/api/blast', {
+        method:'POST',
+        headers:{'Content-Type':'application/json', 'Authorization':'Bearer '+token},
+        body: JSON.stringify({text: msg, source:'broadcast'})
+      });
+      if (!r.ok) throw 0;
+      composer.value = '';
+      status.textContent = 'Transmitted.';
+      status.style.color = '#27C97A';
+      await loadBoard();
+    } catch(e) {
+      status.textContent = 'Failed. Try again.';
+      status.style.color = '#ff5555';
+    } finally {
+      postBtn.disabled = false;
+      setTimeout(()=>{ if(status){status.textContent=''; status.style.color='#6b6f7a';} }, 1600);
+    }
+  });
+
+  loadBoard();
+  setInterval(loadBoard, 42000);
+})();
 </script>
+</body>
+</html>
 </body>
 </html>
