@@ -598,7 +598,12 @@ function showTerminal() {
 
 // ── Boot ──────────────────────────────────────────────────────────────────────
 // Public standalone - no login. Secret codes for family letters.
-document.getElementById('app').style.display = 'flex';
+const appEl = document.getElementById('app');
+if (appEl) appEl.style.display = 'flex';
+
+const loginOverlay = document.getElementById('login-overlay');
+if (loginOverlay) loginOverlay.style.display = 'none';
+
 if (!term) initTerminal();
 connectWS();
 </script>

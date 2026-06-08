@@ -2364,26 +2364,16 @@ document.querySelectorAll('.reveal,.reveal-group').forEach(el=>ro.observe(el));
 'use strict';
 
 // Public standalone mode - no login
-let eyeTokenState = '';
-let eyeUsernameState = 'public';
-let eyeGroqKey = null;  // no per-user key input in public mode
-
 // Config — same dynamic base as the standalone terminal
 const EYE_API_BASE = (location.protocol === 'https:' ? 'https:' : 'http:') + '//' + location.host;
 const EYE_WS_BASE  = (location.protocol === 'https:' ? 'wss:' : 'ws:') + '//' + location.host;
 
-// Elements
-const eyeLoginCard   = document.getElementById('eye-login-card');
+// Elements - public mode, no login elements
 const eyeApp         = document.getElementById('eye-app');
-const eyeUsername    = document.getElementById('eye-username');
-const eyePassword    = document.getElementById('eye-password');
-const eyeGroqKey     = document.getElementById('eye-groq-key');
-const eyeSigninBtn   = document.getElementById('eye-signin-btn');
-const eyeRegisterBtn = document.getElementById('eye-register-btn');
-const eyeError       = document.getElementById('eye-login-error');
 const eyeUserLabel   = document.getElementById('eye-user-label');
 const eyeLettersLink = document.getElementById('eye-letters-link');
 
+// All state (public/guest)
 let eyeTerm = null;
 let eyeFitAddon = null;
 let eyeWs = null;
@@ -2391,65 +2381,19 @@ let eyeInputBuffer = '';
 let eyeHistory = [];
 let eyeHistoryPos = -1;
 let eyeIsProcessing = false;
-let eyeUsernameState = '';
+let eyeUsernameState = 'public';
 let eyeTokenState = '';
 
-// Helper
-function eyeSetError(msg) { eyeError.textContent = msg || ''; }
+// Legacy login element refs removed for public standalone mode (guard against old code)
+let eyeLoginCard = null;
+let eyeUsername = null;
+let eyePassword = null;
+let eyeGroqKey = null;
+let eyeSigninBtn = null;
+let eyeRegisterBtn = null;
+let eyeError = null;
 
-function eyeSetLoading(btn, loading) {
-  btn.disabled = loading;
-  if (btn.id === 'eye-signin-btn') btn.textContent = loading ? 'Signing in...' : 'Sign In';
-  else btn.textContent = loading ? 'Creating...' : 'Create Free Account';
-}
-
-async function eyeApiPost(path, body) {
-  const resp = await fetch(EYE_API_BASE + path, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body),
-  });
-  const data = await resp.json();
-  if (!resp.ok) throw new Error(data.detail || 'Request failed');
-  return data;
-}
-
-// Do auth (register or login) then show the terminal
-async function eyeDoAuth(register) {
-  const u = (eyeUsername.value || '').trim();
-  const p = eyePassword.value || '';
-  if (!u || !p) { eyeSetError('Username and password required.'); return; }
-
-  const btn = register ? eyeRegisterBtn : eyeSigninBtn;
-  eyeSetLoading(btn, true);
-  eyeSetError('');
-
-  try {
-    if (register) {
-      await eyeApiPost('/api/register', { username: u, password: p });
-    }
-    const data = await eyeApiPost('/api/login', { username: u, password: p });
-    eyeTokenState = data.token;
-    eyeUsernameState = data.username;
-
-    localStorage.setItem('cursiv_token', eyeTokenState);
-    localStorage.setItem('cursiv_user', eyeUsernameState);
-
-    eyeShowTerminal();
-  } catch (e) {
-    eyeSetError(e.message);
-  } finally {
-    eyeSetLoading(btn, false);
-  }
-}
-
-eyeSigninBtn.addEventListener('click', () => eyeDoAuth(false));
-eyeRegisterBtn.addEventListener('click', () => eyeDoAuth(true));
-
-['eye-username', 'eye-password'].forEach(id => {
-  const el = document.getElementById(id);
-  if (el) el.addEventListener('keydown', e => { if (e.key === 'Enter') eyeDoAuth(false); });
-});
+// Public standalone mode - no auth helpers (removed login)
 
 // Initialize the xterm + WS (the real Eye experience)
 function eyeInitTerminal() {
@@ -2481,7 +2425,11 @@ function eyeInitTerminal() {
     eyeTerm.loadAddon(new window.WebLinksAddon.WebLinksAddon());
   }
 
-  const container = document.getElementById('eye-terminal');
+  const container = document.getElementById('eye-terminal') || document.getElementById('terminal');
+  if (!container) {
+    console.warn('Eye terminal container not found');
+    return;
+  }
   eyeTerm.open(container);
   if (eyeFitAddon) eyeFitAddon.fit();
 
@@ -2588,8 +2536,8 @@ function eyeConnectWS() {
 
   let url = `${EYE_WS_BASE}/ws/chat?token=${encodeURIComponent(eyeTokenState)}`;
 
-  // Pass optional user Groq key for this session
-  const userKey = (eyeGroqKey && eyeGroqKey.value.trim()) || localStorage.getItem('cursiv_last_groq_key') || '';
+  // Pass optional user Groq key for this session (public mode: only from localStorage)
+  const userKey = localStorage.getItem('cursiv_last_groq_key') || '';
   if (userKey) {
     url += `&userGroqKey=${encodeURIComponent(userKey)}`;
     localStorage.setItem('cursiv_last_groq_key', userKey);
@@ -2640,35 +2588,34 @@ function eyeSendMessage(msg) {
   eyeWs.send(msg);
 }
 
-// Show the live terminal (hide login card)
+// Show the live terminal (public standalone - no login card)
 function eyeShowTerminal() {
-  eyeLoginCard.style.display = 'none';
-  eyeApp.style.display = 'block';
+  if (typeof eyeLoginCard !== 'undefined' && eyeLoginCard) eyeLoginCard.style.display = 'none';
+  if (eyeApp) eyeApp.style.display = 'block';
 
-  eyeUserLabel.textContent = eyeUsernameState || '';
+  if (eyeUserLabel) eyeUserLabel.textContent = eyeUsernameState || '';
 
-  // Show special links/badges
-  fetch(EYE_API_BASE + '/api/me', {
-    headers: { 'Authorization': 'Bearer ' + eyeTokenState }
-  }).then(r => r.json()).then(me => {
-    if (!me) return;
-    if (me.is_special && eyeLettersLink) {
-      eyeLettersLink.style.display = 'inline-block';
-    }
-    if (me.is_master) {
-      const badge = document.getElementById('eye-edition-badge') || document.createElement('span');
-      badge.id = 'eye-edition-badge';
-      badge.textContent = 'MASTER';
-      badge.style.cssText = 'margin-left:8px;font-size:.65rem;padding:1px 6px;border:1px solid #c9a741;color:#c9a741;';
-      const top = document.getElementById('eye-topbar');
-      if (top && !document.getElementById('eye-edition-badge')) top.insertBefore(badge, top.children[1] || null);
-      // Masters get quick access to full legacy view
-      if (eyeLettersLink) {
-        eyeLettersLink.textContent = 'LETTERS (MASTER)';
-        eyeLettersLink.href = '/letters?master=1';
+  // Show special links/badges (best effort; guests won't have is_special)
+  if (eyeTokenState) {
+    fetch(EYE_API_BASE + '/api/me', {
+      headers: { 'Authorization': 'Bearer ' + eyeTokenState }
+    }).then(r => r.json()).then(me => {
+      if (!me) return;
+      if (me.is_special && eyeLettersLink) eyeLettersLink.style.display = 'inline-block';
+      if (me.is_master) {
+        const badge = document.getElementById('eye-edition-badge') || document.createElement('span');
+        badge.id = 'eye-edition-badge';
+        badge.textContent = 'MASTER';
+        badge.style.cssText = 'margin-left:8px;font-size:.65rem;padding:1px 6px;border:1px solid #c9a741;color:#c9a741;';
+        const top = document.getElementById('eye-topbar');
+        if (top && !document.getElementById('eye-edition-badge')) top.insertBefore(badge, top.children[1] || null);
+        if (eyeLettersLink) {
+          eyeLettersLink.textContent = 'LETTERS (MASTER)';
+          eyeLettersLink.href = '/letters?master=1';
+        }
       }
-    }
-  }).catch(() => {});
+    }).catch(() => {});
+  }
 
   eyeInitTerminal();
   eyeConnectWS();
@@ -2680,38 +2627,23 @@ function eyeShowTerminal() {
   }, 420);
 }
 
-// Boot the embedded Eye on page load
+// Public standalone boot for the Eye (no login, always show the terminal)
 function eyeBootEmbeddedTerminal() {
-  // If we already have a token from previous visit (or from standalone terminal), auto-enter
-  const savedToken = localStorage.getItem('cursiv_token');
-  const savedUser  = localStorage.getItem('cursiv_user');
+  // Public mode: always show the app container
+  if (eyeApp) eyeApp.style.display = 'block';
 
-  if (savedToken && savedUser) {
-    eyeTokenState = savedToken;
-    eyeUsernameState = savedUser;
-    // Try to show the terminal immediately (the WS will validate the token)
-    eyeShowTerminal();
-  } else {
-    // Focus username for convenience
-    if (eyeUsername) eyeUsername.focus();
+  // Set public badge
+  const navBadge = document.getElementById('nav-user-badge');
+  if (navBadge) {
+    navBadge.textContent = 'public';
+    navBadge.style.display = 'inline-block';
   }
 
-  // Optional: prefill last used Groq key
-  const lastKey = localStorage.getItem('cursiv_last_groq_key');
-  if (lastKey && eyeGroqKey) eyeGroqKey.value = lastKey;
+  // Always boot the live terminal + WS immediately (guest mode)
+  eyeShowTerminal();
 }
 
-// Standalone public mode - no login required. Secret codes unlock family letters.
-document.getElementById('eye-app').style.display = 'block';
-if (!term) initTerminal();
-connectWS();
-
-const navBadge = document.getElementById('nav-user-badge');
-if (navBadge) {
-  navBadge.textContent = 'public';
-  navBadge.style.display = 'inline-block';
-}
-
+// Boot now (public Eye - terminal is the website facing display)
 eyeBootEmbeddedTerminal();
 
 // ══════════════════════════════════════════════════════════

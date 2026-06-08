@@ -166,6 +166,7 @@ class CursivWebSession:
             return
 
         lower = text.lower()
+        uname = (self.username or "guest").lower()
 
         if lower in ("help", "?", "/help", "commands"):
             yield HELP_TEXT
@@ -204,31 +205,17 @@ class CursivWebSession:
                 except Exception:
                     yield "Board posting not available in this session.\r\n"
                     return
-            user = get_user_by_username(uname) if uname != "guest" else None
             post_username = uname if uname != "guest" else "visitor"
-            if user or uname == "guest":
-                # For public/standalone terminal, allow guest posts as "visitor"
-                if not user:
-                    # Use a dummy or create guest on fly if needed; for simplicity post with visitor
-                    # To keep DB clean, we can skip actual DB insert for pure guest or use a fixed
-                    # For now, always attempt with a guest approach - if no user, just echo as public
-                    try:
-                        guest = get_user_by_username("visitor")
-                        if guest:
-                            create_post(guest["id"], post_username, msg, "broadcast")
-                        else:
-                            # echo only if no guest user
-                            pass
-                    except:
-                        pass
-                else:
+            try:
+                user = get_user_by_username(uname) if uname != "guest" else None
+                if user:
                     create_post(user["id"], post_username, msg, "broadcast")
-                yield f"\x1b[32m[Board] {msg}\x1b[0m\r\n"
-                yield "\x1b[90mPosted to the shared Board (visible to the temple).\x1b[0m\r\n"
-                return
-            else:
-                yield "Could not post.\r\n"
-                return
+                # For pure public guest, just echo (no DB user record needed)
+            except Exception:
+                pass
+            yield f"\x1b[32m[Board] {msg}\x1b[0m\r\n"
+            yield "\x1b[90mPosted to the shared Board (visible to the temple).\x1b[0m\r\n"
+            return
 
         # ── View the shared Board feed ────────────────────────────────────────
         if lower in ("board", "posts", "feed", "syntheses"):
