@@ -578,8 +578,16 @@ def terminal_page():
 @app.get("/vision", include_in_schema=False)
 def vision_page():
     """The Vision — interactive Eye of Horus display (agent phases on the sphere)."""
-    if _VISION_FILE.exists():
-        return FileResponse(_VISION_FILE, media_type="text/html")
+    candidates = [
+        _VISION_FILE,
+        _WEB_DIR / "system_vision.html",
+        _ROOT_DIR / "system_vision.html",
+        Path("/app/system_vision.html"),
+        Path("/workspace/system_vision.html"),
+    ]
+    for p in candidates:
+        if p.exists():
+            return FileResponse(p, media_type="text/html")
     raise HTTPException(404, "Vision page not found")
 
 
@@ -595,21 +603,18 @@ def letters_page(authorization: str | None = Header(None)):
 
 @app.websocket("/ws/chat")
 async def ws_chat(websocket: WebSocket, token: str = Query(default=""), userGroqKey: str = Query(default="")):
-    """Authenticated WebSocket terminal session.
-    Optional userGroqKey allows visitors on the public site to bring their own Groq key
-    for the duration of the session (falls back to server key if empty).
+    """Public standalone WebSocket terminal session (no login required).
+    Users access via the Eye on the website. Special family letters unlocked by secret codes
+    (e.g. "babel I am Keiarra Winkler born 09/12/1995").
+    Optional userGroqKey allows bringing your own Groq key for the session.
     """
-    payload = decode_token(token)
-    if not payload:
-        await websocket.accept()
-        await websocket.close(code=4001, reason="Invalid or expired token")
-        return
-
-    user = get_user_by_id(payload["sub"])
-    if not user:
-        await websocket.accept()
-        await websocket.close(code=4001, reason="User not found")
-        return
+    username = "guest"
+    if token:
+        payload = decode_token(token)
+        if payload:
+            user = get_user_by_id(payload["sub"])
+            if user:
+                username = user["username"]
 
     try:
         from cursiv_v215.web.chat_ws import CursivWebSession, BANNER
@@ -623,8 +628,7 @@ async def ws_chat(websocket: WebSocket, token: str = Query(default=""), userGroq
             return
 
     await websocket.accept()
-    # Pass the user's key (if any) so the session can use it instead of the server default
-    session = CursivWebSession(user["username"], user_groq_key=userGroqKey or None)
+    session = CursivWebSession(username, user_groq_key=userGroqKey or None)
 
     # Send banner — client shows prompt after DONE
     await websocket.send_text(BANNER)

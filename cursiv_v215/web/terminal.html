@@ -286,32 +286,7 @@
   </p>
 </div>
 
-<!-- Login overlay -->
-<div id="login-overlay">
-  <div class="login-card">
-    <div class="login-logo">
-      <span class="glyph">𓂀</span>
-      <h1>Cursiv</h1>
-      <p>Eye of Horus · Web Terminal</p>
-    </div>
 
-    <div class="form-group">
-      <label>Username</label>
-      <input type="text" id="username-input" autocomplete="username" spellcheck="false">
-    </div>
-    <div class="form-group">
-      <label>Password</label>
-      <input type="password" id="password-input" autocomplete="current-password">
-    </div>
-
-    <div class="btn-row">
-      <button class="btn primary" id="signin-btn">Sign In</button>
-      <button class="btn" id="register-btn">Register</button>
-    </div>
-
-    <div id="login-error"></div>
-  </div>
-</div>
 
 <!-- Main app -->
 <div id="app">
@@ -380,41 +355,8 @@ async function apiPost(path, body) {
   return data;
 }
 
-// ── Auth ──────────────────────────────────────────────────────────────────────
-async function doAuth(register) {
-  const u = document.getElementById('username-input').value.trim();
-  const p = document.getElementById('password-input').value;
-  if (!u || !p) { setError('Username and password required.'); return; }
-
-  const btn = document.getElementById(register ? 'register-btn' : 'signin-btn');
-  setLoading(btn, true);
-  setError('');
-
-  try {
-    if (register) {
-      await apiPost('/api/register', { username: u, password: p });
-    }
-    const data = await apiPost('/api/login', { username: u, password: p });
-    token    = data.token;
-    username = data.username;
-    localStorage.setItem('cursiv_token', token);
-    localStorage.setItem('cursiv_user', username);
-    showTerminal();
-  } catch (e) {
-    setError(e.message);
-  } finally {
-    setLoading(btn, false);
-  }
-}
-
-document.getElementById('signin-btn').addEventListener('click', () => doAuth(false));
-document.getElementById('register-btn').addEventListener('click', () => doAuth(true));
-
-['username-input', 'password-input'].forEach(id => {
-  document.getElementById(id).addEventListener('keydown', e => {
-    if (e.key === 'Enter') doAuth(false);
-  });
-});
+// ── No login required - public standalone terminal ────────────────────────────
+// Use secret codes like "babel I am Keiarra Winkler born 09/12/1995" for letters.
 
 // ── Terminal setup ────────────────────────────────────────────────────────────
 function initTerminal() {
@@ -654,11 +596,10 @@ function showTerminal() {
 }
 
 // ── Boot ──────────────────────────────────────────────────────────────────────
-if (token) {
-  showTerminal();
-} else {
-  document.getElementById('username-input').focus();
-}
+// Public standalone - no login. Secret codes for family letters.
+document.getElementById('app').style.display = 'flex';
+if (!term) initTerminal();
+connectWS();
 </script>
 </body>
 </html>

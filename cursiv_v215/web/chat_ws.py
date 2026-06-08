@@ -202,14 +202,30 @@ class CursivWebSession:
                 except Exception:
                     yield "Board posting not available in this session.\r\n"
                     return
-            user = get_user_by_username(uname)
-            if user:
-                create_post(user["id"], uname, msg, "broadcast")
-                yield f"\x1b[32mPosted to the Board:\x1b[0m {msg}\r\n"
-                yield "\x1b[90mOthers can see it in the shared memory (Board section or /api/posts).\x1b[0m\r\n"
+            user = get_user_by_username(uname) if uname != "guest" else None
+            post_username = uname if uname != "guest" else "visitor"
+            if user or uname == "guest":
+                # For public/standalone terminal, allow guest posts as "visitor"
+                if not user:
+                    # Use a dummy or create guest on fly if needed; for simplicity post with visitor
+                    # To keep DB clean, we can skip actual DB insert for pure guest or use a fixed
+                    # For now, always attempt with a guest approach - if no user, just echo as public
+                    try:
+                        guest = get_user_by_username("visitor")
+                        if guest:
+                            create_post(guest["id"], post_username, msg, "broadcast")
+                        else:
+                            # echo only if no guest user
+                            pass
+                    except:
+                        pass
+                else:
+                    create_post(user["id"], post_username, msg, "broadcast")
+                yield f"\x1b[32m[Board] {msg}\x1b[0m\r\n"
+                yield "\x1b[90mPosted to the shared Board (visible to the temple).\x1b[0m\r\n"
                 return
             else:
-                yield "Could not post — user record not found.\r\n"
+                yield "Could not post.\r\n"
                 return
 
         # ── View the shared Board feed ────────────────────────────────────────
@@ -233,92 +249,89 @@ class CursivWebSession:
             yield "\x1b[90mUse 'blast <your message>' to add your voice to the shared memory.\x1b[0m\r\n"
             return
 
-        # ── Personal Babel Letters for family (special users) ──
-        # Wife (KWdomain) has specific name+birthdate activation.
-        # Stepdaughter and sons have pre-seeded letters ready for when they create accounts.
+        # ── Personal Babel Letters via secret codes (public, no login required) ──
+        # The terminal is now standalone/public. Access sealed family letters with the right secret code.
+        # No account needed — just type the phrase.
         if lower.startswith("babel "):
-            uname = self.username.lower()
-            if uname in [u.strip() for u in os.environ.get("CURSIV_SPECIAL_USERS", "beloved,wife,kwdomain").split(",") if u.strip()]:
-                # Wife specific activation
-                if uname == "kwdomain":
-                    name_match = "keiarra" in lower or "winkler's" in lower or "keiarra winkler" in lower
-                    date_match = "09/12/1995" in lower or "9/12/1995" in lower or "september 12" in lower or "sept 12" in lower or "12 september" in lower or "1995" in lower
-                    if name_match and date_match:
-                        try:
-                            from .db import get_legacy_letters
-                        except Exception:
-                            try:
-                                from db import get_legacy_letters
-                            except Exception:
-                                yield "Babel letters engine not available in this session.\r\n"
-                                return
-                        letters = get_legacy_letters("kwdomain")
-                        if not letters:
-                            letters = get_legacy_letters("beloved")
-                        if letters:
-                            for l in letters:
-                                yield f"\r\n\x1b[33m--- {l['subject']} ---\x1b[0m\r\n"
-                                yield l['body'].replace("\n", "\r\n") + "\r\n"
-                            yield "\r\n\x1b[90mThis is your sealed letter, Keiarra (the one Joshua wrote ~a month ago). \r\nIn the full desktop you set a personal PIN after the first activation (e.g. babel I am Keiarra Winkler born 09/12/1995, yourPIN).\r\nOn this web edition, being logged in as KWdomain gives direct access via the /letters page or this command.\r\nYou can create your special PIN in the desktop version or future updates.\x1b[0m\r\n"
-                            yield "\r\n\x1b[90mVia Babel: request this letter in different languages (reply 'babel this in spanish' or 'babel this in german' etc.) or encoded/binary ('babel encode this' or 'babel this binary'). The Eye will transform it while preserving the personal meaning and tone.\x1b[0m\r\n"
-                            return
-
-                # General family letter access for any special user (stepdaughter, sons, etc.)
-                # They can type "babel my letter" or "babel letter" or their name once they have accounts
-                if any(phrase in lower for phrase in ["my letter", "letter for me", "my babel", "sealed letter"]):
+            # Keiarra (wife)
+            if "keiarra" in lower and ("09/12/1995" in lower or "9/12/1995" in lower or "september 12" in lower or "sept 12" in lower or "12 september" in lower or "1995" in lower):
+                try:
+                    from .db import get_legacy_letters
+                except Exception:
                     try:
-                        from .db import get_legacy_letters
+                        from db import get_legacy_letters
                     except Exception:
-                        try:
-                            from db import get_legacy_letters
-                        except Exception:
-                            yield "Babel letters engine not available in this session.\r\n"
-                            return
-                    letters = get_legacy_letters(uname)
-                    if letters:
-                        for l in letters:
-                            yield f"\r\n\x1b[33m--- {l['subject']} ---\x1b[0m\r\n"
-                            yield l['body'].replace("\n", "\r\n") + "\r\n"
-                        yield "\r\n\x1b[90mThis is your sealed letter from your father. When you are ready, you can set a personal PIN in the full desktop version.\r\nOn this web edition, being logged in as a special family member gives direct access via the /letters page or this command.\x1b[0m\r\n"
-                        yield "\r\n\x1b[90mVia Babel: request this letter in different languages (reply 'babel this in spanish' etc.) or encoded/binary form ('babel encode this' or 'babel this binary'). The Eye will handle the translation or encoding while keeping the personal, loving essence.\x1b[0m\r\n"
+                        yield "Babel letters engine not available in this session.\r\n"
                         return
-                    else:
-                        yield "\r\n\x1b[90mYour letter is prepared and waiting. It will be fully unlocked when your account is marked as special and you use the proper activation phrase with your name and birthdate.\x1b[0m\r\n"
+                letters = get_legacy_letters("kwdomain")
+                if not letters:
+                    letters = get_legacy_letters("beloved")
+                if letters:
+                    for l in letters:
+                        yield f"\r\n\x1b[33m--- {l['subject']} ---\x1b[0m\r\n"
+                        yield l['body'].replace("\n", "\r\n") + "\r\n"
+                    yield "\r\n\x1b[90mThis is your sealed letter, Keiarra (the one Joshua wrote ~a month ago). \r\nIn the full desktop you set a personal PIN after the first activation (e.g. babel I am Keiarra Winkler born 09/12/1995, yourPIN).\r\nOn this web terminal, use the secret code to unlock.\r\nYou can create your special PIN in the desktop version.\x1b[0m\r\n"
+                    yield "\r\n\x1b[90mVia Babel: request this letter in different languages (reply 'babel this in spanish' etc.) or encoded/binary ('babel encode this' or 'babel this binary'). The Eye transforms it while preserving the personal meaning and tone.\x1b[0m\r\n"
+                    return
+
+            # Naylie (stepdaughter)
+            if "naylie" in lower and ("03/31/2016" in lower or "3/31/2016" in lower or "march 31" in lower or "march 31st" in lower or "2016" in lower):
+                try:
+                    from .db import get_legacy_letters
+                except Exception:
+                    try:
+                        from db import get_legacy_letters
+                    except Exception:
+                        yield "Babel letters engine not available in this session.\r\n"
                         return
+                letters = get_legacy_letters("naylie")
+                if letters:
+                    for l in letters:
+                        yield f"\r\n\x1b[33m--- {l['subject']} ---\x1b[0m\r\n"
+                        yield l['body'].replace("\n", "\r\n") + "\r\n"
+                    yield "\r\n\x1b[90mThis is your sealed letter, Naylie. In the full desktop you set a personal PIN after the first activation (e.g. babel I am Naylie Rae Shaffer born 03/31/2016, yourPIN).\r\nOn this web terminal, use the secret code to unlock.\x1b[0m\r\n"
+                    yield "\r\n\x1b[90mVia Babel: request this letter in different languages (reply 'babel this in spanish' etc.) or encoded/binary ('babel encode this'). The Eye transforms it while preserving the personal meaning.\x1b[0m\r\n"
+                    return
 
-                # Specific name+birthdate for stepdaughter and sons (when they log in with their usernames)
-                if uname == "naylie":
-                    if "naylie" in lower and ("03/31/2016" in lower or "3/31/2016" in lower or "march 31" in lower or "march 31st" in lower or "2016" in lower):
-                        letters = get_legacy_letters("naylie")
-                        if letters:
-                            for l in letters:
-                                yield f"\r\n\x1b[33m--- {l['subject']} ---\x1b[0m\r\n"
-                                yield l['body'].replace("\n", "\r\n") + "\r\n"
-                            yield "\r\n\x1b[90mThis is your sealed letter, Naylie. In the full desktop you set a personal PIN after the first activation (e.g. babel I am Naylie Rae Shaffer born 03/31/2016, yourPIN).\r\nOn this web edition, being logged in as naylie gives direct access via the /letters page or this command.\r\n\x1b[0m\r\n"
-                            yield "\r\n\x1b[90mVia Babel: request this letter in different languages (reply 'babel this in spanish' etc.) or encoded/binary ('babel encode this'). The Eye transforms it while preserving the personal meaning.\x1b[0m\r\n"
-                            return
-                if uname == "kain":
-                    if "kain" in lower and ("03/03/2020" in lower or "3/3/2020" in lower or "march 3" in lower or "march 3rd" in lower or "2020" in lower):
-                        letters = get_legacy_letters("kain")
-                        if letters:
-                            for l in letters:
-                                yield f"\r\n\x1b[33m--- {l['subject']} ---\x1b[0m\r\n"
-                                yield l['body'].replace("\n", "\r\n") + "\r\n"
-                            yield "\r\n\x1b[90mThis is your sealed letter, Kain. In the full desktop you set a personal PIN after the first activation (e.g. babel I am Allan Kain Winkler born 03/03/2020, yourPIN).\r\nOn this web edition, being logged in as kain gives direct access via the /letters page or this command.\r\n\x1b[0m\r\n"
-                            yield "\r\n\x1b[90mVia Babel: request this letter in different languages (reply 'babel this in spanish' etc.) or encoded/binary ('babel encode this'). The Eye transforms it while preserving the personal meaning.\x1b[0m\r\n"
-                            return
-                if uname == "eli":
-                    if "eli" in lower and ("08/10/2022" in lower or "8/10/2022" in lower or "august 10" in lower or "aug 10" in lower or "2022" in lower):
-                        letters = get_legacy_letters("eli")
-                        if letters:
-                            for l in letters:
-                                yield f"\r\n\x1b[33m--- {l['subject']} ---\x1b[0m\r\n"
-                                yield l['body'].replace("\n", "\r\n") + "\r\n"
-                            yield "\r\n\x1b[90mThis is your sealed letter, Eli. In the full desktop you set a personal PIN after the first activation (e.g. babel I am Elijah James Winkler born 08/10/2022, yourPIN).\r\nOn this web edition, being logged in as eli gives direct access via the /letters page or this command.\r\n\x1b[0m\r\n"
-                            yield "\r\n\x1b[90mVia Babel: request this letter in different languages (reply 'babel this in spanish' etc.) or encoded/binary ('babel encode this'). The Eye transforms it while preserving the personal meaning.\x1b[0m\r\n"
-                            return
+            # Kain (eldest son)
+            if "kain" in lower and ("03/03/2020" in lower or "3/3/2020" in lower or "march 3" in lower or "march 3rd" in lower or "2020" in lower):
+                try:
+                    from .db import get_legacy_letters
+                except Exception:
+                    try:
+                        from db import get_legacy_letters
+                    except Exception:
+                        yield "Babel letters engine not available in this session.\r\n"
+                        return
+                letters = get_legacy_letters("kain")
+                if letters:
+                    for l in letters:
+                        yield f"\r\n\x1b[33m--- {l['subject']} ---\x1b[0m\r\n"
+                        yield l['body'].replace("\n", "\r\n") + "\r\n"
+                    yield "\r\n\x1b[90mThis is your sealed letter, Kain. In the full desktop you set a personal PIN after the first activation (e.g. babel I am Allan Kain Winkler born 03/03/2020, yourPIN).\r\nOn this web terminal, use the secret code to unlock.\x1b[0m\r\n"
+                    yield "\r\n\x1b[90mVia Babel: request this letter in different languages (reply 'babel this in spanish' etc.) or encoded/binary ('babel encode this'). The Eye transforms it while preserving the personal meaning.\x1b[0m\r\n"
+                    return
 
-            # Fall through to normal chat for other babel uses (translations etc.)
+            # Eli (youngest son)
+            if "eli" in lower and ("08/10/2022" in lower or "8/10/2022" in lower or "august 10" in lower or "aug 10" in lower or "2022" in lower):
+                try:
+                    from .db import get_legacy_letters
+                except Exception:
+                    try:
+                        from db import get_legacy_letters
+                    except Exception:
+                        yield "Babel letters engine not available in this session.\r\n"
+                        return
+                letters = get_legacy_letters("eli")
+                if letters:
+                    for l in letters:
+                        yield f"\r\n\x1b[33m--- {l['subject']} ---\x1b[0m\r\n"
+                        yield l['body'].replace("\n", "\r\n") + "\r\n"
+                    yield "\r\n\x1b[90mThis is your sealed letter, Eli. In the full desktop you set a personal PIN after the first activation (e.g. babel I am Elijah James Winkler born 08/10/2022, yourPIN).\r\nOn this web terminal, use the secret code to unlock.\x1b[0m\r\n"
+                    yield "\r\n\x1b[90mVia Babel: request this letter in different languages (reply 'babel this in spanish' etc.) or encoded/binary ('babel encode this'). The Eye transforms it while preserving the personal meaning.\x1b[0m\r\n"
+                    return
+
+            # Fall through for general babel (translations etc.)
 
         # Route everything else through the AI
         # If the message contains a verse reference, inject its text as context

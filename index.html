@@ -993,49 +993,14 @@ footer {
     </p>
   </div>
 
-  <!-- Embedded Login Card (shown until logged in) -->
-  <div id="eye-login-card" style="max-width: 420px; margin: 0 auto 20px; border: 1px solid var(--border2); background: #0a0c12; padding: 28px 26px; position: relative;">
-    <div style="text-align:center; margin-bottom: 18px;">
-      <span style="font-size: 2.1rem; color: var(--gold);">𓂀</span>
-      <div style="font-size: .95rem; letter-spacing: .18em; color: var(--gold); text-transform: uppercase; margin-top: 4px;">Eye of Horus • Web Terminal</div>
-    </div>
-
-    <div style="margin-bottom: 12px;">
-      <label style="display:block; font-size: .68rem; color: var(--silver2); letter-spacing: .08em; text-transform: uppercase; margin-bottom: 4px;">Username</label>
-      <input id="eye-username" type="text" autocomplete="username" spellcheck="false"
-             style="width:100%; background:#08090C; border:1px solid var(--border); color:var(--silver); font-family:inherit; font-size:.92rem; padding:10px 12px; outline:none;">
-    </div>
-    <div style="margin-bottom: 12px;">
-      <label style="display:block; font-size: .68rem; color: var(--silver2); letter-spacing: .08em; text-transform: uppercase; margin-bottom: 4px;">Password</label>
-      <input id="eye-password" type="password" autocomplete="current-password"
-             style="width:100%; background:#08090C; border:1px solid var(--border); color:var(--silver); font-family:inherit; font-size:.92rem; padding:10px 12px; outline:none;">
-    </div>
-
-    <!-- Optional personal Groq key -->
-    <div style="margin-bottom: 14px;">
-      <label style="display:block; font-size: .68rem; color: var(--silver2); letter-spacing: .08em; text-transform: uppercase; margin-bottom: 4px;">
-        Groq API Key <span style="opacity:.6;">(optional — use your own quota)</span>
-      </label>
-      <input id="eye-groq-key" type="password" placeholder="sk-... (leave empty for shared public backend)"
-             style="width:100%; background:#08090C; border:1px solid var(--border); color:var(--silver); font-family:inherit; font-size:.85rem; padding:9px 11px; outline:none;">
-      <div style="font-size: 10px; color: #6b6f7a; margin-top: 3px;">Your key is only used for this session and never stored on our servers.</div>
-    </div>
-
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 16px;">
-      <button id="eye-signin-btn" style="padding: 11px 0; border:1px solid var(--gold); background: transparent; color: var(--gold); font-family: inherit; font-size: .82rem; letter-spacing: .1em; text-transform: uppercase; cursor: pointer;">Sign In</button>
-      <button id="eye-register-btn" style="padding: 11px 0; border:1px solid var(--border2); background: transparent; color: var(--silver2); font-family: inherit; font-size: .82rem; letter-spacing: .1em; text-transform: uppercase; cursor: pointer;">Create Free Account</button>
-    </div>
-
-    <div id="eye-login-error" style="margin-top: 12px; font-size: .78rem; color: #ff5555; text-align: center; min-height: 1.1em;"></div>
-  </div>
-
-  <!-- The actual terminal (hidden until logged in) -->
-  <div id="eye-app" style="display: none; border: 1px solid var(--border2); background: #060709; max-width: 980px; margin: 0 auto;">
+  <!-- The Eye terminal - standalone public (no login credentials required) -->
+  <!-- Access your Babel letters with the right secret codes (e.g. babel I am Keiarra Winkler born 09/12/1995) -->
+  <div id="eye-app" style="border: 1px solid var(--border2); background: #060709; max-width: 980px; margin: 0 auto;">
     <div id="eye-topbar" style="display:flex; align-items:center; padding: 6px 14px; height: 34px; background:#0f1515; border-bottom:1px solid var(--border); font-size:.72rem; color:#9a9480;">
-      <span style="color:var(--gold); font-weight:400; letter-spacing:.12em;">𓂀 Cursiv — Eye of Horus (Web)</span>
-      <span id="eye-user-label" style="margin-left:12px; color:#c9a741;"></span>
+      <span style="color:var(--gold); font-weight:400; letter-spacing:.12em;">𓂀 Cursiv — Eye of Horus (Web Standalone)</span>
+      <span id="eye-user-label" style="margin-left:12px; color:#c9a741;">public</span>
       <div style="flex:1;"></div>
-      <a href="/letters" id="eye-letters-link" style="display:none; margin-right:10px; font-size:.65rem; padding:1px 8px; border:1px solid var(--gold); color:var(--gold); text-decoration:none; letter-spacing:.05em;">BABEL LETTERS</a>
+      <a href="/letters" id="eye-letters-link" style="margin-right:10px; font-size:.65rem; padding:1px 8px; border:1px solid #c9a741;color:#c9a741;text-decoration:none;letter-spacing:.05em;">BABEL LETTERS</a>
       <a href="/vision" style="margin-right:10px; font-size:.65rem; padding:1px 8px; border:1px solid #3a4a4a; color:#a8b0b8; text-decoration:none; letter-spacing:.05em;">VISION</a>
       <a href="https://github.com/joshua1993winkler-jpg/Cursiv/releases" target="_blank" style="font-size:.65rem; padding:1px 8px; border:1px solid var(--gold); color:var(--gold); text-decoration:none; letter-spacing:.05em;">DOWNLOAD DESKTOP</a>
     </div>
@@ -2729,6 +2694,17 @@ function eyeBootEmbeddedTerminal() {
   // Optional: prefill last used Groq key
   const lastKey = localStorage.getItem('cursiv_last_groq_key');
   if (lastKey && eyeGroqKey) eyeGroqKey.value = lastKey;
+}
+
+// Standalone public mode - no login required. Secret codes unlock family letters.
+document.getElementById('eye-app').style.display = 'block';
+if (!term) initTerminal();
+connectWS();
+
+const navBadge = document.getElementById('nav-user-badge');
+if (navBadge) {
+  navBadge.textContent = 'public';
+  navBadge.style.display = 'inline-block';
 }
 
 eyeBootEmbeddedTerminal();
