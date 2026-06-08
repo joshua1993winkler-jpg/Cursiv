@@ -5,6 +5,7 @@ Users + posts. No ORM — plain sqlite3, no extra dependencies.
 from __future__ import annotations
 
 import hashlib
+import os
 import secrets
 import sqlite3
 import uuid
@@ -12,7 +13,9 @@ from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Any
 
-_DB_PATH = Path(__file__).parent / "board.db"
+_DATA_DIR = Path(os.environ.get("CURSIV_DATA_DIR", str(Path(__file__).parent)))
+_DB_PATH = _DATA_DIR / "board.db"
+_DATA_DIR.mkdir(parents=True, exist_ok=True)
 
 
 def _conn() -> sqlite3.Connection:
