@@ -1,14 +1,13 @@
 """
 CursivWebSession — powers the web terminal.
 
-Free tier inference chain (zero cost to the site owner by default):
-  1. Groq API (GROQ_API_KEY env) — llama-3.1-8b-instant (very generous free tier)
-  2. Your own Ollama (set OLLAMA_URL env) — exactly like the desktop, 100% free/local
-  3. Users can paste their own free Groq key at login for personal limits
-  4. Friendly fallback if nothing is configured
+Free / full inference chain (use your keys as needed, idfc):
+  1. Groq API (GROQ_API_KEY) — llama-3.1-8b-instant (generous free tier)
+  2. xAI Grok (XAI_API_KEY) — real grok-4.3 if set (paid but full power)
+  3. Ollama (OLLAMA_URL) — your local/free instance, exactly like the desktop
+  4. Fallback message if nothing configured
 
-The web Eye is deliberately free / low-cost.
-For the real paid Grok (xAI) + full council/forge etc. with no limits, download the desktop.
+The web Eye is public/standalone. Set the keys on Railway for the chat to respond with real power (Groq free or your xAI/Ollama). Desktop for the full offline sovereign experience.
 """
 from __future__ import annotations
 
@@ -41,6 +40,9 @@ except Exception:
 _GROQ_KEY   = lambda: os.environ.get("GROQ_API_KEY", "")
 _GROQ_URL   = "https://api.groq.com/openai/v1/chat/completions"
 _GROQ_MODEL = os.environ.get("GROQ_MODEL", "llama-3.1-8b-instant")
+_XAI_KEY    = lambda: os.environ.get("XAI_API_KEY", "")
+_XAI_URL    = "https://api.x.ai/v1/chat/completions"
+_XAI_MODEL  = os.environ.get("XAI_MODEL", "grok-4.3")
 _OLLAMA_URL = os.environ.get("OLLAMA_URL", "http://localhost:11434")
 _OLLAMA_MDL = os.environ.get("OLLAMA_MODEL", "llama3.1")
 
@@ -345,12 +347,16 @@ class CursivWebSession:
             self._history = self._history[-self.MAX_HISTORY * 2:]
 
         full_response = ""
-        if not self._effective_groq_key() and not os.environ.get("OLLAMA_URL"):
-            yield "\x1b[90m[AI chat backend not configured on server — no GROQ_API_KEY or OLLAMA_URL. Special family letters via secret codes still work fully. Owner should set a free Groq key for responses.]\x1b[0m\r\n"
+        if not self._effective_groq_key() and not os.environ.get("OLLAMA_URL") and not _XAI_KEY():
+            yield "\x1b[90m[AI chat backend not configured on server — set GROQ_API_KEY (free tier) or XAI_API_KEY or OLLAMA_URL in Railway env. Special family letters via secret codes still work fully.]\x1b[0m\r\n"
             return
 
         if self._effective_groq_key():
             async for chunk in self._call_groq():
+                full_response += chunk
+                yield chunk
+        elif _XAI_KEY():
+            async for chunk in self._call_xai():
                 full_response += chunk
                 yield chunk
         else:
@@ -403,6 +409,52 @@ class CursivWebSession:
                             pass
             except Exception as e:
                 chunks.append(f"\x1b[31mGroq error: {e}\x1b[0m")
+            return chunks
+
+        chunks = await loop.run_in_executor(None, _stream_sync)
+        for chunk in chunks:
+            yield chunk.replace("\n", "\r\n")
+
+    async def _call_xai(self) -> AsyncIterator[str]:
+        payload = json.dumps({
+            "model":      _XAI_MODEL,
+            "messages":   [{"role": "system", "content": _WEB_SYSTEM}] + self._history,
+            "max_tokens": 800,
+            "stream":     True,
+            "temperature": 0.7,
+        }).encode()
+
+        req = _ur.Request(
+            _XAI_URL,
+            data=payload,
+            headers={
+                "Content-Type":  "application/json",
+                "Authorization": f"Bearer {_XAI_KEY()}",
+            },
+        )
+
+        loop = asyncio.get_event_loop()
+
+        def _stream_sync() -> list[str]:
+            chunks: list[str] = []
+            try:
+                with _ur.urlopen(req, timeout=30) as resp:
+                    for raw_line in resp:
+                        line = raw_line.decode("utf-8").strip()
+                        if not line.startswith("data: "):
+                            continue
+                        data = line[6:]
+                        if data == "[DONE]":
+                            break
+                        try:
+                            obj   = json.loads(data)
+                            delta = obj["choices"][0]["delta"].get("content", "")
+                            if delta:
+                                chunks.append(delta)
+                        except Exception:
+                            pass
+            except Exception as e:
+                chunks.append(f"\x1b[31mXAI error: {e}\x1b[0m")
             return chunks
 
         chunks = await loop.run_in_executor(None, _stream_sync)
