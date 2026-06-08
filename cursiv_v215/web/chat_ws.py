@@ -194,7 +194,7 @@ class CursivWebSession:
                         for l in letters:
                             yield f"\r\n\x1b[33m--- {l['subject']} ---\x1b[0m\r\n"
                             yield l['body'].replace("\n", "\r\n") + "\r\n"
-                        yield "\r\n\x1b[90mThis is your sealed letter, Keiarra. In the full desktop you set a personal PIN after the first activation (e.g. babel I am Keiarra Winkler born 09/12/1995, yourPIN).\r\nOn this web edition, being logged in as KWdomain gives direct access via the /letters page or this command.\r\nYou can create your special PIN in the desktop version or future updates.\x1b[0m\r\n"
+                        yield "\r\n\x1b[90mThis is your sealed letter, Keiarra (the one Joshua wrote ~a month ago). \r\nIn the full desktop you set a personal PIN after the first activation (e.g. babel I am Keiarra Winkler born 09/12/1995, yourPIN).\r\nOn this web edition, being logged in as KWdomain gives direct access via the /letters page or this command.\r\nYou can create your special PIN in the desktop version or future updates.\x1b[0m\r\n"
                         return
             # Fall through to normal chat for other babel uses (translations etc.)
 
