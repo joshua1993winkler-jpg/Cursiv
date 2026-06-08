@@ -2363,6 +2363,11 @@ document.querySelectorAll('.reveal,.reveal-group').forEach(el=>ro.observe(el));
 <script>
 'use strict';
 
+// Public standalone mode - no login
+let eyeTokenState = '';
+let eyeUsernameState = 'public';
+let eyeGroqKey = null;  // no per-user key input in public mode
+
 // Config — same dynamic base as the standalone terminal
 const EYE_API_BASE = (location.protocol === 'https:' ? 'https:' : 'http:') + '//' + location.host;
 const EYE_WS_BASE  = (location.protocol === 'https:' ? 'wss:' : 'ws:') + '//' + location.host;

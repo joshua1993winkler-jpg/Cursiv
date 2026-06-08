@@ -345,6 +345,10 @@ class CursivWebSession:
             self._history = self._history[-self.MAX_HISTORY * 2:]
 
         full_response = ""
+        if not self._effective_groq_key() and not os.environ.get("OLLAMA_URL"):
+            yield "\x1b[90m[AI chat backend not configured on server — no GROQ_API_KEY or OLLAMA_URL. Special family letters via secret codes still work fully. Owner should set a free Groq key for responses.]\x1b[0m\r\n"
+            return
+
         if self._effective_groq_key():
             async for chunk in self._call_groq():
                 full_response += chunk

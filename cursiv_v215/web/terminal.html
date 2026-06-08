@@ -319,8 +319,9 @@ const WS_BASE  = window.CURSIV_WS_BASE  ||
   (location.protocol === 'https:' ? 'wss://' : 'ws://') + location.host;
 
 // ── State ─────────────────────────────────────────────────────────────────────
-let token    = localStorage.getItem('cursiv_token') || '';
-let username = localStorage.getItem('cursiv_user')  || '';
+// Public standalone - no login or token
+let token    = '';
+let username = 'public';
 let ws       = null;
 let term     = null;
 let fitAddon = null;
