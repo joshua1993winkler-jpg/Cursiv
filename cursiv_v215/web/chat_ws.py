@@ -86,6 +86,7 @@ HELP_TEXT = (
     "  \x1b[36mbabel I am Allan Kain Winkler born 03/03/2020\x1b[0m (eldest son)\r\n"
     "  \x1b[36mbabel I am Elijah James Winkler born 08/10/2022\x1b[0m (youngest son)\r\n"
     "                  \x1b[90m(Shows sealed letter. Set PIN in desktop with ,yourPIN)\x1b[0m\r\n"
+    "  \x1b[90mAfter access: 'babel this in spanish' (any language) or 'babel encode this' / 'babel this binary' for encoded/UTF-8 version via the Babel translator.\x1b[0m\r\n"
     "\r\n"
     "\x1b[90m  On web: login with the special username + /letters or the command above.\x1b[0m\r\n"
     "\r\n"
@@ -250,6 +251,7 @@ class CursivWebSession:
                                 yield f"\r\n\x1b[33m--- {l['subject']} ---\x1b[0m\r\n"
                                 yield l['body'].replace("\n", "\r\n") + "\r\n"
                             yield "\r\n\x1b[90mThis is your sealed letter, Keiarra (the one Joshua wrote ~a month ago). \r\nIn the full desktop you set a personal PIN after the first activation (e.g. babel I am Keiarra Winkler born 09/12/1995, yourPIN).\r\nOn this web edition, being logged in as KWdomain gives direct access via the /letters page or this command.\r\nYou can create your special PIN in the desktop version or future updates.\x1b[0m\r\n"
+                            yield "\r\n\x1b[90mVia Babel: request this letter in different languages (reply 'babel this in spanish' or 'babel this in german' etc.) or encoded/binary ('babel encode this' or 'babel this binary'). The Eye will transform it while preserving the personal meaning and tone.\x1b[0m\r\n"
                             return
 
                 # General family letter access for any special user (stepdaughter, sons, etc.)
@@ -269,6 +271,7 @@ class CursivWebSession:
                             yield f"\r\n\x1b[33m--- {l['subject']} ---\x1b[0m\r\n"
                             yield l['body'].replace("\n", "\r\n") + "\r\n"
                         yield "\r\n\x1b[90mThis is your sealed letter from your father. When you are ready, you can set a personal PIN in the full desktop version.\r\nOn this web edition, being logged in as a special family member gives direct access via the /letters page or this command.\x1b[0m\r\n"
+                        yield "\r\n\x1b[90mVia Babel: request this letter in different languages (reply 'babel this in spanish' etc.) or encoded/binary form ('babel encode this' or 'babel this binary'). The Eye will handle the translation or encoding while keeping the personal, loving essence.\x1b[0m\r\n"
                         return
                     else:
                         yield "\r\n\x1b[90mYour letter is prepared and waiting. It will be fully unlocked when your account is marked as special and you use the proper activation phrase with your name and birthdate.\x1b[0m\r\n"
@@ -283,6 +286,7 @@ class CursivWebSession:
                                 yield f"\r\n\x1b[33m--- {l['subject']} ---\x1b[0m\r\n"
                                 yield l['body'].replace("\n", "\r\n") + "\r\n"
                             yield "\r\n\x1b[90mThis is your sealed letter, Naylie. In the full desktop you set a personal PIN after the first activation (e.g. babel I am Naylie Rae Shaffer born 03/31/2016, yourPIN).\r\nOn this web edition, being logged in as naylie gives direct access via the /letters page or this command.\r\n\x1b[0m\r\n"
+                            yield "\r\n\x1b[90mVia Babel: request this letter in different languages (reply 'babel this in spanish' etc.) or encoded/binary ('babel encode this'). The Eye transforms it while preserving the personal meaning.\x1b[0m\r\n"
                             return
                 if uname == "kain":
                     if "kain" in lower and ("03/03/2020" in lower or "3/3/2020" in lower or "march 3" in lower or "march 3rd" in lower or "2020" in lower):
@@ -292,6 +296,7 @@ class CursivWebSession:
                                 yield f"\r\n\x1b[33m--- {l['subject']} ---\x1b[0m\r\n"
                                 yield l['body'].replace("\n", "\r\n") + "\r\n"
                             yield "\r\n\x1b[90mThis is your sealed letter, Kain. In the full desktop you set a personal PIN after the first activation (e.g. babel I am Allan Kain Winkler born 03/03/2020, yourPIN).\r\nOn this web edition, being logged in as kain gives direct access via the /letters page or this command.\r\n\x1b[0m\r\n"
+                            yield "\r\n\x1b[90mVia Babel: request this letter in different languages (reply 'babel this in spanish' etc.) or encoded/binary ('babel encode this'). The Eye transforms it while preserving the personal meaning.\x1b[0m\r\n"
                             return
                 if uname == "eli":
                     if "eli" in lower and ("08/10/2022" in lower or "8/10/2022" in lower or "august 10" in lower or "aug 10" in lower or "2022" in lower):
@@ -301,6 +306,7 @@ class CursivWebSession:
                                 yield f"\r\n\x1b[33m--- {l['subject']} ---\x1b[0m\r\n"
                                 yield l['body'].replace("\n", "\r\n") + "\r\n"
                             yield "\r\n\x1b[90mThis is your sealed letter, Eli. In the full desktop you set a personal PIN after the first activation (e.g. babel I am Elijah James Winkler born 08/10/2022, yourPIN).\r\nOn this web edition, being logged in as eli gives direct access via the /letters page or this command.\r\n\x1b[0m\r\n"
+                            yield "\r\n\x1b[90mVia Babel: request this letter in different languages (reply 'babel this in spanish' etc.) or encoded/binary ('babel encode this'). The Eye transforms it while preserving the personal meaning.\x1b[0m\r\n"
                             return
 
             # Fall through to normal chat for other babel uses (translations etc.)
