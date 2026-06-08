@@ -67,7 +67,8 @@ datas = [
 ]
 
 # Collect data files from packages that read files at import time
-for _pkg in ("safehttpx", "gradio", "gradio_client"):
+# groovy is a gradio dependency that reads version.txt at import — must be included
+for _pkg in ("safehttpx", "gradio", "gradio_client", "groovy"):
     try:
         datas += collect_data_files(_pkg)
     except Exception:
