@@ -317,10 +317,12 @@
 <div id="app">
   <div id="topbar">
     <span class="brand">𓂀 Cursiv</span>
-    <span class="edition-badge">Basic Edition</span>
+    <span class="edition-badge">Eye of Horus • Web</span>
     <div class="spacer"></div>
     <span class="user-label" id="user-label"></span>
     <span id="conn-dot" class="connecting" title="Connecting..."></span>
+    <a id="letters-btn" href="/letters" style="display:none;margin-right:8px;font-size:.68rem;padding:2px 9px;border:1px solid #c9a741;color:#c9a741;text-decoration:none;letter-spacing:.06em;">BABEL LETTERS</a>
+    <a id="vision-btn" href="/vision" style="margin-right:8px;font-size:.68rem;padding:2px 9px;border:1px solid #3a4a4a;color:#a8b0b8;text-decoration:none;letter-spacing:.06em;">VISION</a>
     <a id="download-btn" href="https://cursiv.winklers-llc.com" target="_blank">
       Download Desktop
     </a>
@@ -624,6 +626,16 @@ function showTerminal() {
   const app = document.getElementById('app');
   app.classList.add('visible');
   document.getElementById('user-label').textContent = username;
+
+  // Special access: show Babel Letters button for wife / beloved
+  fetch(API_BASE + '/api/me', {
+    headers: { 'Authorization': 'Bearer ' + token }
+  }).then(r => r.json()).then(me => {
+    if (me && me.is_special) {
+      const b = document.getElementById('letters-btn');
+      if (b) b.style.display = 'inline-block';
+    }
+  }).catch(() => {});
 
   if (!term) initTerminal();
   connectWS();

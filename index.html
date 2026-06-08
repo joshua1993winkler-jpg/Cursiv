@@ -17,6 +17,13 @@
 <link rel="icon" type="image/png" href="launcher/resources/icons/cursiv_256.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+
+<!-- xterm.js for the embedded Eye of Horus Terminal on this page -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/xterm@5.3.0/css/xterm.css">
+<script src="https://cdn.jsdelivr.net/npm/xterm@5.3.0/lib/xterm.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xterm-addon-fit@0.8.0/lib/xterm-addon-fit.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xterm-addon-web-links@0.9.0/lib/xterm-addon-web-links.js"></script>
+
 <style>
 /* ══════════════════════════════════════════════════════════
    CURSIV — Release Page  v3.14-U11
@@ -903,6 +910,116 @@ footer {
   </div>
 
   <p class="hero-note">Already on v3.14? &nbsp;Open Cursiv → Check for Updates → in-place install. Ollama and your data are untouched.</p>
+
+  <!-- ═══ ENTER THE EYE — THE WEBSITE FACING TERMINAL ═══ -->
+  <div style="margin: 18px 0 10px;">
+    <a href="/terminal"
+       style="display:inline-flex;align-items:center;gap:14px;padding:18px 40px;background:#0f2a3a;border:1px solid #c9a741;color:#c9a741;text-decoration:none;font-size:15px;font-weight:600;clip-path:polygon(10px 0%,100% 0%,calc(100% - 10px) 100%,0% 100%);">
+      <span style="font-size:22px;">𓂀</span>
+      <span>
+        <span style="display:block;font-size:15px;letter-spacing:.5px;">OPEN THE EYE — THE TERMINAL</span>
+        <span style="display:block;font-size:10px;opacity:.65;letter-spacing:1px;margin-top:1px;">Login • Full system access • Bible • Babel • Your private letters</span>
+      </span>
+    </a>
+  </div>
+  <div style="font-size:11px;opacity:.55;letter-spacing:.4px;margin-bottom:8px;">
+    This is the public face of Cursiv on the web. The terminal is the living Eye.
+  </div>
+</section>
+
+<!-- ══ THE PORTALS — full system on the website ═════════════════════════ -->
+<div style="max-width:1120px;margin:0 auto 40px;padding:0 40px;">
+  <div style="font-family:var(--mono);font-size:10px;letter-spacing:3.5px;color:#c9a741;text-transform:uppercase;opacity:.7;margin-bottom:8px;">THE TEMPLE PORTALS</div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1px;background:#1e3030;border:1px solid #1e3030;">
+    <a href="/terminal" style="background:#0f1515;padding:22px 24px;text-decoration:none;color:inherit;display:block;border-right:1px solid #1e3030;">
+      <div style="font-size:10px;letter-spacing:2px;color:#c9a741;margin-bottom:6px;">THE LIVING DISPLAY</div>
+      <div style="font-size:15px;color:#c9a741;margin-bottom:6px;">The Eye • Terminal</div>
+      <div style="font-size:13px;color:#a8b0b8;line-height:1.6;">The website-facing terminal of the entire AI system. Login here. Use everything. This is where the Recoding happens in public.</div>
+    </a>
+    <a href="/vision" style="background:#0f1515;padding:22px 24px;text-decoration:none;color:inherit;display:block;border-right:1px solid #1e3030;">
+      <div style="font-size:10px;letter-spacing:2px;color:#c9a741;margin-bottom:6px;">THE VISUAL CROWN</div>
+      <div style="font-size:15px;color:#c9a741;margin-bottom:6px;">The Vision</div>
+      <div style="font-size:13px;color:#a8b0b8;line-height:1.6;">Interactive Eye of Horus. 14 council phases on a rotating sphere. Drag it. Zoom it. See the architecture of the temple.</div>
+    </a>
+    <a href="/letters" style="background:#0f1515;padding:22px 24px;text-decoration:none;color:inherit;display:block;">
+      <div style="font-size:10px;letter-spacing:2px;color:#c9a741;margin-bottom:6px;">SEALED FOR HER</div>
+      <div style="font-size:15px;color:#c9a741;margin-bottom:6px;">Babel Letters</div>
+      <div style="font-size:13px;color:#a8b0b8;line-height:1.6;">The private vault. Only special credentials open these. The letters left inside the stone for one person. The Eye will know.</div>
+    </a>
+  </div>
+  <div style="margin-top:18px;font-size:13px;color:#a8b0b8;max-width:640px;line-height:1.65;">
+    After you login at the Eye you also reach the Board (shared memory), the Codex (deep Bible study), and every other living part of the system through the terminal. The full sovereign desktop (council, forge, academy, guardian, postal, family legacy) remains on your machine — this website is the public face and the doorway for the people you love.
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     THE EYE — EMBEDDED TERMINAL + LOGIN (full experience on the index)
+     ══════════════════════════════════════════════════════════ -->
+<section id="the-eye-section" style="max-width: 1100px; margin: 40px auto; padding: 0 20px;">
+  <div style="text-align:center; margin-bottom: 18px;">
+    <div style="font-family: var(--mono); font-size: 10px; letter-spacing: 3px; color: var(--gold); text-transform: uppercase; opacity: .75;">THE LIVING HEART</div>
+    <h2 style="font-family: var(--serif); font-size: clamp(28px, 4.2vw, 44px); color: var(--silver); margin: 6px 0 8px;">𓂀 The Eye of Horus Terminal</h2>
+    <p style="max-width: 620px; margin: 0 auto; color: var(--silver2); font-size: 15px; line-height: 1.55;">
+      Use the entire system right here. Create a free basic account or sign in.<br>
+      Chat with Bible study, Babel translation, synthesis, and more. Uses the public backend (Groq).<br>
+      <strong>Want your own keys + the full 14-agent council offline?</strong> Download the desktop.
+    </p>
+  </div>
+
+  <!-- Embedded Login Card (shown until logged in) -->
+  <div id="eye-login-card" style="max-width: 420px; margin: 0 auto 20px; border: 1px solid var(--border2); background: #0a0c12; padding: 28px 26px; position: relative;">
+    <div style="text-align:center; margin-bottom: 18px;">
+      <span style="font-size: 2.1rem; color: var(--gold);">𓂀</span>
+      <div style="font-size: .95rem; letter-spacing: .18em; color: var(--gold); text-transform: uppercase; margin-top: 4px;">Eye of Horus • Web Terminal</div>
+    </div>
+
+    <div style="margin-bottom: 12px;">
+      <label style="display:block; font-size: .68rem; color: var(--silver2); letter-spacing: .08em; text-transform: uppercase; margin-bottom: 4px;">Username</label>
+      <input id="eye-username" type="text" autocomplete="username" spellcheck="false"
+             style="width:100%; background:#08090C; border:1px solid var(--border); color:var(--silver); font-family:inherit; font-size:.92rem; padding:10px 12px; outline:none;">
+    </div>
+    <div style="margin-bottom: 12px;">
+      <label style="display:block; font-size: .68rem; color: var(--silver2); letter-spacing: .08em; text-transform: uppercase; margin-bottom: 4px;">Password</label>
+      <input id="eye-password" type="password" autocomplete="current-password"
+             style="width:100%; background:#08090C; border:1px solid var(--border); color:var(--silver); font-family:inherit; font-size:.92rem; padding:10px 12px; outline:none;">
+    </div>
+
+    <!-- Optional personal Groq key -->
+    <div style="margin-bottom: 14px;">
+      <label style="display:block; font-size: .68rem; color: var(--silver2); letter-spacing: .08em; text-transform: uppercase; margin-bottom: 4px;">
+        Groq API Key <span style="opacity:.6;">(optional — use your own quota)</span>
+      </label>
+      <input id="eye-groq-key" type="password" placeholder="sk-... (leave empty for shared public backend)"
+             style="width:100%; background:#08090C; border:1px solid var(--border); color:var(--silver); font-family:inherit; font-size:.85rem; padding:9px 11px; outline:none;">
+      <div style="font-size: 10px; color: #6b6f7a; margin-top: 3px;">Your key is only used for this session and never stored on our servers.</div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 16px;">
+      <button id="eye-signin-btn" style="padding: 11px 0; border:1px solid var(--gold); background: transparent; color: var(--gold); font-family: inherit; font-size: .82rem; letter-spacing: .1em; text-transform: uppercase; cursor: pointer;">Sign In</button>
+      <button id="eye-register-btn" style="padding: 11px 0; border:1px solid var(--border2); background: transparent; color: var(--silver2); font-family: inherit; font-size: .82rem; letter-spacing: .1em; text-transform: uppercase; cursor: pointer;">Create Free Account</button>
+    </div>
+
+    <div id="eye-login-error" style="margin-top: 12px; font-size: .78rem; color: #ff5555; text-align: center; min-height: 1.1em;"></div>
+  </div>
+
+  <!-- The actual terminal (hidden until logged in) -->
+  <div id="eye-app" style="display: none; border: 1px solid var(--border2); background: #060709; max-width: 980px; margin: 0 auto;">
+    <div id="eye-topbar" style="display:flex; align-items:center; padding: 6px 14px; height: 34px; background:#0f1515; border-bottom:1px solid var(--border); font-size:.72rem; color:#9a9480;">
+      <span style="color:var(--gold); font-weight:400; letter-spacing:.12em;">𓂀 Cursiv — Eye of Horus (Web)</span>
+      <span id="eye-user-label" style="margin-left:12px; color:#c9a741;"></span>
+      <div style="flex:1;"></div>
+      <a href="/letters" id="eye-letters-link" style="display:none; margin-right:10px; font-size:.65rem; padding:1px 8px; border:1px solid var(--gold); color:var(--gold); text-decoration:none; letter-spacing:.05em;">BABEL LETTERS</a>
+      <a href="/vision" style="margin-right:10px; font-size:.65rem; padding:1px 8px; border:1px solid #3a4a4a; color:#a8b0b8; text-decoration:none; letter-spacing:.05em;">VISION</a>
+      <a href="https://github.com/joshua1993winkler-jpg/Cursiv/releases" target="_blank" style="font-size:.65rem; padding:1px 8px; border:1px solid var(--gold); color:var(--gold); text-decoration:none; letter-spacing:.05em;">DOWNLOAD DESKTOP</a>
+    </div>
+    <div id="eye-terminal-wrap" style="height: 420px; padding: 8px 6px;">
+      <div id="eye-terminal" style="height:100%; width:100%;"></div>
+    </div>
+  </div>
+
+  <div style="text-align:center; margin-top: 10px; font-size: 11px; color: #6b6f7a;">
+    Your session uses the same account as the rest of the temple. Everything you do here is also available at <a href="/terminal" style="color:#c9a741;">/terminal</a>.
+  </div>
 </section>
 
 <!-- ══ STATS ══════════════════════════════════════════════════════════ -->
@@ -2216,6 +2333,335 @@ document.querySelectorAll('.reveal,.reveal-group').forEach(el=>ro.observe(el));
   sendBtn.addEventListener('click', sendMessage);
   inputEl.addEventListener('keydown', e => { if (e.key === 'Enter') sendMessage(); });
 })();
+</script>
+
+<!-- ══════════════════════════════════════════════════════════
+     EMBEDDED EYE OF HORUS TERMINAL LOGIC (full login + xterm on the index)
+     This lets anyone create a basic account and use the live terminal
+     directly on the public website without leaving the page.
+     ══════════════════════════════════════════════════════════ -->
+<script>
+'use strict';
+
+// Config — same dynamic base as the standalone terminal
+const EYE_API_BASE = (location.protocol === 'https:' ? 'https:' : 'http:') + '//' + location.host;
+const EYE_WS_BASE  = (location.protocol === 'https:' ? 'wss:' : 'ws:') + '//' + location.host;
+
+// Elements
+const eyeLoginCard   = document.getElementById('eye-login-card');
+const eyeApp         = document.getElementById('eye-app');
+const eyeUsername    = document.getElementById('eye-username');
+const eyePassword    = document.getElementById('eye-password');
+const eyeGroqKey     = document.getElementById('eye-groq-key');
+const eyeSigninBtn   = document.getElementById('eye-signin-btn');
+const eyeRegisterBtn = document.getElementById('eye-register-btn');
+const eyeError       = document.getElementById('eye-login-error');
+const eyeUserLabel   = document.getElementById('eye-user-label');
+const eyeLettersLink = document.getElementById('eye-letters-link');
+
+let eyeTerm = null;
+let eyeFitAddon = null;
+let eyeWs = null;
+let eyeInputBuffer = '';
+let eyeHistory = [];
+let eyeHistoryPos = -1;
+let eyeIsProcessing = false;
+let eyeUsernameState = '';
+let eyeTokenState = '';
+
+// Helper
+function eyeSetError(msg) { eyeError.textContent = msg || ''; }
+
+function eyeSetLoading(btn, loading) {
+  btn.disabled = loading;
+  if (btn.id === 'eye-signin-btn') btn.textContent = loading ? 'Signing in...' : 'Sign In';
+  else btn.textContent = loading ? 'Creating...' : 'Create Free Account';
+}
+
+async function eyeApiPost(path, body) {
+  const resp = await fetch(EYE_API_BASE + path, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  });
+  const data = await resp.json();
+  if (!resp.ok) throw new Error(data.detail || 'Request failed');
+  return data;
+}
+
+// Do auth (register or login) then show the terminal
+async function eyeDoAuth(register) {
+  const u = (eyeUsername.value || '').trim();
+  const p = eyePassword.value || '';
+  if (!u || !p) { eyeSetError('Username and password required.'); return; }
+
+  const btn = register ? eyeRegisterBtn : eyeSigninBtn;
+  eyeSetLoading(btn, true);
+  eyeSetError('');
+
+  try {
+    if (register) {
+      await eyeApiPost('/api/register', { username: u, password: p });
+    }
+    const data = await eyeApiPost('/api/login', { username: u, password: p });
+    eyeTokenState = data.token;
+    eyeUsernameState = data.username;
+
+    localStorage.setItem('cursiv_token', eyeTokenState);
+    localStorage.setItem('cursiv_user', eyeUsernameState);
+
+    eyeShowTerminal();
+  } catch (e) {
+    eyeSetError(e.message);
+  } finally {
+    eyeSetLoading(btn, false);
+  }
+}
+
+eyeSigninBtn.addEventListener('click', () => eyeDoAuth(false));
+eyeRegisterBtn.addEventListener('click', () => eyeDoAuth(true));
+
+['eye-username', 'eye-password'].forEach(id => {
+  const el = document.getElementById(id);
+  if (el) el.addEventListener('keydown', e => { if (e.key === 'Enter') eyeDoAuth(false); });
+});
+
+// Initialize the xterm + WS (the real Eye experience)
+function eyeInitTerminal() {
+  if (eyeTerm) return;
+
+  eyeTerm = new Terminal({
+    theme: {
+      background: '#080c0c',
+      foreground: '#d8d0c0',
+      cursor: '#c9a741',
+      cursorAccent: '#080c0c',
+      black: '#080c0c', red: '#ff5555', green: '#50fa7b', yellow: '#c9a741',
+      blue: '#6272a4', magenta: '#bd93f9', cyan: '#8be9fd', white: '#d8d0c0',
+      brightBlack: '#607070', brightYellow: '#e8c96b',
+    },
+    fontFamily: '"Cascadia Code", "Fira Code", Consolas, monospace',
+    fontSize: 13,
+    lineHeight: 1.4,
+    cursorBlink: true,
+    cursorStyle: 'bar',
+    scrollback: 4000,
+  });
+
+  eyeFitAddon = new (window.FitAddon ? window.FitAddon.FitAddon : null)();
+  if (eyeFitAddon) {
+    eyeTerm.loadAddon(eyeFitAddon);
+  }
+  if (window.WebLinksAddon && window.WebLinksAddon.WebLinksAddon) {
+    eyeTerm.loadAddon(new window.WebLinksAddon.WebLinksAddon());
+  }
+
+  const container = document.getElementById('eye-terminal');
+  eyeTerm.open(container);
+  if (eyeFitAddon) eyeFitAddon.fit();
+
+  window.addEventListener('resize', () => { if (eyeFitAddon) eyeFitAddon.fit(); });
+
+  eyeTerm.onKey(eyeHandleKey);
+  eyeTerm.focus();
+}
+
+const EYE_PROMPT = '\x1b[33m\u{13080}\x1b[0m  ';
+
+function eyeShowPrompt() { if (eyeTerm) eyeTerm.write('\r\n' + EYE_PROMPT); }
+function eyeShowPromptNoNL() { if (eyeTerm) eyeTerm.write(EYE_PROMPT); }
+
+function eyeHandleKey({ key, domEvent }) {
+  if (eyeIsProcessing) {
+    if (domEvent.ctrlKey && domEvent.keyCode === 67) {
+      if (eyeWs) eyeWs.send('\x03');
+      if (eyeTerm) eyeTerm.write('^C\r\n');
+      eyeIsProcessing = false;
+      eyeShowPrompt();
+    }
+    return;
+  }
+
+  const printable = !domEvent.altKey && !domEvent.ctrlKey && !domEvent.metaKey;
+
+  switch (domEvent.keyCode) {
+    case 13: // Enter
+      if (eyeTerm) eyeTerm.write('\r\n');
+      eyeSubmitInput();
+      break;
+    case 8: // Backspace
+      if (eyeInputBuffer.length > 0) {
+        eyeInputBuffer = eyeInputBuffer.slice(0, -1);
+        if (eyeTerm) eyeTerm.write('\b \b');
+      }
+      break;
+    case 38: // Up
+      if (eyeHistoryPos < eyeHistory.length - 1) {
+        eyeHistoryPos++;
+        eyeReplaceInput(eyeHistory[eyeHistoryPos]);
+      }
+      break;
+    case 40: // Down
+      if (eyeHistoryPos > 0) {
+        eyeHistoryPos--;
+        eyeReplaceInput(eyeHistory[eyeHistoryPos]);
+      } else if (eyeHistoryPos === 0) {
+        eyeHistoryPos = -1;
+        eyeReplaceInput('');
+      }
+      break;
+    case 67: // Ctrl+C
+      if (domEvent.ctrlKey) {
+        if (eyeTerm) eyeTerm.write('^C\r\n');
+        eyeInputBuffer = '';
+        eyeHistoryPos = -1;
+        eyeShowPrompt();
+      }
+      break;
+    case 76: // Ctrl+L
+      if (domEvent.ctrlKey) {
+        if (eyeTerm) eyeTerm.write('\x1b[2J\x1b[H');
+        eyeShowPrompt();
+      }
+      break;
+    default:
+      if (printable && key && eyeTerm) {
+        eyeInputBuffer += key;
+        eyeTerm.write(key);
+      }
+  }
+}
+
+function eyeReplaceInput(newText) {
+  if (!eyeTerm) return;
+  eyeTerm.write('\r\x1b[K');
+  eyeShowPromptNoNL();
+  eyeInputBuffer = newText;
+  eyeTerm.write(newText);
+}
+
+function eyeSubmitInput() {
+  const cmd = eyeInputBuffer.trim();
+  eyeInputBuffer = '';
+  eyeHistoryPos = -1;
+
+  if (cmd) {
+    eyeHistory.unshift(cmd);
+    if (eyeHistory.length > 60) eyeHistory.pop();
+    eyeSendMessage(cmd);
+  } else {
+    eyeShowPrompt();
+  }
+}
+
+const EYE_DONE = '\x00DONE\x00';
+const EYE_ERR  = '\x00ERR\x00';
+
+function eyeConnectWS() {
+  if (eyeWs) { try { eyeWs.close(); } catch(e){} }
+
+  let url = `${EYE_WS_BASE}/ws/chat?token=${encodeURIComponent(eyeTokenState)}`;
+
+  // Pass optional user Groq key for this session
+  const userKey = (eyeGroqKey && eyeGroqKey.value.trim()) || localStorage.getItem('cursiv_last_groq_key') || '';
+  if (userKey) {
+    url += `&userGroqKey=${encodeURIComponent(userKey)}`;
+    localStorage.setItem('cursiv_last_groq_key', userKey);
+  }
+
+  eyeWs = new WebSocket(url);
+
+  eyeWs.onopen = () => {
+    // banner already sent by server
+  };
+
+  eyeWs.onmessage = (e) => {
+    const data = e.data;
+    if (data === EYE_DONE) {
+      eyeIsProcessing = false;
+      eyeShowPrompt();
+    } else if (data.startsWith(EYE_ERR)) {
+      if (eyeTerm) eyeTerm.write(`\x1b[31m${data.slice(EYE_ERR.length)}\x1b[0m`);
+      eyeIsProcessing = false;
+      eyeShowPrompt();
+    } else if (eyeTerm) {
+      eyeTerm.write(data);
+    }
+  };
+
+  eyeWs.onerror = () => {
+    if (eyeTerm) eyeTerm.write('\r\n\x1b[31m  Connection error.\x1b[0m\r\n');
+  };
+
+  eyeWs.onclose = (ev) => {
+    if (ev.code === 4001) {
+      localStorage.removeItem('cursiv_token');
+      localStorage.removeItem('cursiv_user');
+      location.reload();
+      return;
+    }
+    if (eyeTerm) eyeTerm.write('\r\n\x1b[90m  Connection closed. Refresh to reconnect.\x1b[0m\r\n');
+  };
+}
+
+function eyeSendMessage(msg) {
+  if (!eyeWs || eyeWs.readyState !== WebSocket.OPEN) {
+    if (eyeTerm) eyeTerm.write('\x1b[31m  Not connected.\x1b[0m\r\n');
+    eyeShowPrompt();
+    return;
+  }
+  eyeIsProcessing = true;
+  eyeWs.send(msg);
+}
+
+// Show the live terminal (hide login card)
+function eyeShowTerminal() {
+  eyeLoginCard.style.display = 'none';
+  eyeApp.style.display = 'block';
+
+  eyeUserLabel.textContent = eyeUsernameState || '';
+
+  // Show Babel Letters link only for special users
+  fetch(EYE_API_BASE + '/api/me', {
+    headers: { 'Authorization': 'Bearer ' + eyeTokenState }
+  }).then(r => r.json()).then(me => {
+    if (me && me.is_special && eyeLettersLink) {
+      eyeLettersLink.style.display = 'inline-block';
+    }
+  }).catch(() => {});
+
+  eyeInitTerminal();
+  eyeConnectWS();
+
+  // Welcome line
+  setTimeout(() => {
+    if (eyeTerm) eyeTerm.write('\r\n\x1b[90m  Type \x1b[36mhelp\x1b[90m for commands. Bible study and Babel translation are built in.\x1b[0m');
+    eyeShowPrompt();
+  }, 420);
+}
+
+// Boot the embedded Eye on page load
+function eyeBootEmbeddedTerminal() {
+  // If we already have a token from previous visit (or from standalone terminal), auto-enter
+  const savedToken = localStorage.getItem('cursiv_token');
+  const savedUser  = localStorage.getItem('cursiv_user');
+
+  if (savedToken && savedUser) {
+    eyeTokenState = savedToken;
+    eyeUsernameState = savedUser;
+    // Try to show the terminal immediately (the WS will validate the token)
+    eyeShowTerminal();
+  } else {
+    // Focus username for convenience
+    if (eyeUsername) eyeUsername.focus();
+  }
+
+  // Optional: prefill last used Groq key
+  const lastKey = localStorage.getItem('cursiv_last_groq_key');
+  if (lastKey && eyeGroqKey) eyeGroqKey.value = lastKey;
+}
+
+eyeBootEmbeddedTerminal();
 </script>
 </body>
 </html>
