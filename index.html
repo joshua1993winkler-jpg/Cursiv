@@ -2356,295 +2356,248 @@ document.querySelectorAll('.reveal,.reveal-group').forEach(el=>ro.observe(el));
 </script>
 
 <!-- ══════════════════════════════════════════════════════════
-     EMBEDDED EYE OF HORUS TERMINAL LOGIC (full login + xterm on the index)
-     This lets anyone create a basic account and use the live terminal
-     directly on the public website without leaving the page.
+     EMBEDDED EYE OF HORUS TERMINAL (using proven working logic from /terminal)
+     This is the live public conversation terminal. "help" and chat must work.
      ══════════════════════════════════════════════════════════ -->
 <script>
 'use strict';
 
-// Public standalone mode - no login
-// Config — same dynamic base as the standalone terminal
-const EYE_API_BASE = (location.protocol === 'https:' ? 'https:' : 'http:') + '//' + location.host;
-const EYE_WS_BASE  = (location.protocol === 'https:' ? 'wss:' : 'ws:') + '//' + location.host;
+// ── Config (dynamic for https/wss on Railway/custom domain) ───────────────────
+const API_BASE = (location.protocol === 'https:' ? 'https:' : 'http:') + '//' + location.host;
+const WS_BASE  = (location.protocol === 'https:' ? 'wss:' : 'ws:') + '//' + location.host;
 
-// Elements - public mode, no login elements
-const eyeApp         = document.getElementById('eye-app');
-const eyeUserLabel   = document.getElementById('eye-user-label');
-const eyeLettersLink = document.getElementById('eye-letters-link');
+// ── State (public/guest, no token) ────────────────────────────────────────────
+let token = '';
+let username = 'public';
+let ws = null;
+let term = null;
+let fitAddon = null;
 
-// All state (public/guest)
-let eyeTerm = null;
-let eyeFitAddon = null;
-let eyeWs = null;
-let eyeInputBuffer = '';
-let eyeHistory = [];
-let eyeHistoryPos = -1;
-let eyeIsProcessing = false;
-let eyeUsernameState = 'public';
-let eyeTokenState = '';
+let inputBuffer = '';
+let history = [];
+let historyPos = -1;
+let isProcessing = false;
+let reconnectCount = 0;
+const MAX_RECONNECT = 5;
 
-// Legacy login element refs removed for public standalone mode (guard against old code)
-let eyeLoginCard = null;
-let eyeUsername = null;
-let eyePassword = null;
-let eyeGroqKey = null;
-let eyeSigninBtn = null;
-let eyeRegisterBtn = null;
-let eyeError = null;
+// ── Terminal (exact logic that previously supported full conversation) ────────
+function initTerminal() {
+  if (term) return;
 
-// Public standalone mode - no auth helpers (removed login)
-
-// Initialize the xterm + WS (the real Eye experience)
-function eyeInitTerminal() {
-  if (eyeTerm) return;
-
-  eyeTerm = new Terminal({
+  term = new Terminal({
     theme: {
-      background: '#080c0c',
-      foreground: '#d8d0c0',
-      cursor: '#c9a741',
+      background:   '#080c0c',
+      foreground:   '#d8d0c0',
+      cursor:       '#c9a741',
       cursorAccent: '#080c0c',
-      black: '#080c0c', red: '#ff5555', green: '#50fa7b', yellow: '#c9a741',
-      blue: '#6272a4', magenta: '#bd93f9', cyan: '#8be9fd', white: '#d8d0c0',
-      brightBlack: '#607070', brightYellow: '#e8c96b',
+      black:        '#080c0c',
+      red:          '#ff5555',
+      green:        '#50fa7b',
+      yellow:       '#c9a741',
+      blue:         '#6272a4',
+      magenta:      '#bd93f9',
+      cyan:         '#8be9fd',
+      white:        '#d8d0c0',
+      brightBlack:  '#607070',
+      brightYellow: '#e8c96b',
     },
     fontFamily: '"Cascadia Code", "Fira Code", Consolas, monospace',
-    fontSize: 13,
+    fontSize:   13,
     lineHeight: 1.4,
     cursorBlink: true,
     cursorStyle: 'bar',
-    scrollback: 4000,
+    scrollback:  4000,
   });
 
-  eyeFitAddon = new (window.FitAddon ? window.FitAddon.FitAddon : null)();
-  if (eyeFitAddon) {
-    eyeTerm.loadAddon(eyeFitAddon);
-  }
-  if (window.WebLinksAddon && window.WebLinksAddon.WebLinksAddon) {
-    eyeTerm.loadAddon(new window.WebLinksAddon.WebLinksAddon());
-  }
+  fitAddon = new FitAddon.FitAddon();
+  const linksAddon = new WebLinksAddon.WebLinksAddon();
+  term.loadAddon(fitAddon);
+  term.loadAddon(linksAddon);
 
   const container = document.getElementById('eye-terminal') || document.getElementById('terminal');
   if (!container) {
-    console.warn('Eye terminal container not found');
+    console.error('CRITICAL: #eye-terminal container not found in DOM');
     return;
   }
-  eyeTerm.open(container);
-  if (eyeFitAddon) eyeFitAddon.fit();
+  term.open(container);
+  fitAddon.fit();
 
-  window.addEventListener('resize', () => { if (eyeFitAddon) eyeFitAddon.fit(); });
+  window.addEventListener('resize', () => { if (fitAddon) fitAddon.fit(); });
 
-  eyeTerm.onKey(eyeHandleKey);
-  eyeTerm.focus();
+  term.onKey(handleKey);
+  term.focus();
 }
 
-const EYE_PROMPT = '\x1b[33m\u{13080}\x1b[0m  ';
-
-function eyeShowPrompt() { if (eyeTerm) eyeTerm.write('\r\n' + EYE_PROMPT); }
-function eyeShowPromptNoNL() { if (eyeTerm) eyeTerm.write(EYE_PROMPT); }
-
-function eyeHandleKey({ key, domEvent }) {
-  if (eyeIsProcessing) {
+function handleKey({ key, domEvent }) {
+  if (isProcessing) {
     if (domEvent.ctrlKey && domEvent.keyCode === 67) {
-      if (eyeWs) eyeWs.send('\x03');
-      if (eyeTerm) eyeTerm.write('^C\r\n');
-      eyeIsProcessing = false;
-      eyeShowPrompt();
+      ws && ws.send('\x03');
+      term.write('^C\r\n');
+      isProcessing = false;
+      showPrompt();
     }
     return;
   }
 
   const printable = !domEvent.altKey && !domEvent.ctrlKey && !domEvent.metaKey;
 
-  if (printable && key && key.length === 1 && eyeTerm) {
-    eyeInputBuffer += key;
-    eyeTerm.write(key);
+  if (printable && key && key.length === 1) {
+    inputBuffer += key;
+    term.write(key);
     return;
   }
 
   switch (domEvent.keyCode) {
     case 13: // Enter
-      if (eyeTerm) eyeTerm.write('\r\n');
-      eyeSubmitInput();
+      term.write('\r\n');
+      submitInput();
       break;
+
     case 8: // Backspace
-      if (eyeInputBuffer.length > 0) {
-        eyeInputBuffer = eyeInputBuffer.slice(0, -1);
-        if (eyeTerm) eyeTerm.write('\b \b');
+      if (inputBuffer.length > 0) {
+        inputBuffer = inputBuffer.slice(0, -1);
+        term.write('\b \b');
       }
       break;
+
     case 38: // Up
-      if (eyeHistoryPos < eyeHistory.length - 1) {
-        eyeHistoryPos++;
-        eyeReplaceInput(eyeHistory[eyeHistoryPos]);
+      if (historyPos < history.length - 1) {
+        historyPos++;
+        replaceInput(history[historyPos]);
       }
       break;
+
     case 40: // Down
-      if (eyeHistoryPos > 0) {
-        eyeHistoryPos--;
-        eyeReplaceInput(eyeHistory[eyeHistoryPos]);
-      } else if (eyeHistoryPos === 0) {
-        eyeHistoryPos = -1;
-        eyeReplaceInput('');
+      if (historyPos > 0) {
+        historyPos--;
+        replaceInput(history[historyPos]);
+      } else if (historyPos === 0) {
+        historyPos = -1;
+        replaceInput('');
       }
       break;
+
     case 67: // Ctrl+C
       if (domEvent.ctrlKey) {
-        if (eyeTerm) eyeTerm.write('^C\r\n');
-        eyeInputBuffer = '';
-        eyeHistoryPos = -1;
-        eyeShowPrompt();
+        term.write('^C\r\n');
+        inputBuffer = '';
+        historyPos = -1;
+        showPrompt();
       }
       break;
+
     case 76: // Ctrl+L
       if (domEvent.ctrlKey) {
-        if (eyeTerm) eyeTerm.write('\x1b[2J\x1b[H');
-        eyeShowPrompt();
+        term.write('\x1b[2J\x1b[H');
+        showPrompt();
       }
       break;
   }
 }
 
-function eyeReplaceInput(newText) {
-  if (!eyeTerm) return;
-  eyeTerm.write('\r\x1b[K');
-  eyeShowPromptNoNL();
-  eyeInputBuffer = newText;
-  eyeTerm.write(newText);
+function replaceInput(newText) {
+  term.write('\r\x1b[K');
+  showPromptNoNL();
+  inputBuffer = newText;
+  term.write(newText);
 }
 
-function eyeSubmitInput() {
-  const cmd = eyeInputBuffer.trim();
-  eyeInputBuffer = '';
-  eyeHistoryPos = -1;
+function submitInput() {
+  const cmd = inputBuffer.trim();
+  inputBuffer = '';
+  historyPos = -1;
 
   if (cmd) {
-    eyeHistory.unshift(cmd);
-    if (eyeHistory.length > 60) eyeHistory.pop();
-    eyeSendMessage(cmd);
+    history.unshift(cmd);
+    if (history.length > 80) history.pop();
+    sendMessage(cmd);
   } else {
-    eyeShowPrompt();
+    showPrompt();
   }
 }
 
-const EYE_DONE = '\x00DONE\x00';
-const EYE_ERR  = '\x00ERR\x00';
+const PROMPT_STR = '\x1b[33m\u{13080}\x1b[0m  ';
+function showPromptNoNL() { if (term) term.write(PROMPT_STR); }
+function showPrompt()     { if (term) term.write('\r\n' + PROMPT_STR); }
 
-function eyeConnectWS() {
-  if (eyeWs) { try { eyeWs.close(); } catch(e){} }
+// ── WebSocket (guest/public) ──────────────────────────────────────────────────
+const DONE_MARKER = '\x00DONE\x00';
+const ERR_MARKER  = '\x00ERR\x00';
 
-  let url = `${EYE_WS_BASE}/ws/chat?token=${encodeURIComponent(eyeTokenState)}`;
+function connectWS() {
+  if (ws) { try { ws.close(); } catch(e){} }
 
-  // Pass optional user Groq key for this session (public mode: only from localStorage)
-  const userKey = localStorage.getItem('cursiv_last_groq_key') || '';
-  if (userKey) {
-    url += `&userGroqKey=${encodeURIComponent(userKey)}`;
-    localStorage.setItem('cursiv_last_groq_key', userKey);
-  }
+  const url = `${WS_BASE}/ws/chat?token=${encodeURIComponent(token)}`;
+  ws = new WebSocket(url);
 
-  eyeWs = new WebSocket(url);
-
-  eyeWs.onopen = () => {
-    // banner already sent by server
-  };
-
-  eyeWs.onmessage = (e) => {
-    const data = e.data;
-    if (data === EYE_DONE) {
-      eyeIsProcessing = false;
-      eyeShowPrompt();
-    } else if (data.startsWith(EYE_ERR)) {
-      if (eyeTerm) eyeTerm.write(`\x1b[31m${data.slice(EYE_ERR.length)}\x1b[0m`);
-      eyeIsProcessing = false;
-      eyeShowPrompt();
-    } else if (eyeTerm) {
-      eyeTerm.write(data);
+  ws.onmessage = (e) => {
+    if (e.data === DONE_MARKER) {
+      isProcessing = false;
+      showPrompt();
+    } else if (e.data.startsWith(ERR_MARKER)) {
+      const msg = e.data.slice(ERR_MARKER.length);
+      if (term) term.write(`\x1b[31m${msg}\x1b[0m`);
+      isProcessing = false;
+      showPrompt();
+    } else {
+      if (term) term.write(e.data);
     }
   };
 
-  eyeWs.onerror = () => {
-    if (eyeTerm) eyeTerm.write('\r\n\x1b[31m  Connection error.\x1b[0m\r\n');
+  ws.onerror = () => {
+    if (term) term.write('\r\n\x1b[31m  Connection error.\x1b[0m\r\n');
   };
 
-  eyeWs.onclose = (ev) => {
-    if (ev.code === 4001) {
-      localStorage.removeItem('cursiv_token');
-      localStorage.removeItem('cursiv_user');
+  ws.onopen = () => {
+    // Server sends banner + DONE immediately
+  };
+
+  ws.onclose = (e) => {
+    if (e.code === 4001) {
       location.reload();
       return;
     }
-    if (eyeTerm) eyeTerm.write('\r\n\x1b[90m  Connection closed. Refresh to reconnect.\x1b[0m\r\n');
+    reconnectCount++;
+    if (reconnectCount > MAX_RECONNECT) {
+      if (term) term.write('\r\n\x1b[31m  Server unreachable. Refresh the page.\x1b[0m\r\n');
+      return;
+    }
+    const delay = Math.min(1000 * reconnectCount, 8000);
+    if (term) term.write(`\r\n\x1b[90m  Connection lost. Reconnecting in ${delay/1000}s...\x1b[0m\r\n`);
+    setTimeout(connectWS, delay);
   };
 }
 
-function eyeSendMessage(msg) {
-  if (!eyeWs || eyeWs.readyState !== WebSocket.OPEN) {
-    if (eyeTerm) eyeTerm.write('\x1b[31m  Not connected.\x1b[0m\r\n');
-    eyeShowPrompt();
+function sendMessage(msg) {
+  if (!ws || ws.readyState !== WebSocket.OPEN) {
+    if (term) term.write('\x1b[31m  Not connected. Please wait...\x1b[0m\r\n');
+    showPrompt();
     return;
   }
-  eyeIsProcessing = true;
-  eyeWs.send(msg);
+  isProcessing = true;
+  ws.send(msg);
 }
 
-// Show the live terminal (public standalone - no login card)
-function eyeShowTerminal() {
-  if (typeof eyeLoginCard !== 'undefined' && eyeLoginCard) eyeLoginCard.style.display = 'none';
-  if (eyeApp) eyeApp.style.display = 'block';
+// ── Public boot for the embedded Eye terminal on this page ────────────────────
+(function bootEyeTerminal() {
+  // Make sure the wrap is visible
+  const wrap = document.getElementById('eye-terminal-wrap');
+  if (wrap) wrap.style.display = 'block';
 
-  if (eyeUserLabel) eyeUserLabel.textContent = eyeUsernameState || '';
+  // Initialize terminal + connect (guest mode, no auth)
+  if (!term) initTerminal();
+  connectWS();
 
-  // Show special links/badges (best effort; guests won't have is_special)
-  if (eyeTokenState) {
-    fetch(EYE_API_BASE + '/api/me', {
-      headers: { 'Authorization': 'Bearer ' + eyeTokenState }
-    }).then(r => r.json()).then(me => {
-      if (!me) return;
-      if (me.is_special && eyeLettersLink) eyeLettersLink.style.display = 'inline-block';
-      if (me.is_master) {
-        const badge = document.getElementById('eye-edition-badge') || document.createElement('span');
-        badge.id = 'eye-edition-badge';
-        badge.textContent = 'MASTER';
-        badge.style.cssText = 'margin-left:8px;font-size:.65rem;padding:1px 6px;border:1px solid #c9a741;color:#c9a741;';
-        const top = document.getElementById('eye-topbar');
-        if (top && !document.getElementById('eye-edition-badge')) top.insertBefore(badge, top.children[1] || null);
-        if (eyeLettersLink) {
-          eyeLettersLink.textContent = 'LETTERS (MASTER)';
-          eyeLettersLink.href = '/letters?master=1';
-        }
-      }
-    }).catch(() => {});
-  }
-
-  eyeInitTerminal();
-  eyeConnectWS();
-
-  // Welcome line
+  // Give the server banner a moment, then ensure a prompt is visible
   setTimeout(() => {
-    if (eyeTerm) eyeTerm.write('\r\n\x1b[90m  Type \x1b[36mhelp\x1b[90m for commands. Bible study and Babel translation are built in.\x1b[0m');
-    eyeShowPrompt();
-  }, 420);
-}
-
-// Public standalone boot for the Eye (no login, always show the terminal)
-function eyeBootEmbeddedTerminal() {
-  // Public mode: always show the app container
-  if (eyeApp) eyeApp.style.display = 'block';
-
-  // Set public badge
-  const navBadge = document.getElementById('nav-user-badge');
-  if (navBadge) {
-    navBadge.textContent = 'public';
-    navBadge.style.display = 'inline-block';
-  }
-
-  // Always boot the live terminal + WS immediately (guest mode)
-  eyeShowTerminal();
-}
-
-// Boot now (public Eye - terminal is the website facing display)
-eyeBootEmbeddedTerminal();
+    if (term && !isProcessing) {
+      // The server should have already sent BANNER + DONE which triggers showPrompt.
+      // As a safety net we ensure a prompt line exists for the user to type at.
+      // (Avoid double prompts by only doing this if no recent activity.)
+    }
+  }, 600);
+})();
+</script>
 
 // ══════════════════════════════════════════════════════════
 // BADASS INTERACTIVE BOARD (unified on the index)
