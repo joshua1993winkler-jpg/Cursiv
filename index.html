@@ -984,7 +984,7 @@ footer {
 <section id="the-eye-section" style="max-width: 1100px; margin: 40px auto; padding: 0 20px;">
   <div style="text-align:center; margin-bottom: 18px;">
     <div style="font-family: var(--mono); font-size: 10px; letter-spacing: 3px; color: var(--gold); text-transform: uppercase; opacity: .75;">THE LIVING HEART</div>
-    <h2 style="font-family: var(--serif); font-size: clamp(28px, 4.2vw, 44px); color: var(--silver); margin: 6px 0 8px;">𓂀 The Eye of Horus Terminal</h2>
+    <h2 style="font-family: var(--serif); font-size: clamp(28px, 4.2vw, 44px); color: var(--silver); margin: 6px 0 8px;">𓂀 Talk to the Eye</h2>
     <p style="max-width: 620px; margin: 0 auto; color: var(--silver2); font-size: 15px; line-height: 1.55;">
       Use the entire system right here. Public terminal with full chat, blast to the Board, and family Babel letters via secret codes. No account needed.<br>
       Chat with Bible study, Babel translation, synthesis, and more. Uses the public backend (Groq).<br>
@@ -1003,18 +1003,23 @@ footer {
       <a href="/vision" style="margin-right:10px; font-size:.65rem; padding:1px 8px; border:1px solid #3a4a4a; color:#a8b0b8; text-decoration:none; letter-spacing:.05em;">VISION</a>
       <a href="https://github.com/joshua1993winkler-jpg/Cursiv/releases" target="_blank" style="font-size:.65rem; padding:1px 8px; border:1px solid var(--gold); color:var(--gold); text-decoration:none; letter-spacing:.05em;">DOWNLOAD DESKTOP</a>
     </div>
-    <!-- 
-      WHATEVER IT TAKES: iframe the proven /terminal page (with ?embedded to strip chrome).
-      This guarantees the xterm + WS chat (help, conversation, blast, babel codes, etc.) works exactly as it did before.
-      The terminal inside is 100% the working version.
-    -->
-    <div id="eye-terminal-wrap" style="height: 460px; padding: 0; border: 1px solid #1e3030; background:#080c0c; overflow:hidden;">
-      <iframe 
-        src="/terminal?embedded=1" 
-        style="width:100%; height:100%; border:none; background:#080c0c; display:block;"
-        title="Cursiv Eye of Horus Terminal"
-        allow="clipboard-read; clipboard-write"
-      ></iframe>
+    <!-- Normal chatbox (like before) directly on the page: talk to the system, responses come back live.
+         After useful messages, post them to the public Board below for others to see. -->
+    <div id="eye-chat" style="background:#080c0c; border:1px solid #1e3030; display:flex; flex-direction:column; height:480px; max-width:980px; margin:0 auto;">
+      <div style="padding:8px 14px; background:#0f1515; border-bottom:1px solid #1e3030; font-size:12px; color:#9a9480; display:flex; align-items:center; gap:8px;">
+        <span style="color:#c9a741; font-weight:600;">𓂀 Eye Chat</span>
+        <span style="opacity:.6; font-size:10px;">public • no login • talk to the system • post useful messages to the Board</span>
+        <div style="flex:1"></div>
+        <button id="eye-chat-clear" style="background:transparent; border:1px solid #3a4a4a; color:#a8b0b8; font-size:10px; padding:2px 8px; cursor:pointer;">Clear</button>
+      </div>
+
+      <div id="eye-chat-messages" style="flex:1; overflow-y:auto; padding:14px; background:#080c0c; font-size:14px; line-height:1.5; display:flex; flex-direction:column; gap:10px;"></div>
+
+      <div style="padding:10px 12px; border-top:1px solid #1e3030; background:#0a0c12; display:flex; gap:8px; align-items:flex-end;">
+        <textarea id="eye-chat-input" rows="2" placeholder="Talk to the Eye... (your messages can be posted to the Board below for others)" style="flex:1; background:#08090C; border:1px solid #1e3030; color:#d8d0c0; font-family:inherit; font-size:14px; padding:10px; border-radius:4px; resize:vertical; min-height:42px;"></textarea>
+        <button id="eye-chat-send" style="background:#c9a741; color:#08090C; border:none; padding:10px 18px; font-size:13px; font-weight:700; letter-spacing:.5px; cursor:pointer; border-radius:3px;">Send</button>
+        <button id="eye-chat-post-board" style="background:#1e3030; color:#c9a741; border:1px solid #c9a741; padding:10px 12px; font-size:11px; cursor:pointer; border-radius:3px;">Post last to Board</button>
+      </div>
     </div>
   </div>
 
@@ -2403,32 +2408,28 @@ document.querySelectorAll('.reveal,.reveal-group').forEach(el=>ro.observe(el));
   postBtn.addEventListener('click', async () => {
     const msg = (composer.value || '').trim();
     if (!msg) return;
-    if (!token) {
-      status.textContent = 'Use the Eye terminal (above) — type: blast your message  (public visitors supported there)';
-      status.style.color = '#c9a741';
-      setTimeout(()=>{status.textContent='';status.style.color='#6b6f7a';}, 2800);
-      return;
-    }
     postBtn.disabled = true;
-    status.textContent = 'Transmitting...';
+    status.textContent = 'Transmitting to the Board...';
     status.style.color = '#c9a741';
     try {
+      const headers = {'Content-Type': 'application/json'};
+      if (token) headers['Authorization'] = 'Bearer ' + token;
       const r = await fetch('/api/blast', {
         method:'POST',
-        headers:{'Content-Type':'application/json', 'Authorization':'Bearer '+token},
+        headers,
         body: JSON.stringify({text: msg, source:'broadcast'})
       });
       if (!r.ok) throw 0;
       composer.value = '';
-      status.textContent = 'Transmitted.';
+      status.textContent = 'Transmitted to the Board (visible to everyone).';
       status.style.color = '#27C97A';
       await loadBoard();
     } catch(e) {
-      status.textContent = 'Failed. Try again.';
+      status.textContent = 'Could not transmit. Use the chatbox below and "post to board".';
       status.style.color = '#ff5555';
     } finally {
       postBtn.disabled = false;
-      setTimeout(()=>{ if(status){status.textContent=''; status.style.color='#6b6f7a';} }, 1600);
+      setTimeout(() => { if (status) { status.textContent = ''; status.style.color = '#6b6f7a'; } }, 2200);
     }
   });
 
@@ -2436,7 +2437,220 @@ document.querySelectorAll('.reveal,.reveal-group').forEach(el=>ro.observe(el));
   setInterval(loadBoard, 42000);
 })();
 </script>
-</body>
-</html>
+
+<!-- Normal chatbox logic: direct WS to the same backend the old terminal used.
+     Streams text back live into bubbles. "Post last to Board" uses the public blast (now supported for guests as "visitor").
+     This is the reliable non-xterm chat the user asked for. -->
+<script>
+'use strict';
+
+const CHAT_WS_BASE = (location.protocol === 'https:' ? 'wss:' : 'ws:') + '//' + location.host;
+const CHAT_API_BASE = (location.protocol === 'https:' ? 'https:' : 'http:') + '//' + location.host;
+
+let chatWs = null;
+let chatIsProcessing = false;
+let lastUserQuery = '';
+let lastAssistantText = '';
+
+const messagesEl = document.getElementById('eye-chat-messages');
+const inputEl = document.getElementById('eye-chat-input');
+const sendBtn = document.getElementById('eye-chat-send');
+const clearBtn = document.getElementById('eye-chat-clear');
+const postBoardBtn = document.getElementById('eye-chat-post-board');
+
+function appendMessage(role, text, isStreaming = false) {
+  const div = document.createElement('div');
+  div.style.cssText = role === 'user' 
+    ? 'align-self:flex-end; max-width:75%; background:#1e3a5f; color:#d8d0c0; padding:9px 13px; border-radius:12px; border-bottom-right-radius:3px; white-space:pre-wrap;'
+    : 'align-self:flex-start; max-width:85%; background:#11151f; color:#d8d0c0; padding:9px 13px; border-radius:12px; border-bottom-left-radius:3px; border-left:3px solid #c9a741; white-space:pre-wrap;';
+
+  if (role === 'assistant') {
+    div.dataset.role = 'assistant';
+    div.innerHTML = '<span style="font-size:10px;opacity:.6;color:#c9a741;">𓂀 </span>' + (text || '').replace(/\n/g, '<br>');
+  } else {
+    div.textContent = text || '';
+  }
+
+  messagesEl.appendChild(div);
+  messagesEl.scrollTop = messagesEl.scrollHeight;
+
+  if (role === 'assistant' && !isStreaming) {
+    lastAssistantText = text || '';
+    // Attach per-message post button
+    const postBtn = document.createElement('button');
+    postBtn.textContent = '📌 Post to Board';
+    postBtn.style.cssText = 'margin-top:6px; font-size:10px; background:transparent; border:1px solid #c9a741; color:#c9a741; padding:1px 6px; cursor:pointer;';
+    postBtn.onclick = () => postToBoard(lastUserQuery, text);
+    div.appendChild(postBtn);
+  }
+
+  return div;
+}
+
+function updateLastAssistant(chunk) {
+  // Find the last assistant bubble and append
+  const bubbles = messagesEl.querySelectorAll('div[data-role="assistant"]');
+  if (bubbles.length === 0) return;
+  const last = bubbles[bubbles.length - 1];
+  lastAssistantText += chunk;
+  // rebuild content (keep the eye icon)
+  last.innerHTML = '<span style="font-size:10px;opacity:.6;color:#c9a741;">𓂀 </span>' + lastAssistantText.replace(/\n/g, '<br>');
+  messagesEl.scrollTop = messagesEl.scrollHeight;
+}
+
+function connectChat() {
+  if (chatWs && chatWs.readyState === WebSocket.OPEN) return;
+
+  const url = `${CHAT_WS_BASE}/ws/chat?token=`;
+  chatWs = new WebSocket(url);
+
+  chatWs.onmessage = (e) => {
+    const data = e.data;
+
+    if (data === '\x00DONE\x00') {
+      chatIsProcessing = false;
+      sendBtn.disabled = false;
+      // final assistant text is ready for posting
+      lastAssistantText = lastAssistantText.trim();
+      return;
+    }
+    if (data.startsWith('\x00ERR\x00')) {
+      const err = data.slice(6);
+      appendMessage('assistant', 'Error: ' + err);
+      chatIsProcessing = false;
+      sendBtn.disabled = false;
+      return;
+    }
+
+    // streaming chunk for current assistant response
+    if (chatIsProcessing) {
+      updateLastAssistant(data);
+    } else {
+      // initial banner or unexpected — show as system once
+      if (data && data.includes('Eye of Horus')) {
+        // ignore the big banner for clean chat start; user can type immediately
+        return;
+      }
+      appendMessage('assistant', data);
+    }
+  };
+
+  chatWs.onopen = () => {
+    // ready — user can type
+  };
+
+  chatWs.onclose = () => {
+    // simple reconnect on close
+    setTimeout(connectChat, 1200);
+  };
+
+  chatWs.onerror = () => {
+    appendMessage('assistant', 'Connection issue — refresh if it stays silent.');
+  };
+}
+
+function sendChatMessage() {
+  const text = (inputEl.value || '').trim();
+  if (!text || chatIsProcessing) return;
+
+  lastUserQuery = text;
+  appendMessage('user', text);
+  inputEl.value = '';
+
+  if (!chatWs || chatWs.readyState !== WebSocket.OPEN) {
+    appendMessage('assistant', 'Connecting to the Eye...');
+    connectChat();
+    // retry send after short delay
+    setTimeout(() => sendChatMessage(), 400);
+    return;
+  }
+
+  // create the assistant bubble we will stream into
+  appendMessage('assistant', '', true); // placeholder, will be updated by chunks
+  lastAssistantText = '';
+
+  chatIsProcessing = true;
+  sendBtn.disabled = true;
+
+  chatWs.send(text);
+}
+
+function postToBoard(userQ, assistantResponse) {
+  const text = (userQ ? 'User: ' + userQ + '\n\nEye: ' : '') + (assistantResponse || lastAssistantText || '');
+  if (!text.trim()) {
+    alert('Nothing to post yet.');
+    return;
+  }
+
+  postBoardBtn.disabled = true;
+  postBoardBtn.textContent = 'Posting...';
+
+  fetch(CHAT_API_BASE + '/api/blast', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ text: text.trim(), source: 'broadcast' })
+  })
+  .then(r => {
+    if (!r.ok) throw new Error('post failed');
+    postBoardBtn.textContent = 'Posted!';
+    // refresh the Board section so it appears immediately for others
+    const boardFeed = document.getElementById('board-posts');
+    if (boardFeed && typeof loadBoard === 'function') {
+      // the board IIFE defined loadBoard in its scope, so trigger a reload via interval or direct fetch
+      setTimeout(() => location.reload(), 900); // simple reliable way to refresh the whole board area
+    }
+  })
+  .catch(() => {
+    postBoardBtn.textContent = 'Failed — try Board composer';
+  })
+  .finally(() => {
+    setTimeout(() => {
+      postBoardBtn.disabled = false;
+      postBoardBtn.textContent = 'Post last to Board';
+    }, 1600);
+  });
+}
+
+function setupChat() {
+  if (!messagesEl || !inputEl || !sendBtn) return;
+
+  // Welcome message
+  setTimeout(() => {
+    appendMessage('assistant', 'The Eye is listening. Ask anything — Bible, synthesis, questions, or just talk. Use the button below any response to share it to the public Board.');
+  }, 120);
+
+  sendBtn.onclick = sendChatMessage;
+  inputEl.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      sendChatMessage();
+    }
+  });
+
+  clearBtn.onclick = () => {
+    messagesEl.innerHTML = '';
+    lastUserQuery = '';
+    lastAssistantText = '';
+    appendMessage('assistant', 'Chat cleared. The Eye is ready.');
+  };
+
+  postBoardBtn.onclick = () => {
+    if (lastAssistantText) {
+      postToBoard(lastUserQuery, lastAssistantText);
+    } else {
+      alert('Have a conversation first — the Eye will respond, then you can post the exchange.');
+    }
+  };
+
+  // Connect immediately so first send is fast
+  connectChat();
+
+  // Optional: focus input
+  setTimeout(() => inputEl.focus(), 300);
+}
+
+setupChat();
+</script>
+
 </body>
 </html>

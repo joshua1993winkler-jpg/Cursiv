@@ -519,10 +519,16 @@ def blast(
     authorization: str | None = Header(None),
     x_cursiv_cli:  str | None = Header(None),
 ):
-    user = _require_auth(authorization)
+    # Support public/guest posts from the Eye chatbox and on-page Board (no login required)
+    if authorization:
+        user = _require_auth(authorization)
+    else:
+        # Public visitor / guest — allows anyone on the site to share to the Board
+        user = {"id": 0, "username": "visitor"}
     if body.source == "council" and not x_cursiv_cli:
         raise HTTPException(403, "Council posts must come from the Cursiv CLI")
-    if count_posts_today(user["id"]) >= 4:
+    # Guests (id 0) have no daily limit; real users still capped at 4/day
+    if user["id"] != 0 and count_posts_today(user["id"]) >= 4:
         raise HTTPException(429, "Daily limit reached — 4 posts per day max")
     post = create_post(user["id"], user["username"], body.text, body.source)
     return post
