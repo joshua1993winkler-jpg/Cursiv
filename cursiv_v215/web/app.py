@@ -1,11 +1,5 @@
 """
-Cursiv Board — FastAPI backend. The public Eye of Horus website.
-
-This is the Railway-facing sacred index for the entire system:
-- The beautiful index (/) is the public website and gateway.
-- /terminal is the living Eye of Horus terminal display (full interactive access).
-- Login gives access to the Board, Codex (via chat), Vision, and the full temple.
-- Special credentials (wife / beloved) unlock the private Babel Letters vault.
+Cursiv Board — FastAPI backend.
 
 Auth model (two-ring figure-8):
   /api/login  tries access_gate (local bcrypt) first — issues bridge token.
@@ -13,16 +7,20 @@ Auth model (two-ring figure-8):
   All routes accept any valid signed token.
   Bridge tokens are machine-bound; only the owner's machine can mint them.
 
-Special users: set CURSIV_SPECIAL_USERS=beloved,hername (comma list). Those
-usernames receive is_special=true in /api/me and can read the legacy letters.
-
 Routes:
-  GET  /                  Eye of Horus sacred website / landing (the public face)
-  GET  /terminal          The Eye — xterm terminal (the living display of the system)
-  GET  /vision            The Vision canvas (system phases / Eye of Horus display)
-  GET  /letters           Babel Letters vault (special users only)
+  GET  /                  substrate UI (or health JSON on Railway)
   GET  /health            JSON health check
-  ...
+  GET  /robots.txt
+  GET  /api/posts         public feed (no auth, 30-day window)
+  POST /api/register      create account (Railway / non-local only)
+  POST /api/login         get a JWT (local: bcrypt gate, remote: board.db)
+  GET  /api/me            current user info (auth required)
+  POST /api/blast         post a synthesis (auth required)
+  DELETE /api/post/{id}   delete own post (auth required)
+  GET  /substrate/status
+  POST /substrate/activate
+  GET  /substrate/weave
+  GET  /substrate/address/{node_id}
 """
 from __future__ import annotations
 
@@ -33,60 +31,16 @@ import os
 import secrets as _secrets_mod
 from pathlib import Path
 
-from fastapi import FastAPI, HTTPException, Header, Query, Request, WebSocket, WebSocketDisconnect
+from fastapi import FastAPI, HTTPException, Header, Query, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, PlainTextResponse
 from pydantic import BaseModel, field_validator
 
 _log = logging.getLogger("cursiv.sentinel")
 
-_WEB_DIR       = Path(__file__).parent
-_ROOT_DIR      = _WEB_DIR.parent.parent
-_LANDING_FILE  = _ROOT_DIR / "index.html"          # The sacred Eye of Horus public website
-_TERMINAL_FILE = _WEB_DIR / "terminal.html"
-_VISION_FILE   = _ROOT_DIR / "system_vision.html"
-_LETTERS_FILE  = _WEB_DIR / "letters.html"
-_FLEET_TOKEN   = os.environ.get("CURSIV_FLEET_TOKEN", "")
-
-# Special users (wife, stepdaughter, sons, etc.) who get private Babel Letters access.
-# Set CURSIV_SPECIAL_USERS=kwdomain,naylie,kain,eli on Railway.
-# Letters (real content from family/family_profiles.py) are pre-seeded in web/db.py .
-# When they create accounts with those usernames, add them here so /letters and babel commands work.
-_SPECIAL_USERS = {
-    u.strip().lower() for u in
-    os.environ.get("CURSIV_SPECIAL_USERS", "beloved,wife").split(",") if u.strip()
-}
-
-# Master / owner users (JW etc) – get full visibility (e.g. all legacy letters, master badge).
-# Set CURSIV_MASTER_USERS=jw on Railway.
-_MASTER_USERS = {
-    u.strip().lower() for u in
-    os.environ.get("CURSIV_MASTER_USERS", "jw").split(",") if u.strip()
-}
-
-
-def _is_special_user(username: str | None) -> bool:
-    if not username:
-        return False
-    return username.lower().strip() in _SPECIAL_USERS
-
-
-def _is_master_user(username: str | None) -> bool:
-    if not username:
-        return False
-    return username.lower().strip() in _MASTER_USERS
-
-
-def _user_response(user: dict, token: str) -> dict:
-    """Standard login/me response + special + master flags."""
-    uname = user.get("username", "")
-    return {
-        "token": token,
-        "user_id": user["id"],
-        "username": uname,
-        "is_special": _is_special_user(uname),
-        "is_master": _is_master_user(uname),
-    }
+_WEB_DIR     = Path(__file__).parent
+_UI_FILE     = _WEB_DIR / "substrate_ui.html"
+_FLEET_TOKEN = os.environ.get("CURSIV_FLEET_TOKEN", "")
 
 try:
     from cursiv_v215.web.db   import (
@@ -95,7 +49,6 @@ try:
         count_posts_today, upsert_fleet_node, get_fleet_nodes,
         create_fleet_token, get_fleet_token_by_hash, list_fleet_tokens,
         deactivate_fleet_token,
-        init_legacy_seed, create_legacy_letter, get_legacy_letters, list_all_legacy_letters,
     )
     from cursiv_v215.web.auth import (
         hash_password, verify_password,
@@ -109,7 +62,6 @@ except ImportError:
         count_posts_today, upsert_fleet_node, get_fleet_nodes,
         create_fleet_token, get_fleet_token_by_hash, list_fleet_tokens,
         deactivate_fleet_token,
-        init_legacy_seed, create_legacy_letter, get_legacy_letters, list_all_legacy_letters,
     )
     from auth import (
         hash_password, verify_password,
@@ -228,11 +180,6 @@ app.add_middleware(
 @app.on_event("startup")
 def _startup():
     init_db()
-    try:
-        init_legacy_seed()
-    except Exception:
-        # non-fatal — letters are a nice-to-have on top of the temple
-        pass
 
 
 # ── Auth helpers ──────────────────────────────────────────────────────────────
@@ -327,25 +274,16 @@ class BlastRequest(BaseModel):
 
 # ── Routes ────────────────────────────────────────────────────────────────────
 
-@app.get("/", include_in_schema=False)
+@app.get("/")
 def root():
-    """The public Eye of Horus website — the Railway index and sacred gateway."""
-    if _LANDING_FILE.exists():
-        return FileResponse(_LANDING_FILE, media_type="text/html")
-    # Fallback to terminal if the beautiful landing is missing
-    if _TERMINAL_FILE.exists():
-        return FileResponse(_TERMINAL_FILE, media_type="text/html")
-    return {"status": "ok", "service": "cursiv-board", "message": "Welcome to the Eye of Horus. /terminal for the living display."}
+    if _UI_FILE.exists():
+        return FileResponse(_UI_FILE, media_type="text/html")
+    return {"status": "ok", "service": "cursiv-board"}
 
 
 @app.get("/health")
 def health():
     return {"status": "ok", "service": "cursiv-board"}
-
-
-@app.get("/api/status")
-def api_status():
-    return {"status": "ok", "version": "3.14-U11", "service": "cursiv-board"}
 
 
 @app.get("/robots.txt", include_in_schema=False)
@@ -492,25 +430,19 @@ def login(body: LoginRequest):
     if _try_access_gate(body.username, body.password):
         user  = _provision_local_user(body.username)
         token = create_bridge_token(user["id"], user["username"])
-        return _user_response(user, token) | {"ring": "bridge"}
+        return {"token": token, "username": user["username"], "ring": "bridge"}
 
     user = get_user_by_username(body.username)
     if not user or not verify_password(body.password, user["pw_hash"]):
         raise HTTPException(401, "Invalid username or password")
     token = create_web_token(user["id"], user["username"])
-    return _user_response(user, token) | {"ring": "web"}
+    return {"token": token, "username": user["username"], "ring": "web"}
 
 
 @app.get("/api/me")
 def me(authorization: str | None = Header(None)):
     user = _require_auth(authorization)
-    uname = user.get("username", "")
-    return {
-        "id": user["id"],
-        "username": uname,
-        "is_special": _is_special_user(uname),
-        "is_master": _is_master_user(uname),
-    }
+    return {"id": user["id"], "username": user["username"]}
 
 
 @app.post("/api/blast", status_code=201)
@@ -519,16 +451,10 @@ def blast(
     authorization: str | None = Header(None),
     x_cursiv_cli:  str | None = Header(None),
 ):
-    # Support public/guest posts from the Eye chatbox and on-page Board (no login required)
-    if authorization:
-        user = _require_auth(authorization)
-    else:
-        # Public visitor / guest — allows anyone on the site to share to the Board
-        user = {"id": 0, "username": "visitor"}
+    user = _require_auth(authorization)
     if body.source == "council" and not x_cursiv_cli:
         raise HTTPException(403, "Council posts must come from the Cursiv CLI")
-    # Guests (id 0) have no daily limit; real users still capped at 4/day
-    if user["id"] != 0 and count_posts_today(user["id"]) >= 4:
+    if count_posts_today(user["id"]) >= 4:
         raise HTTPException(429, "Daily limit reached — 4 posts per day max")
     post = create_post(user["id"], user["username"], body.text, body.source)
     return post
@@ -540,122 +466,6 @@ def remove_post(post_id: str, authorization: str | None = Header(None)):
     if not delete_post(post_id, user["id"]):
         raise HTTPException(404, "Post not found or not yours")
     return {"ok": True}
-
-
-# ── Babel Letters / Legacy (special access only) ─────────────────────────────
-
-@app.get("/api/legacy/letters")
-def legacy_letters(authorization: str | None = Header(None)):
-    """Return letters for the authenticated special user (or master can view their own + special).
-    """
-    user = _require_auth(authorization)
-    uname = user.get("username", "")
-    if _is_master_user(uname):
-        # Masters can see the primary wife's letters (kwdomain) + beloved fallback
-        letters = get_legacy_letters("kwdomain") or get_legacy_letters("beloved")
-        return {"letters": letters, "for": "kwdomain (master view)"}
-    if not _is_special_user(uname):
-        raise HTTPException(403, "These letters are sealed for a specific heart.")
-    letters = get_legacy_letters(uname)
-    if not letters:
-        letters = get_legacy_letters("beloved")
-    return {"letters": letters, "for": uname}
-
-
-@app.get("/api/legacy/all")
-def legacy_all(authorization: str | None = Header(None)):
-    """Master/owner view of all letters (for managing what was left for her)."""
-    user = _require_auth(authorization)
-    if not _is_master_user(user.get("username")):
-        raise HTTPException(403, "Master access only.")
-    return {"letters": list_all_legacy_letters()}
-
-
-# ── Web terminal ──────────────────────────────────────────────────────────────
-
-@app.get("/terminal", include_in_schema=False)
-def terminal_page():
-    """The Eye of Horus Terminal — the living website-facing display of the entire system."""
-    if _TERMINAL_FILE.exists():
-        return FileResponse(_TERMINAL_FILE, media_type="text/html")
-    raise HTTPException(404, "Terminal page not found")
-
-
-@app.get("/vision", include_in_schema=False)
-def vision_page():
-    """The Vision — interactive Eye of Horus display (agent phases on the sphere)."""
-    candidates = [
-        _VISION_FILE,
-        _WEB_DIR / "system_vision.html",
-        _ROOT_DIR / "system_vision.html",
-        Path("/app/system_vision.html"),
-        Path("/workspace/system_vision.html"),
-    ]
-    for p in candidates:
-        if p.exists():
-            return FileResponse(p, media_type="text/html")
-    raise HTTPException(404, "Vision page not found")
-
-
-@app.get("/letters", include_in_schema=False)
-def letters_page(authorization: str | None = Header(None)):
-    """Babel Letters vault. Only reachable for special users (or with valid token)."""
-    # Light gate: we still serve the page; the client will call the API which enforces.
-    # This lets the beautiful page itself do the "you are not special" messaging.
-    if _LETTERS_FILE.exists():
-        return FileResponse(_LETTERS_FILE, media_type="text/html")
-    raise HTTPException(404, "Letters page not found")
-
-
-@app.websocket("/ws/chat")
-async def ws_chat(websocket: WebSocket, token: str = Query(default=""), userGroqKey: str = Query(default="")):
-    """Public standalone WebSocket terminal session (no login required).
-    Users access via the Eye on the website. Special family letters unlocked by secret codes
-    (e.g. "babel I am Keiarra Winkler born 09/12/1995").
-    Optional userGroqKey allows bringing your own Groq key for the session.
-    """
-    username = "guest"
-    if token:
-        payload = decode_token(token)
-        if payload:
-            user = get_user_by_id(payload["sub"])
-            if user:
-                username = user["username"]
-
-    try:
-        from cursiv_v215.web.chat_ws import CursivWebSession, BANNER
-    except ImportError:
-        try:
-            from chat_ws import CursivWebSession, BANNER
-        except ImportError:
-            await websocket.accept()
-            await websocket.send_text("\x1b[31mTerminal backend not available.\x1b[0m")
-            await websocket.close()
-            return
-
-    await websocket.accept()
-    session = CursivWebSession(username, user_groq_key=userGroqKey or None)
-
-    # Send banner — client shows prompt after DONE
-    await websocket.send_text(BANNER)
-    await websocket.send_text("\x00DONE\x00")
-
-    try:
-        while True:
-            msg = await websocket.receive_text()
-            if not msg.strip():
-                await websocket.send_text("\x00DONE\x00")
-                continue
-            try:
-                async for chunk in session.process(msg):
-                    await websocket.send_text(chunk)
-            except Exception as e:
-                await websocket.send_text(f"\x00ERR\x00Internal error: {e}")
-            await websocket.send_text("\x00DONE\x00")
-    except WebSocketDisconnect:
-        pass
-    except Exception:
-        pass
 
 
 # ── Substrate layer ───────────────────────────────────────────────────────────

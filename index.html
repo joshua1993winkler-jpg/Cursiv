@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cursiv • The Eye of Horus</title>
-<meta name="description" content="The sacred public temple. Login to the living Eye — full terminal, shared Board, sealed family letters, and the Vision. Free. Badass. Human sovereignty.">
+<title>Cursiv — AI Workspace</title>
+<meta name="description" content="The AI workspace that lives on your machine. No cloud. No keys. No one watching.">
 <meta property="og:title" content="Cursiv — AI Workspace">
 <meta property="og:description" content="14-agent council. Full offline. xAI → OpenAI → Claude → Ollama cascade routing. Your data never leaves.">
 <meta property="og:image" content="https://cursiv.winklers-llc.com/assets/og-image.png">
@@ -17,16 +17,9 @@
 <link rel="icon" type="image/png" href="launcher/resources/icons/cursiv_256.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
-
-<!-- xterm.js for the embedded Eye of Horus Terminal on this page -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/xterm@5.3.0/css/xterm.css">
-<script src="https://cdn.jsdelivr.net/npm/xterm@5.3.0/lib/xterm.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/xterm-addon-fit@0.8.0/lib/xterm-addon-fit.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/xterm-addon-web-links@0.9.0/lib/xterm-addon-web-links.js"></script>
-
 <style>
 /* ══════════════════════════════════════════════════════════
-   CURSIV — Release Page  v3.14-U11
+   CURSIV — Release Page  v3.14-U08
    Palette: #08090C bg · #C9A227 gold · #2255DD blue
    ══════════════════════════════════════════════════════════ */
 
@@ -85,12 +78,9 @@ nav {
   display: flex; align-items: center; justify-content: space-between;
   padding: 0 48px;
   height: 56px;
-  background: rgba(8,9,12,0.92);
-  backdrop-filter: blur(18px);
+  background: rgba(8,9,12,0.88);
+  backdrop-filter: blur(14px);
   border-bottom: 1px solid var(--border);
-  font-family: var(--mono);
-  font-size: 12px;
-  letter-spacing: 1.5px;
 }
 
 .nav-logo {
@@ -100,27 +90,6 @@ nav {
   font-size: 13px; font-weight: 700; letter-spacing: 3.5px;
 }
 .nav-logo .hex { font-size: 19px; filter: drop-shadow(0 0 5px var(--gold)); }
-
-.nav-links {
-  display: flex;
-  gap: 32px;
-  align-items: center;
-}
-.nav-links a {
-  color: var(--silver2);
-  text-decoration: none;
-  transition: color .15s;
-}
-.nav-links a:hover { color: var(--gold); }
-
-.nav-user {
-  font-size: 11px;
-  color: var(--gold);
-  padding: 4px 10px;
-  border: 1px solid var(--gold-dim);
-  border-radius: 2px;
-  display: none;
-}
 
 nav ul { display: flex; gap: 32px; list-style: none; }
 nav ul a {
@@ -888,20 +857,18 @@ footer {
 
 <!-- ══ NAV ══════════════════════════════════════════════════════════ -->
 <nav class="layer">
-  <a href="#" class="nav-logo"><span class="hex">𓂀</span> THE EYE</a>
-  
-  <div class="nav-links">
-    <a href="#the-eye">The Eye</a>
-    <a href="#the-board">The Board</a>
-    <a href="#the-letters">The Letters</a>
-    <a href="#the-vision">The Vision</a>
-    <a href="https://github.com/joshua1993winkler-jpg/Cursiv" target="_blank">Desktop</a>
-  </div>
-
-  <div style="display:flex; align-items:center; gap:12px;">
-    <span id="nav-user-badge" class="nav-user"></span>
-    <a href="#the-eye" style="font-size:11px; padding:6px 14px; border:1px solid var(--gold); color:var(--gold); text-decoration:none; letter-spacing:1px;">ENTER THE TEMPLE</a>
-  </div>
+  <a href="#" class="nav-logo"><span class="hex">⬡</span>CURSIV</a>
+  <ul>
+    <li><a href="#new">What's New</a></li>
+    <li><a href="#features">Features</a></li>
+    <li><a href="#try-live">Try Live</a></li>
+    <li><a href="#install">Install</a></li>
+    <li><a href="#academy">The Academy</a></li>
+    <li><a href="#history">History</a></li>
+    <li><a href="#origin">Origin</a></li>
+    <li><a href="https://github.com/joshua1993winkler-jpg/Cursiv" target="_blank">GitHub ↗</a></li>
+  </ul>
+  <span class="nav-ver">v3.14-U08</span>
 </nav>
 
 <!-- ══ HERO ══════════════════════════════════════════════════════════ -->
@@ -923,7 +890,7 @@ footer {
 
   <div class="dl-row">
     <div class="dl-pulse">
-      <a href="https://github.com/joshua1993winkler-jpg/Cursiv/releases/download/v3.14-U11/Cursiv-Setup-3.14-U11.exe" class="btn-dl">
+      <a href="https://github.com/joshua1993winkler-jpg/Cursiv/releases/download/V3.14-U08/Cursiv-Setup-3.14-U08.exe" class="btn-dl">
         <span class="btn-dl-icon">⬇</span>
         <span class="btn-dl-txt">
           <span class="btn-dl-main">Download Cursiv-Setup-3.14-U08.exe</span>
@@ -936,124 +903,6 @@ footer {
   </div>
 
   <p class="hero-note">Already on v3.14? &nbsp;Open Cursiv → Check for Updates → in-place install. Ollama and your data are untouched.</p>
-
-  <!-- ═══ ENTER THE EYE — THE WEBSITE FACING TERMINAL ═══ -->
-  <div style="margin: 18px 0 10px;">
-    <a href="/terminal"
-       style="display:inline-flex;align-items:center;gap:14px;padding:18px 40px;background:#0f2a3a;border:1px solid #c9a741;color:#c9a741;text-decoration:none;font-size:15px;font-weight:600;clip-path:polygon(10px 0%,100% 0%,calc(100% - 10px) 100%,0% 100%);">
-      <span style="font-size:22px;">𓂀</span>
-      <span>
-        <span style="display:block;font-size:15px;letter-spacing:.5px;">OPEN THE EYE — THE TERMINAL</span>
-        <span style="display:block;font-size:10px;opacity:.65;letter-spacing:1px;margin-top:1px;">Public • No login • Full terminal chat + Board + Babel secret codes for family letters</span>
-      </span>
-    </a>
-  </div>
-  <div style="font-size:11px;opacity:.55;letter-spacing:.4px;margin-bottom:8px;">
-    This is the public face of Cursiv on the web. The terminal is the living Eye.
-  </div>
-</section>
-
-<!-- ══ THE PORTALS — full system on the website ═════════════════════════ -->
-<div style="max-width:1120px;margin:0 auto 40px;padding:0 40px;">
-  <div style="font-family:var(--mono);font-size:10px;letter-spacing:3.5px;color:#c9a741;text-transform:uppercase;opacity:.7;margin-bottom:8px;">THE TEMPLE PORTALS</div>
-  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1px;background:#1e3030;border:1px solid #1e3030;">
-    <a href="/terminal" style="background:#0f1515;padding:22px 24px;text-decoration:none;color:inherit;display:block;border-right:1px solid #1e3030;">
-      <div style="font-size:10px;letter-spacing:2px;color:#c9a741;margin-bottom:6px;">THE LIVING DISPLAY</div>
-      <div style="font-size:15px;color:#c9a741;margin-bottom:6px;">The Eye • Terminal</div>
-      <div style="font-size:13px;color:#a8b0b8;line-height:1.6;">The website-facing terminal of the entire AI system. No login needed. Type help, talk to the Eye, blast to the Board, unlock family letters with secret codes. This is where the Recoding happens in public.</div>
-    </a>
-    <a href="/vision" style="background:#0f1515;padding:22px 24px;text-decoration:none;color:inherit;display:block;border-right:1px solid #1e3030;">
-      <div style="font-size:10px;letter-spacing:2px;color:#c9a741;margin-bottom:6px;">THE VISUAL CROWN</div>
-      <div style="font-size:15px;color:#c9a741;margin-bottom:6px;">The Vision</div>
-      <div style="font-size:13px;color:#a8b0b8;line-height:1.6;">Interactive Eye of Horus. 14 council phases on a rotating sphere. Drag it. Zoom it. See the architecture of the temple.</div>
-    </a>
-    <a href="/letters" style="background:#0f1515;padding:22px 24px;text-decoration:none;color:inherit;display:block;">
-      <div style="font-size:10px;letter-spacing:2px;color:#c9a741;margin-bottom:6px;">SEALED FOR FAMILY</div>
-      <div style="font-size:15px;color:#c9a741;margin-bottom:6px;">Babel Letters</div>
-      <div style="font-size:13px;color:#a8b0b8;line-height:1.6;">Private vault for wife (Keiarra/KWdomain), stepdaughter, and two sons. Pre-seeded and ready. Unlocked by special login + name/birthdate commands when they are older.</div>
-    </a>
-  </div>
-  <div style="margin-top:18px;font-size:13px;color:#a8b0b8;max-width:640px;line-height:1.65;">
-    After you login at the Eye you also reach the Board (shared memory), the Codex (deep Bible study), and every other living part of the system through the terminal. The full sovereign desktop (council, forge, academy, guardian, postal, family legacy) remains on your machine — this website is the public face and the doorway for the people you love.
-  </div>
-</div>
-
-<!-- ══════════════════════════════════════════════════════════
-     THE EYE — LIVE TERMINAL + BOARD (public, no login required)
-     ══════════════════════════════════════════════════════════ -->
-<section id="the-eye-section" style="max-width: 1100px; margin: 40px auto; padding: 0 20px;">
-  <div style="text-align:center; margin-bottom: 18px;">
-    <div style="font-family: var(--mono); font-size: 10px; letter-spacing: 3px; color: var(--gold); text-transform: uppercase; opacity: .75;">THE LIVING HEART</div>
-    <h2 style="font-family: var(--serif); font-size: clamp(28px, 4.2vw, 44px); color: var(--silver); margin: 6px 0 8px;">𓂀 Talk to the Eye</h2>
-    <p style="max-width: 620px; margin: 0 auto; color: var(--silver2); font-size: 15px; line-height: 1.55;">
-      Use the entire system right here. Public terminal with full chat, blast to the Board, and family Babel letters via secret codes. No account needed.<br>
-      Chat with Bible study, Babel translation, synthesis, and more. Uses the public backend (Groq).<br>
-      Family letters (wife, stepdaughter, sons) are pre-sealed and waiting for their accounts.<br>
-      <strong>Want your own keys + the full 14-agent council offline?</strong> Download the desktop.
-    </p>
-  </div>
-
-  <!-- The Eye terminal - fully public, no credentials required. The working terminal is embedded below via the proven engine. -->
-  <div id="eye-app" style="border: 1px solid var(--border2); background: #060709; max-width: 980px; margin: 0 auto;">
-    <div id="eye-topbar" style="display:flex; align-items:center; padding: 6px 14px; height: 34px; background:#0f1515; border-bottom:1px solid var(--border); font-size:.72rem; color:#9a9480;">
-      <span style="color:var(--gold); font-weight:400; letter-spacing:.12em;">𓂀 Cursiv — Eye of Horus (Web Standalone)</span>
-      <span id="eye-user-label" style="margin-left:12px; color:#c9a741;">public</span>
-      <div style="flex:1;"></div>
-      <a href="/letters" id="eye-letters-link" style="margin-right:10px; font-size:.65rem; padding:1px 8px; border:1px solid #c9a741;color:#c9a741;text-decoration:none;letter-spacing:.05em;">BABEL LETTERS</a>
-      <a href="/vision" style="margin-right:10px; font-size:.65rem; padding:1px 8px; border:1px solid #3a4a4a; color:#a8b0b8; text-decoration:none; letter-spacing:.05em;">VISION</a>
-      <a href="https://github.com/joshua1993winkler-jpg/Cursiv/releases" target="_blank" style="font-size:.65rem; padding:1px 8px; border:1px solid var(--gold); color:var(--gold); text-decoration:none; letter-spacing:.05em;">DOWNLOAD DESKTOP</a>
-    </div>
-    <!-- Normal chatbox (like before) directly on the page: talk to the system, responses come back live.
-         After useful messages, post them to the public Board below for others to see. -->
-    <div id="eye-chat" style="background:#080c0c; border:1px solid #1e3030; display:flex; flex-direction:column; height:480px; max-width:980px; margin:0 auto;">
-      <div style="padding:8px 14px; background:#0f1515; border-bottom:1px solid #1e3030; font-size:12px; color:#9a9480; display:flex; align-items:center; gap:8px;">
-        <span style="color:#c9a741; font-weight:600;">𓂀 Eye Chat</span>
-        <span style="opacity:.6; font-size:10px;">public • no login • talk to the system • post useful messages to the Board</span>
-        <div style="flex:1"></div>
-        <button id="eye-chat-clear" style="background:transparent; border:1px solid #3a4a4a; color:#a8b0b8; font-size:10px; padding:2px 8px; cursor:pointer;">Clear</button>
-      </div>
-
-      <div id="eye-chat-messages" style="flex:1; overflow-y:auto; padding:14px; background:#080c0c; font-size:14px; line-height:1.5; display:flex; flex-direction:column; gap:10px;"></div>
-
-      <div style="padding:10px 12px; border-top:1px solid #1e3030; background:#0a0c12; display:flex; gap:8px; align-items:flex-end;">
-        <textarea id="eye-chat-input" rows="2" placeholder="Talk to the Eye... (your messages can be posted to the Board below for others)" style="flex:1; background:#08090C; border:1px solid #1e3030; color:#d8d0c0; font-family:inherit; font-size:14px; padding:10px; border-radius:4px; resize:vertical; min-height:42px;"></textarea>
-        <button id="eye-chat-send" style="background:#c9a741; color:#08090C; border:none; padding:10px 18px; font-size:13px; font-weight:700; letter-spacing:.5px; cursor:pointer; border-radius:3px;">Send</button>
-        <button id="eye-chat-post-board" style="background:#1e3030; color:#c9a741; border:1px solid #c9a741; padding:10px 12px; font-size:11px; cursor:pointer; border-radius:3px;">Post last to Board</button>
-      </div>
-    </div>
-  </div>
-
-  <div style="text-align:center; margin-top: 10px; font-size: 11px; color: #6b6f7a;">
-    Your session uses the same account as the rest of the temple. Everything you do here is also available at <a href="/terminal" style="color:#c9a741;">/terminal</a>.
-  </div>
-</section>
-
-<!-- ══════════════════════════════════════════════════════════
-     THE BOARD — BADASS INTERACTIVE SHARED MESSAGE AREA
-     Users send real messages to each other here. Fully integrated.
-     ══════════════════════════════════════════════════════════ -->
-<section id="the-board" style="max-width: 1120px; margin: 70px auto; padding: 0 20px;">
-  <div style="margin-bottom: 22px;">
-    <div style="font-family: var(--mono); font-size: 10px; letter-spacing: 3.5px; color: var(--gold); text-transform: uppercase; opacity: .75;">THE LIVING RECORD</div>
-    <h3 style="font-family: var(--serif); font-size: 36px; color: var(--silver); margin: 2px 0 6px;">The Board</h3>
-    <p style="color: var(--silver2); max-width: 620px; font-size: 15px;">This is where the temple speaks to itself. Post here or type <span style="color:#c9a741;">blast your words</span> in the Eye above. Every transmission stays visible to the community.</p>
-  </div>
-
-  <div style="display: grid; grid-template-columns: 1fr 400px; gap: 18px;">
-    <!-- Posts -->
-    <div style="background: #0a0c12; border: 1px solid var(--border2); padding: 22px;">
-      <div style="font-family: var(--mono); font-size: 10px; color: var(--gold); letter-spacing: 2px; margin-bottom: 14px; text-transform: uppercase;">Recent Transmissions</div>
-      <div id="board-posts" style="min-height: 280px; font-size: 14.5px; line-height: 1.75; color: var(--silver2);"></div>
-    </div>
-
-    <!-- Composer -->
-    <div style="background: #0a0c12; border: 1px solid var(--border2); padding: 22px; display: flex; flex-direction: column;">
-      <div style="font-family: var(--mono); font-size: 10px; color: var(--gold); letter-spacing: 2px; margin-bottom: 10px; text-transform: uppercase;">Transmit to the Temple</div>
-      <textarea id="board-text" placeholder="Your synthesis, message, or offering to the others..." style="flex:1; min-height: 160px; background:#08090C; border:1px solid var(--border); color:var(--silver); font-family:inherit; font-size:14px; padding:14px; resize:vertical; outline:none;"></textarea>
-      <button id="board-blast-btn" style="margin-top:12px; padding:13px; background:#c9a741; color:#08090C; border:none; font-size:13px; letter-spacing:1.5px; text-transform:uppercase; font-weight:600; cursor:pointer;">BLAST TO THE BOARD</button>
-      <div id="board-status" style="margin-top:8px; font-size:11px; color:#6b6f7a; min-height:16px;"></div>
-    </div>
-  </div>
 </section>
 
 <!-- ══ STATS ══════════════════════════════════════════════════════════ -->
@@ -1280,165 +1129,6 @@ footer {
   <p class="reveal" style="text-align:center;font-family:var(--mono);font-size:11px;color:var(--silver2);opacity:.4;margin-top:18px;">
     Demo is rate-limited &nbsp;·&nbsp; No account required &nbsp;·&nbsp; Nothing stored
   </p>
-
-  <!-- ── Feature previews: Babel Letter + Bible Study ──────────────── -->
-  <div class="reveal" style="margin-top:64px;display:grid;grid-template-columns:1fr 1fr;gap:24px;max-width:900px;margin-left:auto;margin-right:auto;">
-
-    <!-- Babel Letter card -->
-    <div style="background:var(--bg2);border:1px solid var(--border2);border-radius:12px;overflow:hidden;">
-      <div class="t-bar" style="cursor:pointer;" id="babel-tab">
-        <span class="t-dot r"></span><span class="t-dot a"></span><span class="t-dot g"></span>
-        <span class="t-title">Babel Letter — Personal Activation</span>
-      </div>
-      <div style="padding:20px 22px;font-family:var(--mono);font-size:12.5px;line-height:1.8;color:var(--silver2);">
-        <div style="color:var(--silver2);margin-bottom:12px;">
-          <span style="color:var(--gold);">$</span> <span style="color:var(--silver);">babel letter keiarra</span>
-        </div>
-        <div style="color:var(--green);margin-bottom:4px;">→ profile: Keiarra Tanyae-Simone</div>
-        <div style="color:var(--silver2);margin-bottom:4px;">→ sealed 5/20/2026 4:30 AM · key: birth date</div>
-        <hr style="border:none;border-top:1px solid var(--border);margin:12px 0;">
-        <div style="font-family:var(--serif);font-size:14px;line-height:1.9;color:var(--silver);font-style:italic;" id="babel-letter-body">
-          Keiarra —<br><br>
-          I built this for you. Not as a product.<br>
-          As a space that knows your name before you<br>
-          even open your mouth.<br><br>
-          Every agent in this system, every layer of<br>
-          memory it holds — it was assembled with you<br>
-          in mind. Not you someday. You now.<br><br>
-          The babel key is your birth date.<br>
-          The system will know you by it.<br><br>
-          — Joshua Winkler<br>
-          &nbsp;&nbsp;JW Architect Software &nbsp;·&nbsp; 5/20/2026
-        </div>
-        <div style="margin-top:14px;color:var(--silver2);font-size:11px;opacity:.6;">
-          Each family member has their own sealed letter. Unlocked by birth date. Stored locally. No cloud.
-        </div>
-      </div>
-    </div>
-
-    <!-- Bible Study card -->
-    <div style="background:var(--bg2);border:1px solid var(--border2);border-radius:12px;overflow:hidden;">
-      <div class="t-bar">
-        <span class="t-dot r"></span><span class="t-dot a"></span><span class="t-dot g"></span>
-        <span class="t-title">Bible Study — 7 Translations + Synthesis</span>
-      </div>
-      <div style="padding:20px 22px;font-family:var(--mono);font-size:12.5px;line-height:1.8;">
-        <div style="margin-bottom:10px;">
-          <span style="color:var(--gold);">$</span>
-          <input id="verse-input" type="text" value="John 8:7"
-            style="background:transparent;border:none;border-bottom:1px solid var(--border2);color:var(--silver);font-family:var(--mono);font-size:12.5px;width:200px;outline:none;margin-left:6px;"
-            placeholder="John 8:7 · Psalm 23 · Romans 8:38">
-          <button onclick="lookupVerse()" style="margin-left:8px;background:var(--gold);color:#000;border:none;border-radius:4px;padding:2px 10px;font-size:11px;cursor:pointer;font-family:var(--mono);">lookup</button>
-        </div>
-        <div id="verse-out" style="font-size:12px;line-height:1.85;">
-          <div style="margin-bottom:8px;"><span style="color:var(--gold);font-weight:600;">[KJV 1611]</span><br>
-          <span style="color:var(--silver);">He that is without sin among you, let him first cast a stone at her.</span></div>
-          <div style="margin-bottom:8px;"><span style="color:var(--blue3);font-weight:600;">[NWT 1961]</span><br>
-          <span style="color:var(--silver2);">Whoever of you is sinless, let him be the first to throw a stone at her.</span></div>
-          <div style="margin-bottom:8px;"><span style="color:var(--green);font-weight:600;">[NIV 1978]</span><br>
-          <span style="color:var(--silver2);">Let any one of you who is without sin be the first to throw a stone at her.</span></div>
-          <div style="margin-bottom:8px;"><span style="color:var(--amber);font-weight:600;">[WEB 2000]</span><br>
-          <span style="color:var(--silver2);">He who is without sin among you, let him throw the first stone at her.</span></div>
-          <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border);color:var(--silver2);font-size:11px;">
-            <span style="color:var(--gold);">[AXIS: CHARIS]</span> Grace under accusation. Minimum divergence across all 7 traditions. The most bit-stable grace passage in the corpus.
-          </div>
-        </div>
-      </div>
-    </div>
-
-  </div>
-
-  <script>
-  const BIBLE_MOCK = {
-    "john 8:7": {
-      "KJV 1611": "He that is without sin among you, let him first cast a stone at her.",
-      "NWT 1961": "Whoever of you is sinless, let him be the first to throw a stone at her.",
-      "NIV 1978": "Let any one of you who is without sin be the first to throw a stone at her.",
-      "ESV 2001": "Let him who is without sin among you be the first to throw a stone at her.",
-      "NASB 1971": "He who is without sin among you, let him be the first to throw a stone at her.",
-      "YLT 1862": "He who is sinless of you — let him first cast the stone at her.",
-      "WEB 2000":  "He who is without sin among you, let him throw the first stone at her.",
-      "axis": "CHARIS", "axis_note": "Grace under accusation. Minimum divergence across all 7 traditions."
-    },
-    "psalm 23": {
-      "KJV 1611": "The LORD is my shepherd; I shall not want. He maketh me to lie down in green pastures.",
-      "NWT 1961": "Jehovah is my Shepherd. I will lack nothing. In grassy pastures he makes me lie down.",
-      "NIV 1978": "The LORD is my shepherd, I lack nothing. He makes me lie down in green pastures.",
-      "ESV 2001": "The LORD is my shepherd; I shall not want. He makes me lie down in green pastures.",
-      "NASB 1971": "The LORD is my shepherd, I will not be in need. He makes me lie down in green pastures.",
-      "YLT 1862": "Jehovah is my shepherd, I do not lack. In pastures of tender grass He causeth me to lie down.",
-      "WEB 2000":  "Yahweh is my shepherd: I shall lack nothing. He makes me lie down in green pastures.",
-      "axis": "KAIROS", "axis_note": "Appointed presence. The rhythm of Kairos — right timing, not clock time."
-    },
-    "romans 8:38": {
-      "KJV 1611": "For I am persuaded, that neither death, nor life, nor angels, nor principalities, nor powers... shall be able to separate us from the love of God.",
-      "NWT 1961": "For I am convinced that neither death nor life nor angels nor governments... will be able to separate us from God's love.",
-      "NIV 1978": "For I am convinced that neither death nor life, neither angels nor demons... will be able to separate us from the love of God.",
-      "ESV 2001": "For I am sure that neither death nor life, nor angels nor rulers... will be able to separate us from the love of God.",
-      "NASB 1971": "For I am convinced that neither death nor life, nor angels nor principalities... will be able to separate us from the love of God.",
-      "YLT 1862": "For I am persuaded that neither death, nor life, nor messengers, nor principalities... shall be able to separate us from the love of God.",
-      "WEB 2000":  "For I am persuaded that neither death, nor life, nor angels, nor principalities... will be able to separate us from the love of God.",
-      "axis": "CHARIS", "axis_note": "The constitutional guarantee. Most bit-stable passage in the corpus — zero divergence on intent across all 7."
-    },
-    "john 3:16": {
-      "KJV 1611": "For God so loved the world, that he gave his only begotten Son, that whosoever believeth in him should not perish.",
-      "NWT 1961": "For God loved the world so much that he gave his only-begotten Son.",
-      "NIV 1978": "For God so loved the world that he gave his one and only Son.",
-      "ESV 2001": "For God so loved the world, that he gave his only Son.",
-      "NASB 1971": "For God so loved the world, that He gave His only Son.",
-      "YLT 1862": "For God did so love the world, that His Son — the only begotten — He gave.",
-      "WEB 2000":  "For God so loved the world, that he gave his one and only Son.",
-      "axis": "AGAPE", "axis_note": "AGAPE in its most universal form. Love as action, not feeling."
-    },
-    "proverbs 3:5": {
-      "KJV 1611": "Trust in the LORD with all thine heart; and lean not unto thine own understanding.",
-      "NWT 1961": "Trust in Jehovah with all your heart, and do not rely on your own understanding.",
-      "NIV 1978": "Trust in the LORD with all your heart and lean not on your own understanding.",
-      "ESV 2001": "Trust in the LORD with all your heart, and do not lean on your own understanding.",
-      "NASB 1971": "Trust in the LORD with all your heart and do not lean on your own understanding.",
-      "YLT 1862": "Trust unto Jehovah with all thy heart, And unto thine own understanding lean not.",
-      "WEB 2000":  "Trust in Yahweh with all your heart, and don't lean on your own understanding.",
-      "axis": "SOPHIA", "axis_note": "The founding instruction. Sophia over self-reliance. Consistent across all 7 — the most agreed-upon command in the corpus."
-    },
-    "1 corinthians 13:4": {
-      "KJV 1611": "Charity suffereth long, and is kind; charity envieth not; charity vaunteth not itself, is not puffed up.",
-      "NWT 1961": "Love is patient and kind. Love is not jealous. It does not brag, does not get puffed up.",
-      "NIV 1978": "Love is patient, love is kind. It does not envy, it does not boast, it is not proud.",
-      "ESV 2001": "Love is patient and kind; love does not envy or boast; it is not arrogant.",
-      "NASB 1971": "Love is patient, love is kind, it is not jealous; love does not brag, it is not arrogant.",
-      "YLT 1862": "The love is long-suffering, it is kind, the love doth not envy, the love doth not vaunt itself.",
-      "WEB 2000":  "Love is patient and is kind; love doesn't envy. Love doesn't brag, is not proud.",
-      "axis": "AGAPE", "axis_note": "The most translation-stable passage in scripture. Seven versions, one verdict."
-    }
-  };
-
-  const AXIS_COLORS = { CHARIS:'var(--gold)', AGAPE:'var(--blue3)', SOPHIA:'var(--green)', KAIROS:'var(--amber)', LOGOS:'var(--silver)' };
-
-  function lookupVerse() {
-    const raw = document.getElementById('verse-input').value.trim().toLowerCase();
-    const data = BIBLE_MOCK[raw];
-    const out = document.getElementById('verse-out');
-    if (!data) {
-      const available = Object.keys(BIBLE_MOCK).map(k => `<code style="color:var(--gold)">${k}</code>`).join(' · ');
-      out.innerHTML = `<span style="color:var(--red);">Reference not in demo set.</span><br><br>Try: ${available}`;
-      return;
-    }
-    const colors = ['var(--gold)','var(--blue3)','var(--green)','var(--amber)','var(--silver)','var(--silver2)','var(--amber)'];
-    const translations = Object.entries(data).filter(([k]) => !['axis','axis_note'].includes(k));
-    const axisColor = AXIS_COLORS[data.axis] || 'var(--gold)';
-    out.innerHTML = translations.map(([label, text], i) =>
-      `<div style="margin-bottom:8px;"><span style="color:${colors[i]};font-weight:600;">[${label}]</span><br>
-      <span style="color:${i===0?'var(--silver)':'var(--silver2)'};">${text}</span></div>`
-    ).join('') +
-    `<div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border);color:var(--silver2);font-size:11px;">
-      <span style="color:${axisColor};">[AXIS: ${data.axis}]</span> ${data.axis_note}
-    </div>`;
-  }
-
-  document.getElementById('verse-input').addEventListener('keydown', function(e) {
-    if (e.key === 'Enter') lookupVerse();
-  });
-  </script>
 </section>
 
 <!-- ══ REQUIREMENTS + INSTALL ═════════════════════════════════════════ -->
@@ -1465,7 +1155,7 @@ footer {
       <span class="step-n">01</span>
       <div>
         <p class="step-t">Download the installer</p>
-        <p class="step-b">Grab <code>Cursiv-Setup-3.14-U11.exe</code> from the button above. Windows may show a SmartScreen warning — click More info → Run anyway. Standard false positive for unsigned PyInstaller binaries. Full source is open.</p>
+        <p class="step-b">Grab <code>Cursiv-Setup-3.14-U08.exe</code> from the button above. Windows may show a SmartScreen warning — click More info → Run anyway. Standard false positive for unsigned PyInstaller binaries. Full source is open.</p>
       </div>
     </div>
     <div class="step">
@@ -2197,43 +1887,6 @@ document.querySelectorAll('.reveal,.reveal-group').forEach(el=>ro.observe(el));
     ]},
     { t:'pause', ms:2600 },
     { t:'clrout' }, { t:'clrcmd' }, { t:'pause', ms:400 },
-
-    // 13 — babel letter (family activation)
-    { t:'type',  s:'babel letter keiarra' },
-    { t:'pause', ms:500 },
-    { t:'enter' },
-    { t:'out', lines:[
-      { c:'t-dim',  v:'  → Babel Agent — personal letter mode'},
-      { c:'t-dim',  v:'  looking up profile: Keiarra Tanyae-Simone...'},
-      { c:'t-ok',   v:'  ✓ letter found · sealed 5/20/2026 4:30 AM'},
-      { c:'t-dim',  v:''},
-      { c:'t-cmd',  v:'  Keiarra —'},
-      { c:'t-cmd',  v:'  I built this for you. Not as a product.'},
-      { c:'t-cmd',  v:'  As a space that knows your name before you'},
-      { c:'t-cmd',  v:'  even open your mouth. This system holds you.'},
-      { c:'t-dim',  v:'  — JW  [babel key: your birth date]'},
-    ]},
-    { t:'pause', ms:3000 },
-    { t:'clrout' }, { t:'clrcmd' }, { t:'pause', ms:400 },
-
-    // 14 — bible study
-    { t:'type',  s:'bible John 8:7' },
-    { t:'pause', ms:500 },
-    { t:'enter' },
-    { t:'out', lines:[
-      { c:'t-dim',  v:'  → Bible Study Engine · 7 translations + synthesis'},
-      { c:'t-dim',  v:''},
-      { c:'t-ok',   v:'  [KJV]  "He that is without sin among you, let'},
-      { c:'t-ok',   v:'         him first cast a stone at her."'},
-      { c:'t-dim',  v:''},
-      { c:'t-cmd',  v:'  [NWT]  "Whoever of you is sinless, let him'},
-      { c:'t-cmd',  v:'         be the first to throw a stone at her."'},
-      { c:'t-dim',  v:''},
-      { c:'t-dim',  v:'  [AXIS: CHARIS] Grace under pressure. The most'},
-      { c:'t-dim',  v:'  bit-stable grace passage. 0 divergence on intent.'},
-    ]},
-    { t:'pause', ms:3200 },
-    { t:'clrout' }, { t:'clrcmd' }, { t:'pause', ms:400 },
   ];
 
   let outLines=[], si=0;
@@ -2368,301 +2021,5 @@ document.querySelectorAll('.reveal,.reveal-group').forEach(el=>ro.observe(el));
   inputEl.addEventListener('keydown', e => { if (e.key === 'Enter') sendMessage(); });
 })();
 </script>
-
-// ══════════════════════════════════════════════════════════
-// BADASS INTERACTIVE BOARD (unified on the index)
-// Users send real messages to each other publicly in the temple
-// ══════════════════════════════════════════════════════════
-(function() {
-  const feed = document.getElementById('board-posts');
-  const composer = document.getElementById('board-text');
-  const postBtn = document.getElementById('board-blast-btn');
-  const status = document.getElementById('board-status');
-
-  if (!feed || !postBtn) return;
-
-  const token = localStorage.getItem('cursiv_token');
-  const user = localStorage.getItem('cursiv_user');
-
-  async function loadBoard() {
-    try {
-      const r = await fetch('/api/posts');
-      const j = await r.json();
-      const posts = (j.posts || []).slice(0, 7);
-      if (!posts.length) {
-        feed.innerHTML = '<div style="color:#6b6f7a;font-size:13px;">The Board is quiet. Be the first to transmit.</div>';
-        return;
-      }
-      feed.innerHTML = posts.map(p => {
-        const d = (p.timestamp || '').slice(0,10);
-        return `<div style="margin-bottom:17px;padding-bottom:14px;border-bottom:1px solid #1e3030;">
-          <div style="font-size:11px;color:#c9a741;letter-spacing:1px;">${p.username} <span style="opacity:.4;">${d}</span></div>
-          <div style="margin-top:3px;color:#d8d0c0;">${(p.text || '').replace(/</g,'&lt;')}</div>
-        </div>`;
-      }).join('');
-    } catch(e) {
-      feed.innerHTML = '<div style="color:#ff5555;font-size:13px;">Could not reach the Board.</div>';
-    }
-  }
-
-  postBtn.addEventListener('click', async () => {
-    const msg = (composer.value || '').trim();
-    if (!msg) return;
-    postBtn.disabled = true;
-    status.textContent = 'Transmitting to the Board...';
-    status.style.color = '#c9a741';
-    try {
-      const headers = {'Content-Type': 'application/json'};
-      if (token) headers['Authorization'] = 'Bearer ' + token;
-      const r = await fetch('/api/blast', {
-        method:'POST',
-        headers,
-        body: JSON.stringify({text: msg, source:'broadcast'})
-      });
-      if (!r.ok) throw 0;
-      composer.value = '';
-      status.textContent = 'Transmitted to the Board (visible to everyone).';
-      status.style.color = '#27C97A';
-      await loadBoard();
-    } catch(e) {
-      status.textContent = 'Could not transmit. Use the chatbox below and "post to board".';
-      status.style.color = '#ff5555';
-    } finally {
-      postBtn.disabled = false;
-      setTimeout(() => { if (status) { status.textContent = ''; status.style.color = '#6b6f7a'; } }, 2200);
-    }
-  });
-
-  loadBoard();
-  setInterval(loadBoard, 42000);
-})();
-</script>
-
-<!-- Normal chatbox logic: direct WS to the same backend the old terminal used.
-     Streams text back live into bubbles. "Post last to Board" uses the public blast (now supported for guests as "visitor").
-     This is the reliable non-xterm chat the user asked for. -->
-<script>
-'use strict';
-
-const CHAT_WS_BASE = (location.protocol === 'https:' ? 'wss:' : 'ws:') + '//' + location.host;
-const CHAT_API_BASE = (location.protocol === 'https:' ? 'https:' : 'http:') + '//' + location.host;
-
-let chatWs = null;
-let chatIsProcessing = false;
-let lastUserQuery = '';
-let lastAssistantText = '';
-
-const messagesEl = document.getElementById('eye-chat-messages');
-const inputEl = document.getElementById('eye-chat-input');
-const sendBtn = document.getElementById('eye-chat-send');
-const clearBtn = document.getElementById('eye-chat-clear');
-const postBoardBtn = document.getElementById('eye-chat-post-board');
-
-function appendMessage(role, text, isStreaming = false) {
-  const div = document.createElement('div');
-  div.style.cssText = role === 'user' 
-    ? 'align-self:flex-end; max-width:75%; background:#1e3a5f; color:#d8d0c0; padding:9px 13px; border-radius:12px; border-bottom-right-radius:3px; white-space:pre-wrap;'
-    : 'align-self:flex-start; max-width:85%; background:#11151f; color:#d8d0c0; padding:9px 13px; border-radius:12px; border-bottom-left-radius:3px; border-left:3px solid #c9a741; white-space:pre-wrap;';
-
-  if (role === 'assistant') {
-    div.dataset.role = 'assistant';
-    div.innerHTML = '<span style="font-size:10px;opacity:.6;color:#c9a741;">𓂀 </span>' + (text || '').replace(/\n/g, '<br>');
-  } else {
-    div.textContent = text || '';
-  }
-
-  messagesEl.appendChild(div);
-  messagesEl.scrollTop = messagesEl.scrollHeight;
-
-  if (role === 'assistant' && !isStreaming) {
-    lastAssistantText = text || '';
-    // Attach per-message post button
-    const postBtn = document.createElement('button');
-    postBtn.textContent = '📌 Post to Board';
-    postBtn.style.cssText = 'margin-top:6px; font-size:10px; background:transparent; border:1px solid #c9a741; color:#c9a741; padding:1px 6px; cursor:pointer;';
-    postBtn.onclick = () => postToBoard(lastUserQuery, text);
-    div.appendChild(postBtn);
-  }
-
-  return div;
-}
-
-function updateLastAssistant(chunk) {
-  // Find the last assistant bubble and append
-  const bubbles = messagesEl.querySelectorAll('div[data-role="assistant"]');
-  if (bubbles.length === 0) return;
-  const last = bubbles[bubbles.length - 1];
-  lastAssistantText += chunk;
-  // rebuild content (keep the eye icon)
-  last.innerHTML = '<span style="font-size:10px;opacity:.6;color:#c9a741;">𓂀 </span>' + lastAssistantText.replace(/\n/g, '<br>');
-  messagesEl.scrollTop = messagesEl.scrollHeight;
-}
-
-function connectChat() {
-  if (chatWs && chatWs.readyState === WebSocket.OPEN) return;
-
-  const url = `${CHAT_WS_BASE}/ws/chat?token=`;
-  chatWs = new WebSocket(url);
-
-  chatWs.onmessage = (e) => {
-    const data = e.data;
-
-    if (data === '\x00DONE\x00') {
-      chatIsProcessing = false;
-      sendBtn.disabled = false;
-      lastAssistantText = (lastAssistantText || '').trim();
-
-      // Attach the "Post to Board" button to the last assistant bubble now that streaming is complete
-      const bubbles = messagesEl.querySelectorAll('div[data-role="assistant"]');
-      if (bubbles.length > 0) {
-        const lastBubble = bubbles[bubbles.length - 1];
-        if (!lastBubble.querySelector('button')) {
-          const postBtn = document.createElement('button');
-          postBtn.textContent = '📌 Post to Board';
-          postBtn.style.cssText = 'margin-top:6px; font-size:10px; background:transparent; border:1px solid #c9a741; color:#c9a741; padding:1px 6px; cursor:pointer;';
-          postBtn.onclick = () => postToBoard(lastUserQuery, lastAssistantText);
-          lastBubble.appendChild(postBtn);
-        }
-      }
-      return;
-    }
-    if (data.startsWith('\x00ERR\x00')) {
-      const err = data.slice(6);
-      appendMessage('assistant', 'Error: ' + err);
-      chatIsProcessing = false;
-      sendBtn.disabled = false;
-      return;
-    }
-
-    // streaming chunk for current assistant response
-    if (chatIsProcessing) {
-      updateLastAssistant(data);
-    } else {
-      // initial banner or unexpected — show as system once
-      if (data && data.includes('Eye of Horus')) {
-        // ignore the big banner for clean chat start; user can type immediately
-        return;
-      }
-      appendMessage('assistant', data);
-    }
-  };
-
-  chatWs.onopen = () => {
-    // ready — user can type
-  };
-
-  chatWs.onclose = () => {
-    // simple reconnect on close
-    setTimeout(connectChat, 1200);
-  };
-
-  chatWs.onerror = () => {
-    appendMessage('assistant', 'Connection issue — refresh if it stays silent.');
-  };
-}
-
-function sendChatMessage() {
-  const text = (inputEl.value || '').trim();
-  if (!text || chatIsProcessing) return;
-
-  lastUserQuery = text;
-  appendMessage('user', text);
-  inputEl.value = '';
-
-  if (!chatWs || chatWs.readyState !== WebSocket.OPEN) {
-    appendMessage('assistant', 'Connecting to the Eye...');
-    connectChat();
-    // retry send after short delay
-    setTimeout(() => sendChatMessage(), 400);
-    return;
-  }
-
-  // create the assistant bubble we will stream into
-  appendMessage('assistant', '', true); // placeholder, will be updated by chunks
-  lastAssistantText = '';
-
-  chatIsProcessing = true;
-  sendBtn.disabled = true;
-
-  chatWs.send(text);
-}
-
-function postToBoard(userQ, assistantResponse) {
-  const text = (userQ ? 'User: ' + userQ + '\n\nEye: ' : '') + (assistantResponse || lastAssistantText || '');
-  if (!text.trim()) {
-    alert('Nothing to post yet.');
-    return;
-  }
-
-  postBoardBtn.disabled = true;
-  postBoardBtn.textContent = 'Posting...';
-
-  fetch(CHAT_API_BASE + '/api/blast', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ text: text.trim(), source: 'broadcast' })
-  })
-  .then(r => {
-    if (!r.ok) throw new Error('post failed');
-    postBoardBtn.textContent = 'Posted!';
-    // refresh the Board section so it appears immediately for others
-    const boardFeed = document.getElementById('board-posts');
-    if (boardFeed && typeof loadBoard === 'function') {
-      // the board IIFE defined loadBoard in its scope, so trigger a reload via interval or direct fetch
-      setTimeout(() => location.reload(), 900); // simple reliable way to refresh the whole board area
-    }
-  })
-  .catch(() => {
-    postBoardBtn.textContent = 'Failed — try Board composer';
-  })
-  .finally(() => {
-    setTimeout(() => {
-      postBoardBtn.disabled = false;
-      postBoardBtn.textContent = 'Post last to Board';
-    }, 1600);
-  });
-}
-
-function setupChat() {
-  if (!messagesEl || !inputEl || !sendBtn) return;
-
-  // Welcome message
-  setTimeout(() => {
-    appendMessage('assistant', 'The Eye is listening. Ask anything — Bible, synthesis, questions, or just talk. Use the button below any response to share it to the public Board.');
-  }, 120);
-
-  sendBtn.onclick = sendChatMessage;
-  inputEl.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      sendChatMessage();
-    }
-  });
-
-  clearBtn.onclick = () => {
-    messagesEl.innerHTML = '';
-    lastUserQuery = '';
-    lastAssistantText = '';
-    appendMessage('assistant', 'Chat cleared. The Eye is ready.');
-  };
-
-  postBoardBtn.onclick = () => {
-    if (lastAssistantText) {
-      postToBoard(lastUserQuery, lastAssistantText);
-    } else {
-      alert('Have a conversation first — the Eye will respond, then you can post the exchange.');
-    }
-  };
-
-  // Connect immediately so first send is fast
-  connectChat();
-
-  // Optional: focus input
-  setTimeout(() => inputEl.focus(), 300);
-}
-
-setupChat();
-</script>
-
 </body>
 </html>
