@@ -2510,8 +2510,20 @@ function connectChat() {
     if (data === '\x00DONE\x00') {
       chatIsProcessing = false;
       sendBtn.disabled = false;
-      // final assistant text is ready for posting
-      lastAssistantText = lastAssistantText.trim();
+      lastAssistantText = (lastAssistantText || '').trim();
+
+      // Attach the "Post to Board" button to the last assistant bubble now that streaming is complete
+      const bubbles = messagesEl.querySelectorAll('div[data-role="assistant"]');
+      if (bubbles.length > 0) {
+        const lastBubble = bubbles[bubbles.length - 1];
+        if (!lastBubble.querySelector('button')) {
+          const postBtn = document.createElement('button');
+          postBtn.textContent = '📌 Post to Board';
+          postBtn.style.cssText = 'margin-top:6px; font-size:10px; background:transparent; border:1px solid #c9a741; color:#c9a741; padding:1px 6px; cursor:pointer;';
+          postBtn.onclick = () => postToBoard(lastUserQuery, lastAssistantText);
+          lastBubble.appendChild(postBtn);
+        }
+      }
       return;
     }
     if (data.startsWith('\x00ERR\x00')) {
