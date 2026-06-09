@@ -2405,9 +2405,9 @@ document.querySelectorAll('.reveal,.reveal-group').forEach(el=>ro.observe(el));
     const msg = (composer.value || '').trim();
     if (!msg) return;
     if (!token) {
-      status.textContent = 'Login in The Eye first.';
-      status.style.color = '#ff5555';
-      setTimeout(()=>{status.textContent='';status.style.color='#6b6f7a';},1800);
+      status.textContent = 'Use the Eye terminal (above) — type: blast your message  (public visitors supported there)';
+      status.style.color = '#c9a741';
+      setTimeout(()=>{status.textContent='';status.style.color='#6b6f7a';}, 2800);
       return;
     }
     postBtn.disabled = true;
