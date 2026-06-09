@@ -606,6 +606,51 @@ if (loginOverlay) loginOverlay.style.display = 'none';
 
 if (!term) initTerminal();
 connectWS();
+
+// ── Embedded mode for the main Eye page (whatever it takes to make the terminal work) ──
+(function handleEmbedded() {
+  const isEmbedded = location.search.includes('embedded') || window.self !== window.top;
+  if (!isEmbedded) return;
+
+  // Hide all top chrome / nav / labels so only the pure xterm shows inside the iframe
+  const idsToHide = [
+    'topbar', 'header', 'nav', 'app-header',
+    'vision-btn', 'download-btn', 'letters-btn',
+    'user-label', 'edition-badge', 'conn-dot',
+    'login-overlay'
+  ];
+  idsToHide.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = 'none';
+  });
+
+  // Also hide by common classes/selectors that may be in the top chrome
+  document.querySelectorAll('header, nav, .topbar, .header, .nav, [class*="top"], [class*="header"]').forEach(el => {
+    if (el) el.style.display = 'none';
+  });
+
+  // Make terminal wrap take every pixel
+  const wrap = document.getElementById('terminal-wrap');
+  if (wrap) {
+    wrap.style.height = '100%';
+    wrap.style.margin = '0';
+    wrap.style.padding = '0';
+    wrap.style.border = '0';
+    wrap.style.boxShadow = 'none';
+  }
+
+  // Clean body for seamless iframe
+  document.body.style.margin = '0';
+  document.body.style.padding = '0';
+  document.body.style.overflow = 'hidden';
+  document.body.style.background = '#080c0c';
+
+  // Ensure the terminal itself fills
+  setTimeout(() => {
+    if (fitAddon) fitAddon.fit();
+    if (term) term.focus();
+  }, 50);
+})();
 </script>
 </body>
 </html>
